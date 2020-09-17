@@ -19,15 +19,22 @@ function processData(entry) {
         // objects,
     };
 
-    if (entry.data && entry.data.params) {
-        let params = entry.data.params;
+    if (entry.data) {
+        if (entry.data.params) {
+            let params = entry.data.params;
 
-        if(params.newName) {
-            data.newName = params.newName;
+            if(params.newName) {
+                data.newName = params.newName;
+            }
+
+            if (params.modifier) {
+                data.modifier = params.modifier; 
+            }
         }
 
-        if (params.modifier) {
-            data.modifier = params.modifier; 
+        // if (params.result) {}
+        if (entry.data.result.pendingContents) {
+            data.formatted.type = "Marked as deleted";
         }
     }
 
@@ -40,6 +47,7 @@ function getUserName(key) {
     return profile.displayName;
 }
 
+/* Delete shows when marked as deleted */
 function getAuditType(type) {
     switch (type) {
         case "system.content.update":
@@ -54,6 +62,8 @@ function getAuditType(type) {
             return "Move";
         case "system.content.create":
             return "Create";
+        case "system.content.delete":
+            return "Delete"
         default:
             return type;
     }

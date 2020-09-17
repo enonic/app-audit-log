@@ -23,7 +23,8 @@ exports.get = function (req) {
         count: 1000, // OPEN THE FLOOD GATE!
         query: `data.params.contentId = "${contentId}" OR 
             data.params.contentIds = "${contentId}" OR 
-            data.result.id = "${contentId}"`, 
+            data.result.id = "${contentId}" OR
+            data.result.pendingContents = "${contentId}"`, 
         sort: "time ASC",
         /* filters: {
             exists: {
