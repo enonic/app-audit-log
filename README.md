@@ -8,4 +8,4 @@ The widget shows a log of all events that have happened on an item.
 
 | version   | xp version |
 |:---------:|:----------:|
-| 0.0.1     | 7.3.0      |
+| 0.0.2     | 7.3.0      |

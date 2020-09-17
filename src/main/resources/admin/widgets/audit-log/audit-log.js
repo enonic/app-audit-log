@@ -4,7 +4,7 @@ const nodeLib = require("/lib/xp/node");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
 
-const view = resolve("change-viewer.html");
+const view = resolve("audit-log.html");
 
 exports.get = function (req) {
     if (req.params == undefined || req.params.contentId == undefined) {
@@ -20,9 +20,10 @@ exports.get = function (req) {
 
     let result = repoConnection.query({
         start: 0,
-        count: 50,
+        count: 1000, // OPEN THE FLOOD GATE!
         query: `data.params.contentId = "${contentId}" OR 
-            data.params.contentIds = "${contentId}"`,
+            data.params.contentIds = "${contentId}" OR 
+            data.result.id = "${contentId}"`, 
         sort: "time ASC",
         /* filters: {
             exists: {
@@ -31,6 +32,10 @@ exports.get = function (req) {
         }, */
         sort: "time DESC",
     });
+
+    if (result.total == 0)  {
+        return errorMessage("No audit log found for this content.");
+    }
 
     let logEntries = [];
     result.hits.forEach(function (hit) {
@@ -44,12 +49,17 @@ exports.get = function (req) {
     });
 
     let cssUrl = portal.assetUrl({
-        path: "/change-viewer.css"
+        path: "/widget.css"
+    });
+
+    let jsUrl = portal.assetUrl({
+        path: "/widget.js"
     });
 
     let model = {
         entries: logEntries,
-        cssUrl
+        cssUrl,
+        jsUrl,
     };
 
     return {

@@ -1,33 +1,35 @@
 const auth = require("/lib/xp/auth");
 
 function processData(entry) {
-    let contentId = entry.data.params.contentId;
-    
+    //let contentId = entry.data.params.contentId;
+
     //Might want to filter out all system changes
-    let user = getUserName(entry.user)
+    let formattedUser = getUserName(entry.user);
 
-    // let referance = [].concat(entry.objects); // Might be this can be more then 1 object?
-    // let objects = [];
-    /* referance.forEach(function(key) {
-        let info = key.split(":");
-        //let repo = refInfo[0]; //repo should always be the same
-        //let objectId = refInfo[2];
-        objects.push({
-            branch: info[1],
-        })
-    }); */
-
-    let formatedTime = entry.time.split('.')[0];
-    formatedTime = formatedTime.replace('T', " ");
-
-    //let time = `${entryTime.getFullYear()}-${entryTime.getMonth()+1}-${entryTime.getDate()} ${entryTime.getHours()}:${entryTime.getMinutes()}`;
+    // let objects = [].concat(entry.objects); // Might be this can be more then 1 object?
 
     let data = {
-        contentId,
-        user,
-        timestamp: formatedTime,
+        formatted: {
+            user: formattedUser,
+            type: getAuditType(entry.type),
+        },
+        user: entry.user,
+        timestamp: entry.time,
         type: entry.type,
+        // objects,
     };
+
+    if (entry.data && entry.data.params) {
+        let params = entry.data.params;
+
+        if(params.newName) {
+            data.newName = params.newName;
+        }
+
+        if (params.modifier) {
+            data.modifier = params.modifier; 
+        }
+    }
 
     return data;
 }
@@ -38,21 +40,23 @@ function getUserName(key) {
     return profile.displayName;
 }
 
-/* function getAuditType(type) {
+function getAuditType(type) {
     switch (type) {
         case "system.content.update":
-            return "Edit";
+            return "Update";
         case "system.content.unpublishContent":
-            return "Unpublished";
+            return "Unpublish";
         case "system.content.publish":
-            return "Published";
+            return "Publish";
         case "system.content.rename":
-            return "Renamed";
+            return "Rename";
         case "system.content.moved":
-            return "Moved";
-            default:
+            return "Move";
+        case "system.content.create":
+            return "Create";
+        default:
             return type;
     }
-} */
+}
 
 exports.processData = processData;
