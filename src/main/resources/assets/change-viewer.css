@@ -1,0 +1,19 @@
+#change {
+    display: block;
+}
+
+#change .entry {
+    border: 1px solid rgb(213, 221, 236);
+    margin: 5px;
+}
+
+#change .entry .data {
+    padding: 1rem;
+}
+
+#change .entry h2 {
+    font-size: 1.1rem;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background-color: #eef5f7;
+}

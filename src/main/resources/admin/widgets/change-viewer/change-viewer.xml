@@ -1,0 +1,12 @@
+<widget>
+  <display-name>Change viewer</display-name>
+  <description>Widget that lets you see all changes</description>
+  <interfaces>
+    <interface>contentstudio.contextpanel</interface>
+  </interfaces>
+  <allow>
+    <principal>role:system.admin</principal>
+    <principal>role:system.auditlog</principal>
+    <principal>role:cms.app</principal>
+  </allow>
+</widget>
