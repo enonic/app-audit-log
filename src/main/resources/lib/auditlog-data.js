@@ -22,7 +22,6 @@ function processData(entry) {
     if (entry.data) {
         if (entry.data.params) {
             let params = entry.data.params;
-
             if(params.newName) {
                 data.newName = params.newName;
             }
@@ -30,6 +29,10 @@ function processData(entry) {
             if (params.modifier) {
                 data.modifier = params.modifier; 
             }
+
+            if (params.includeChildren) {
+                data.includeChildren = params.includeChildren;
+            };
         }
 
         // if (params.result) {}

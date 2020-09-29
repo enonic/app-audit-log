@@ -21,9 +21,9 @@ exports.get = function (req) {
     let result = repoConnection.query({
         start: 0,
         count: 1000, // OPEN THE FLOOD GATE!
-        query: `data.params.contentId = "${contentId}" OR 
-            data.params.contentIds = "${contentId}" OR 
+        query: `
             data.result.id = "${contentId}" OR
+            data.result.pushedContents = "${contentId}" OR 
             data.result.pendingContents = "${contentId}"`, 
         sort: "time ASC",
         /* filters: {

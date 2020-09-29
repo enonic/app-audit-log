@@ -1,6 +1,6 @@
 <widget>
-  <display-name>Change viewer</display-name>
-  <description>Widget that lets you see all changes</description>
+  <display-name>Audit log viewer</display-name>
+  <description>Widget that lets you see all audit log</description>
   <interfaces>
     <interface>contentstudio.contextpanel</interface>
   </interfaces>
