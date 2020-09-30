@@ -1,0 +1,23 @@
+<div id="audit-log">
+    <link data-th-href="${cssUrl}" rel="stylesheet" />
+    <script data-th-src="${jsUrl}"></script>
+    <div class="entry" data-th-each="data: ${entries}">
+        <details class="data">
+            <summary>
+                <time data-th-attr="datetime=${data.timestamp}"></time>
+                <div class="text">
+                    <strong class="user" data-th-text="${data.formatted.user}"></strong>
+                    <span data-th-text="${data.formatted.type}"></span>
+                </div>
+            </summary>
+            <ul>
+                <li data-th-text="|Type: ${data.type}|"></li>
+                <li data-th-text="|Time: ${data.timestamp}|"></li>
+                <li data-th-text="|User: ${data.user}|"></li>
+                <li data-th-if="${data.newName}" data-th-text="|New name: ${data.newName}|"></li>
+                <li data-th-if="${data.modifier}" data-th-text="|Modifier: ${data.modifier}|"></li>
+                <li data-th-if="${data.objects}" data-th-text="|Content items changed: ${#lists.size(data.objects)}|"></li>
+            </ul>
+        </details>
+    </div>
+</div>

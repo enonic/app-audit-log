@@ -6,7 +6,7 @@ function processData(entry) {
     //Might want to filter out all system changes
     let formattedUser = getUserName(entry.user);
 
-    // let objects = [].concat(entry.objects); // Might be this can be more then 1 object?
+    let objects = [].concat(entry.objects); // Might be this can be more then 1 object?
 
     let data = {
         formatted: {
@@ -16,7 +16,7 @@ function processData(entry) {
         user: entry.user,
         timestamp: entry.time,
         type: entry.type,
-        // objects,
+        objects,
     };
 
     if (entry.data) {

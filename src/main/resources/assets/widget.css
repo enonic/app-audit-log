@@ -36,5 +36,7 @@
 }
 
 #audit-log .entry .data ul {
-    border-top: 2px solid var(--border-color);    
+    border-top: 2px solid var(--border-color);
+    padding-left: 2rem;
+    margin: 0;
 }
