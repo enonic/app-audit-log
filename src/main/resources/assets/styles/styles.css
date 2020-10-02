@@ -1,0 +1,94 @@
+:root {
+    --entry-padding: 0.8em;
+    --border-color: rgb(213, 221, 236);
+}
+
+.appbar {
+    position: initial;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.button-wrapper {
+    color: white;
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.app-name {
+    margin: 0;
+}
+/* All perpuse classes */
+
+.bold {
+    font-weight: bold;
+}
+
+/* Used in a single place or list */
+#audit-log {
+    display: block;
+}
+
+.entry time {
+    display: inline-block;
+}
+
+#select-section {
+    overflow-y: auto;
+    height: calc(100vh - 44px);
+    padding: 0;
+}
+
+.entry {
+    font-size: 16px;
+    padding: 10px 15px;
+    display: block;
+    border: none;
+    margin: 0;
+    width: 100%;
+    text-align: left;
+}
+
+.entry:hover {
+    background-color: #6d6d6d; 
+    color: white;
+}
+
+.entry.selected {
+    background-color: #2196f3;
+    color: white;
+}
+
+#select-section .day-header {
+    font-size: 16px;
+    padding: 10px 15px;
+    display: block;
+    border: none;
+    margin: 0;
+    width: 100%;
+    text-align: left;
+}
+
+#preview {
+    position: relative;
+    min-height: calc(100vh - 44px);
+    margin: 0;
+    padding: 0 10px;
+}
+
+#preview .placeholder {
+    font-size: 16px;
+    color: #6d6d6d;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+}
+
+.show-wrapper {
+    margin: 10px;
+    border: 2px solid lightgray;
+    min-height: calc(100vh - 44px - 20px);
+}

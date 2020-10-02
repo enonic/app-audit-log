@@ -31,29 +31,42 @@ exports.get = function () {
         return errorMessage("No audit log found");
     }
 
+    let dayGroupedEntries = [];
+    let dayGroup = [];
     let logEntries = [];
+    let lastUsedDate;
+
+    //If more then 100 (query.size) happend on a day it will be incomplete
     result.hits.forEach(function (hit) {
         let logEntry = auditlog.get({
             id: hit.id,
         });
-
         let data = auditData.processData(logEntry);
+
+        let getDate = data.timestamp.split("T")[0];
+
+        if (lastUsedDate == undefined || lastUsedDate == getDate) {
+            dayGroup.push(data);
+        } else {
+            dayGroupedEntries.push(dayGroup);
+            dayGroup = [data]; //new array
+        }
+        lastUsedDate = getDate;
 
         logEntries.push(data);
     });
 
-    let cssUrl = portal.assetUrl({
-        path: "/widget.css"
-    });
+    //This last day is likely to be incomplete
+    dayGroupedEntries.push(dayGroup);
 
-    let jsUrl = portal.assetUrl({
-        path: "/widget.js"
+    let assetsUrl = portal.assetUrl({
+        path: ''
     });
 
     let model = {
-        entries: logEntries,
-        cssUrl,
-        jsUrl,
+        dayGroupedEntries, 
+        jsonEntries: JSON.stringify(logEntries),
+        assetsUrl, 
     };
 
     return {

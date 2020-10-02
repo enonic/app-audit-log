@@ -13,6 +13,7 @@ function processData(entry) {
             user: formattedUser,
             type: getAuditType(entry.type),
         },
+        id: entry._id,
         user: entry.user,
         timestamp: entry.time,
         type: entry.type,
