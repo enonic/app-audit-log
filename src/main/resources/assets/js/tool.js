@@ -1,37 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
-    cleanDate();
     setupEntries();
 
     //MaterialCss
     var elems = document.querySelectorAll(".collapsible");
     M.Collapsible.init(elems);
 });
-
-function cleanDate() {
-    let timetag = document.querySelectorAll("time.format-time");
-    timetag.forEach((entry) => {
-        let utcTime = entry.getAttribute("datetime");
-        let entryTime = new Date(utcTime);
-        let localTime = entryTime.toLocaleString(undefined, {
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-        });
-        entry.textContent = localTime;
-    });
-
-    let dateonly = document.querySelectorAll("time.format-date");
-    dateonly.forEach((entry) => {
-        let utcTime = entry.getAttribute("datetime");
-        let entryTime = new Date(utcTime);
-        let localTime = entryTime.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-        });
-        entry.textContent = localTime;
-    });
-}
 
 function setupEntries() {
     let entries = document.getElementsByClassName("entry");
@@ -51,7 +24,10 @@ function setupEntries() {
         if ((event.code = "Enter" || event.code == undefined)) {
             let pressed = toggleEntry(event.currentTarget);
             if (pressed) {
-                showEntry(event.currentTarget);
+                let id = event.currentTarget.dataset.id;
+                if (id) {
+                    getEntry(id);
+                }
             }
         }
     }
@@ -73,11 +49,24 @@ function setupEntries() {
     }
 }
 
-function showEntry(entryHtmlElement) {
-    let id = entryHtmlElement.dataset.id;
-    if (id) {
-        let entry = window.allEntries.find((elem) => elem.id == id);
-        if (entry) {
+function getEntry(id) {
+    let data = JSON.stringify({
+        logId: id,
+    });
+
+    //Service retrieving a audit log entry
+    let request = new XMLHttpRequest();
+    request.open("POST", window.auditServiceUrl);
+    request.setRequestHeader("Content-type", "application/json");
+
+    request.responseType = "application/json";
+    request.onload = handleResponse;
+    request.send(data);
+
+    function handleResponse() {
+        let response = request.response;
+        if (request.status == 200 && response) {
+            let entry = JSON.parse(response);
             let placeholder = document.querySelector("#preview .placeholder");
             if (placeholder) {
                 placeholder.remove();
@@ -89,6 +78,8 @@ function showEntry(entryHtmlElement) {
             //show.textContent = JSON.stringify(entry, null, 4);
 
             show.appendChild(createShowEntry(entry));
+        } else {
+            console.log(request);
         }
     }
 }
@@ -98,9 +89,10 @@ function createShowEntry(entry) {
     showEntry.id = "entry-show";
     showEntry.style.backgroundColor = "pink";
 
-    showEntry.appendChild(shortCreate(entry.timestamp, "", "time"));
-    showEntry.appendChild(shortCreate(entry.user));
-    showEntry.appendChild(shortCreate(JSON.stringify(entry.objects)));
+    showEntry.appendChild(shortCreate(`Time: ${entry.time}`, "", "time"));
+
+    showEntry.appendChild(shortCreate(`User: ${entry.user}`));
+    showEntry.appendChild(shortCreate(JSON.stringify(entry)));
 
     return showEntry;
 

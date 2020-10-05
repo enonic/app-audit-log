@@ -3,6 +3,7 @@ const auditlog = require("/lib/xp/auditlog");
 const nodeLib = require("/lib/xp/node");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
+// const moment = require("/lib/moment.min.js");
 
 const view = resolve("audit-log.html");
 
@@ -12,36 +13,43 @@ exports.get = function () {
         branch: "master",
     });
 
+    /*let past = moment()
+        .subtract(130, "days")
+        .set({ hour: 0, minute: 0, second: 0, milisecond: 0 });*/
+
     let result = repoConnection.query({
         start: 0,
-        count: 100, // OPEN THE FLOOD GATE!
-        /* query: `data.params.contentId = "${contentId}" OR 
-            data.params.contentIds = "${contentId}" OR 
-            data.result.id = "${contentId}" OR
-            data.result.pendingContents = "${contentId}"`,  */
+        count: 1000, // OPEN THE FLOOD GATE! Don't do this unless you know what you are doing.
+        query: '',
         sort: "time DESC",
-        /* filters: {
-            exists: {
-                field: "data.params.modifier",
-            },
-        }, */
-    });
+        /*aggregation: {
+            by_day: {
+                dateHistogram: {
+                    field: "time",
+                    interval: "1d",
+                    minDocCount: 1,
+                    format: "YYYY-MM-DD"
+                }
+            }
+        }*/
+    }); 
 
-    if (result.total == 0)  {
+    /* let result = auditlog.find({
+        start: 0,
+        count: 1000, 
+    }); */
+
+    if (result.total == 0) {
         return errorMessage("No audit log found");
     }
 
     let dayGroupedEntries = [];
     let dayGroup = [];
-    let logEntries = [];
     let lastUsedDate;
 
     //If more then 100 (query.size) happend on a day it will be incomplete
     result.hits.forEach(function (hit) {
-        let logEntry = auditlog.get({
-            id: hit.id,
-        });
-        let data = auditData.processData(logEntry);
+        let data = auditData.getDisplayData(hit.id);
 
         let getDate = data.timestamp.split("T")[0];
 
@@ -53,20 +61,24 @@ exports.get = function () {
         }
         lastUsedDate = getDate;
 
-        logEntries.push(data);
     });
 
     //This last day is likely to be incomplete
     dayGroupedEntries.push(dayGroup);
 
+    let serviceUrl = portal.serviceUrl({
+        service: "get-audit",
+        type: "absolute",
+    })
+
     let assetsUrl = portal.assetUrl({
-        path: ''
+        path: "",
     });
 
     let model = {
-        dayGroupedEntries, 
-        jsonEntries: JSON.stringify(logEntries),
-        assetsUrl, 
+        dayGroupedEntries,
+        assetsUrl,
+        serviceUrl,
     };
 
     return {

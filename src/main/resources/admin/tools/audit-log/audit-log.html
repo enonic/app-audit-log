@@ -11,9 +11,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
     <script data-th-src="|${assetsUrl}/js/materialize.min.js|"></script>
-    <script data-th-inline="javascript">
-        window.allEntries = JSON.parse([[${ jsonEntries }]]);
-    </script>
+    <script>window.auditServiceUrl="[[${serviceUrl}]]";</script>
 </head>
 
 <body>
@@ -34,15 +32,16 @@
                 <ul class="collapsible">
                     <li class="day-group" data-th-each="day: ${dayGroupedEntries}">
                         <div class="day-header collapsible-header">
-                            <time class="format-date" data-th-attr="datetime=${day[0].timestamp}"></time>
+                            <time class="format-date" data-th-text="${day[0].timestamp}"></time>
+                            <span data-th-text="|${#lists.size(day)} logs|"></span>
                         </div>
-                        <div class="collapsible-body">
+                        <div class="day-body collapsible-body">
                             <div data-th-remove="tag" data-th-each="data : ${day}">
                                 <button class="entry" data-th-attr="data-id=${data.id}">
-                                    <span class="bold" data-th-text="${data.formatted.type}"></span>
-                                    <time class="format-time" data-th-attr="datetime=${data.timestamp}"></time>
+                                    <span class="bold" data-th-text="${data.type}"></span>
+                                    <time class="format-time" data-th-text="${data.timestamp}"></time>
                                     <div>
-                                        <span class="user" data-th-text="|by: ${data.formatted.user}|"></span>
+                                        <span class="user" data-th-text="|by: ${data.user}|"></span>
                                     </div>
                                 </button>
                             </div>

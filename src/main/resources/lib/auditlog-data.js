@@ -1,48 +1,50 @@
 const auth = require("/lib/xp/auth");
+const auditlog = require("/lib/xp/auditlog");
+const moment = require("/lib/moment.min.js");
 
-function processData(entry) {
-    //let contentId = entry.data.params.contentId;
+function entryData(id) {
+    const auditlog = require("/lib/xp/auditlog");
 
-    //Might want to filter out all system changes
-    let formattedUser = getUserName(entry.user);
+    let entry = auditlog.get({
+        id: id,
+    });
 
-    let objects = [].concat(entry.objects); // Might be this can be more then 1 object?
+    //let objects = [].concat(entry.objects);
 
-    let data = {
-        formatted: {
-            user: formattedUser,
-            type: getAuditType(entry.type),
-        },
+    return entry;
+
+    /* return {
         id: entry._id,
         user: entry.user,
         timestamp: entry.time,
         type: entry.type,
         objects,
-    };
+    }; */
 
-    if (entry.data) {
-        if (entry.data.params) {
-            let params = entry.data.params;
-
-            if(params.newName) {
-                data.newName = params.newName;
-            }
-
-            if (params.modifier) {
-                data.modifier = params.modifier; 
-            }
-        }
-
-        // if (params.result) {}
-        if (entry.data.result.pendingContents) {
-            data.formatted.type = "Marked as deleted";
-        }
-    }
-
-    return data;
+    /* if (entry.data.result.pendingContents) {
+        data.formatted.type = "Marked as deleted";
+    } */
 }
 
-function getUserName(key) {
+function displayData(id) {
+    let entry = auditlog.get({
+        id: id,
+    });
+
+    //Might want to filter out all system changes
+    let username = getUsername(entry.user);
+
+    let simpleDate = new moment(entry.time).format("YYYY-MM-DD");
+
+    return {
+        id: id,
+        user: username,
+        type: getAuditType(entry.type),
+        timestamp: simpleDate,
+    };
+}
+
+function getUsername(key) {
     let profile = auth.getPrincipal(key);
 
     return profile.displayName;
@@ -64,10 +66,11 @@ function getAuditType(type) {
         case "system.content.create":
             return "Create";
         case "system.content.delete":
-            return "Delete"
+            return "Delete";
         default:
             return type;
     }
 }
 
-exports.processData = processData;
+exports.getDisplayData = displayData;
+exports.getEntryData = entryData;

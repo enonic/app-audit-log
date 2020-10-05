@@ -1,6 +1,11 @@
 :root {
     --entry-padding: 0.8em;
-    --border-color: rgb(213, 221, 236);
+    --dark-gray: #6d6d6d;
+    --mat-blue: #2196f3;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 .appbar {
@@ -41,18 +46,49 @@
     padding: 0;
 }
 
-.entry {
-    font-size: 16px;
-    padding: 10px 15px;
-    display: block;
+#select-section .day-header {
     border: none;
+    border-bottom: 1px solid var(--mat-blue);
+    display: block;
+    font-size: 16px;
     margin: 0;
-    width: 100%;
+    padding: 10px 15px;
     text-align: left;
+    width: 100%;
+}
+
+#select-section .day-header:hover {
+    background-color: var(--dark-gray);
+    border-bottom-color: transparent;
+    color: white;
+}
+
+.day-header span {
+    margin-left: 2em;
+}
+
+.day-header time {
+    font-weight: bold;
+}
+
+#select-section .day-body {
+    padding: 0;
+}
+
+.entry {
+    border: none;
+    border-bottom: 1px solid var(--mat-blue);
+    cursor: pointer;
+    display: block;
+    font-size: 16px;
+    margin: 0 0 0 15px;
+    padding: 10px 15px;
+    text-align: left;
+    width: 100%;
 }
 
 .entry:hover {
-    background-color: #6d6d6d; 
+    background-color: var(--dark-gray);
     color: white;
 }
 
@@ -60,17 +96,6 @@
     background-color: #2196f3;
     color: white;
 }
-
-#select-section .day-header {
-    font-size: 16px;
-    padding: 10px 15px;
-    display: block;
-    border: none;
-    margin: 0;
-    width: 100%;
-    text-align: left;
-}
-
 #preview {
     position: relative;
     min-height: calc(100vh - 44px);
