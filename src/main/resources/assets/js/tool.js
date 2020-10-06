@@ -87,19 +87,57 @@ function getEntry(id) {
 function createShowEntry(entry) {
     let showEntry = document.createElement("div");
     showEntry.id = "entry-show";
-    showEntry.style.backgroundColor = "pink";
 
-    showEntry.appendChild(shortCreate(`Time: ${entry.time}`, "", "time"));
+    for (const prop in entry) {
+        let node = shortCreate(null, "data");
+        if (typeof entry[prop] == "object") {
+            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
 
-    showEntry.appendChild(shortCreate(`User: ${entry.user}`));
-    showEntry.appendChild(shortCreate(JSON.stringify(entry)));
+            if (Array.isArray(entry[prop])) {
+                createListStructure(entry[prop], node);
+            } else {
+                createObjectStructure(entry[prop], node);
+            }
+        } else {
+            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
+            node.appendChild(shortCreate(`${entry[prop]}`, "", "span"));
+        }
+        showEntry.appendChild(node);
+    }
 
     return showEntry;
+}
 
-    function shortCreate(text, className = null, tag = "div") {
-        let elem = document.createElement(tag);
-        if (className) elem.classList.add(className);
-        elem.textContent = text;
-        return elem;
+function createObjectStructure(data, parent) {
+    for (const prop in data) {
+        let node = shortCreate(null, "data");
+        if (typeof data[prop] == "object") {
+            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
+            if (Array.isArray(data[prop])) {
+                createListStructure(data[prop], node);
+            } else {
+                console.log("deeper object");
+                createObjectStructure(data[prop], node);
+            }
+        } else {
+            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
+            node.appendChild(shortCreate(`${data[prop]}`, "", "span"));
+        }
+        parent.appendChild(node);
     }
+}
+
+function createListStructure(list, parent) {
+    list.forEach((item) => {
+        parent.appendChild(shortCreate(`${item}`));
+    });
+}
+
+//showEntry.appendChild(shortCreate(JSON.stringify(entry)));
+
+function shortCreate(text, className = null, tag = "div") {
+    let elem = document.createElement(tag);
+    if (className) elem.classList.add(className);
+    if (text != null) elem.textContent = text;
+    return elem;
 }

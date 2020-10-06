@@ -1,6 +1,7 @@
 const auth = require("/lib/xp/auth");
 const auditlog = require("/lib/xp/auditlog");
 const moment = require("/lib/moment.min.js");
+const content = require("/lib/xp/content");
 
 function entryData(id) {
     const auditlog = require("/lib/xp/auditlog");
@@ -9,17 +10,21 @@ function entryData(id) {
         id: id,
     });
 
-    //let objects = [].concat(entry.objects);
+    /* let changedContent = [];
+
+    if (entry.objects) {
+        entry.objects = [].concat(objects);
+        entry.objects.forEach((element) => {
+            // "objects": "com.enonic.cms.default:draft:b5c145d1-353c-43c5-85fb-35d02cbf7d89",
+            
+            let changed = content.get({
+                key: element,
+            }); 
+        });
+        entry.objects = changedContent;
+    } */
 
     return entry;
-
-    /* return {
-        id: entry._id,
-        user: entry.user,
-        timestamp: entry.time,
-        type: entry.type,
-        objects,
-    }; */
 
     /* if (entry.data.result.pendingContents) {
         data.formatted.type = "Marked as deleted";

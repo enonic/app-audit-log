@@ -13,9 +13,6 @@ exports.get = function () {
         branch: "master",
     });
 
-    /*let past = moment()
-        .subtract(130, "days")
-        .set({ hour: 0, minute: 0, second: 0, milisecond: 0 });*/
 
     let result = repoConnection.query({
         start: 0,
