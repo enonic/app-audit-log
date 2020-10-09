@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
     <script data-th-src="|${assetsUrl}/js/materialize.min.js|"></script>
-    <script>window.auditServiceUrl="[[${serviceUrl}]]";</script>
+    <script>window.auditServiceUrl = "[[${serviceUrl}]]";</script>
 </head>
 
 <body>
@@ -21,25 +21,29 @@
                 <!--/* img class="app-icon" src="{{assetsUrl}}/icons/application.svg" / */-->
                 <h1 class="app-name">Audit log browser</h1>
             </div>
-            <div class="button-wrapper">
-                <span class="material-icons large">search</span>
-                search
+        </div>
+        <div class="toolbar">
+            <div class="icon-wrapper">
+                <div class="material-icons large">search</div>
             </div>
+            <input id="select-from" placeholder="From" class="datepicker" />
+            <input id="select-to" placeholder="To" class="datepicker" />
+            <input id="select-type" placeholder="Type" class="autocomplete" />
         </div>
 
         <div class="row">
             <section id="select-section" class="col s3">
                 <ul class="collapsible">
-                    <li class="day-group" data-th-each="day: ${dayGroupedEntries}">
+                    <li class="day-group" data-th-each="day: ${selectionEntries}">
                         <div class="day-header collapsible-header">
-                            <time class="format-date" data-th-text="${day[0].timestamp}"></time>
-                            <span data-th-text="|${#lists.size(day)} logs|"></span>
+                            <time class="format-date" data-th-text="${day[0].date}"></time>
+                            <span class="badge" data-th-text="${#lists.size(day)}"></span>
                         </div>
                         <div class="day-body collapsible-body">
                             <div data-th-remove="tag" data-th-each="data : ${day}">
                                 <button class="entry" data-th-attr="data-id=${data.id}">
                                     <span class="bold" data-th-text="${data.type}"></span>
-                                    <time class="format-time" data-th-text="${data.timestamp}"></time>
+                                    <time class="format-time" data-th-text="${data.time}"></time>
                                     <div>
                                         <span class="user" data-th-text="|by: ${data.user}|"></span>
                                     </div>

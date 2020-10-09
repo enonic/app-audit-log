@@ -15,16 +15,35 @@
     justify-content: space-between;
 }
 
-.button-wrapper {
-    color: white;
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-    font-size: 1rem;
-}
-
 .app-name {
     margin: 0;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: auto repeat(3, 200px) 1fr;
+    height: auto;
+}
+
+.toolbar .icon-wrapper {
+    display: inline-block;
+    padding: 10px;
+}
+
+.toolbar .icon-wrapper div {
+    display: block;
+}
+
+.toolbar input {
+    font-weight: bold;
+    font-size: 13px;
+    margin: 0 5px;
+    width: calc(100% - 10px);
+}
+
+.toolbar input::placeholder {
+    color: black;
+    font-weight: bold;
 }
 /* All perpuse classes */
 
@@ -64,8 +83,8 @@
     color: white;
 }
 
-.day-header span {
-    margin-left: 2em;
+.day-header:hover span {
+    color: white;
 }
 
 .day-header time {

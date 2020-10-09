@@ -4,6 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
     //MaterialCss
     var elems = document.querySelectorAll(".collapsible");
     M.Collapsible.init(elems);
+    var datepickers = document.querySelectorAll(".datepicker");
+    M.Datepicker.init(datepickers, {
+        autoClose: true,
+        format: "yyyy-mm-dd",
+        defaultDate: Date.now(),
+    });
 });
 
 function setupEntries() {
@@ -51,7 +57,7 @@ function setupEntries() {
 
 function getEntry(id) {
     let data = JSON.stringify({
-        logId: id,
+        entryId: id,
     });
 
     //Service retrieving a audit log entry
