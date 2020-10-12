@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    setupEntries();
+    //setupEntries();
 
     //MaterialCss
     var elems = document.querySelectorAll(".collapsible");
@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultDate: Date.now(),
     });
 });
+
+function getEnteries() {
+
+}
 
 function setupEntries() {
     let entries = document.getElementsByClassName("entry");
@@ -39,10 +43,8 @@ function setupEntries() {
     }
 
     function toggleEntry(target) {
-        let active = false;
-        if (target.classList.contains("selected")) {
-            active = true;
-        }
+        let active = target.classList.contains("selected");
+
         unselectAll();
         // Switch state
         if (active) {
@@ -83,14 +85,18 @@ function getEntry(id) {
             }
             //show.textContent = JSON.stringify(entry, null, 4);
 
-            show.appendChild(createShowEntry(entry));
+            show.appendChild(createEntry(entry));
         } else {
             console.log(request);
         }
     }
 }
 
-function createShowEntry(entry) {
+function createSelectionEntry(data) {
+
+}
+
+function createEntry(entry) {
     let showEntry = document.createElement("div");
     showEntry.id = "entry-show";
 

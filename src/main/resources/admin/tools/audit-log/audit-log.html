@@ -34,21 +34,12 @@
         <div class="row">
             <section id="select-section" class="col s3">
                 <ul class="collapsible">
-                    <li class="day-group" data-th-each="day: ${selectionEntries}">
-                        <div class="day-header collapsible-header">
+                    <li class="day-group" data-th-each="group: ${selectionEntries}">
+                        <div class="day-header collapsible-header" data-th-attr="data-a='${group[0]}'">
                             <time class="format-date" data-th-text="${day[0].date}"></time>
                             <span class="badge" data-th-text="${#lists.size(day)}"></span>
                         </div>
                         <div class="day-body collapsible-body">
-                            <div data-th-remove="tag" data-th-each="data : ${day}">
-                                <button class="entry" data-th-attr="data-id=${data.id}">
-                                    <span class="bold" data-th-text="${data.type}"></span>
-                                    <time class="format-time" data-th-text="${data.time}"></time>
-                                    <div>
-                                        <span class="user" data-th-text="|by: ${data.user}|"></span>
-                                    </div>
-                                </button>
-                            </div>
                         </div>
                     </li>
                 </ul>

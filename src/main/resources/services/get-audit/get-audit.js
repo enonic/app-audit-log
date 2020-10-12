@@ -14,17 +14,19 @@ exports.post = function (req) {
         return getEntryDetails(body.logId);
     }
     if (body.from || body.to) {
-        let enteries = auditData.getSelectionList({
-            from: body.from,
-            to: body.to,
-        });
+        let options = {};
+        if (body.from) options.from = body.from;
+        if (body.to) options.to = body.to;
+        if (body.displayData) options.displayData = true;
+
+        let enteries = auditData.getEntries(options);
 
         return jsonResponse(enteries);
     }
 };
 
 function getEntryDetails(id) {
-    let entry = auditData.getEntryData(id);
+    let entry = auditData.getEntry(id);
     return jsonResponse(entry);
 }
 

@@ -1,10 +1,10 @@
 const auth = require("/lib/xp/auth");
 const auditlog = require("/lib/xp/auditlog");
 const moment = require("/lib/moment.min.js");
-const content = require("/lib/xp/content");
+//const content = require("/lib/xp/content");
 const node = require("/lib/xp/node");
 
-function entryData(id) {
+function getEntry(id) {
     let entry = auditlog.get({
         id: id,
     });
@@ -28,6 +28,52 @@ function entryData(id) {
     /* if (entry.data.result.pendingContents) {
         data.formatted.type = "Marked as deleted";
     } */
+}
+
+/**
+ * 
+ * @param {*} options
+ * @param {String} [options.from] ISO 8601 datetime
+ * @param {String} [options.to] ISO 8601 datetime 
+ * @param {*} options.* desc 
+ */
+function getEntries(options) {
+    let repoConnection = node.connect({
+        repoId: "system.auditlog", // Please never connect to a system repo. Ever.
+        branch: "master",
+    });
+
+    let datetime = moment(date, "YYYY-MM-DD");
+    datetime.startOf("day");
+    let next = moment(datetime.toISOString()).add(1, "days");
+
+    let query = "";
+    if (options.from) {
+        if (query != "") query += " AND ";
+        query += `time > dateTime('${datetime.toISOString()}') `
+    }
+    if (options.from) {
+        if (query != "") query += " AND ";
+        query += `AND time < dateTime('${next.toISOString()}')`
+    }
+
+    let result = repoConnection.query({
+        start: 0,
+        count: -1,
+        query,
+        sort: "time DESC",
+    });
+
+    let data = result.hits;
+
+    if (options.displayData) {
+        data = [];
+        result.hits.forEach(function(elem) {
+            data.push(getEntry(elem.id));
+        });
+    }
+
+    return data;
 }
 
 function getSelectionGroups(options) {
@@ -55,33 +101,23 @@ function getSelectionGroups(options) {
         },
     });
 
-    let findOptions = {
-        start: 0,
-        count: 100,
-    };
-    if (options.from) findOptions.from = options.from;
-    if (options.to) findOptions.to = options.from;
-
-    // Are the first or last entries returned?
-    //let result = auditlog.find(findOptions);
-
     let groups = [];
     //"2020-10-01": [entryData]
 
-    log.info(JSON.stringify(result.aggregations.by_day.buckets[5], null, 4));
+    groups = result.aggregations.by_day.buckets;
 
-    log.info(JSON.stringify(getSelectionForDate("2019-12-22T00:00.00Z"), null, 4));
-
+    log.info(groups);
+    
     //let lastDate = "";
-    result.hits.forEach(function (hit) {
+    /* result.hits.forEach(function (hit) {
         displayData(hit.id);
 
-        /* let getDate = data.timestamp.split("T")[0];
+        let getDate = data.timestamp.split("T")[0];
         if (entries[getDate] != lastDate) {
             entries[getDate] = new Array();
-        } */
+        }
         groups.push(data);
-    });
+    }); */
 
     //Insert into an array and sort each day group.
     /* let dayGroups = [];
@@ -131,8 +167,6 @@ function getSelectionForDate(date) {
     datetime.startOf("day");
     let next = moment(datetime.toISOString()).add(1, "days");
 
-    log.info(datetime.toISOString());
-
     let result = repoConnection.query({
         start: 0,
         count: -1,
@@ -178,5 +212,6 @@ function getAuditType(type) {
 }
 
 //exports.getDisplayData = displayData;
-exports.getEntryData = entryData;
+exports.getEntryData = getEntry;
 exports.getSelectionGroups = getSelectionGroups;
+exports.getEntries = getEntries;
