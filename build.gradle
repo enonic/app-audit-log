@@ -42,7 +42,7 @@ task materialcssStyles(type: Copy) {
 
 task materialcssJs (type: Copy) {
     from "node_modules/@materializecss/materialize/dist/js"
-    include "*.min.js"
+    include "*.js"
     into "$buildDir/resources/main/assets/js"
 }
 

@@ -9,26 +9,50 @@ exports.post = function (req) {
     }
 
     let body = JSON.parse(req.body);
+    let options = body.options || {};
+
+    if (options.from && options.from.match(/^\d-\d-\d$/i) == false ||
+        options.to && options.to.match(/^\d*-\d*-\d*$/i) == false ||
+        options.type && options.type.match(/[ AND ]/i)) {
+        //This looks fishy
+        return {
+            status: 500,
+        }
+    } 
 
     if (body.entryId) {
-        return getEntryDetails(body.logId);
-    }
-    if (body.from || body.to) {
-        let options = {};
-        if (body.from) options.from = body.from;
-        if (body.to) options.to = body.to;
-        if (body.displayData) options.displayData = true;
+        let entry = auditData.getEntry(body.entryId);
 
-        let enteries = auditData.getEntries(options);
-
-        return jsonResponse(enteries);
+        return jsonResponse(entry);
     }
+    else if (body.singelDate) {
+        let entries = auditData.getSelectionsForDate({
+            from: body.singelDate,
+            singleDay: true,
+            type: options.type || null,
+            to: options.to || null,
+        });
+
+        return jsonResponse(entries);
+    }
+    else if (body.selectionGroup) {
+        let selectionGroup = auditData.getSelectionGroups(options);
+
+        // The aggregation structure is located in getSelectionGroups auditlog-data 
+        return jsonResponse(selectionGroup);
+    } 
+
+    /* let options = {};
+    if (body.from) options.from = body.from;
+    if (body.to) options.to = body.to;
+
+    let enteries = auditData.getEntries(options);
+
+    return jsonResponse(enteries); */
+    return {
+        status: 404,
+    };
 };
-
-function getEntryDetails(id) {
-    let entry = auditData.getEntry(id);
-    return jsonResponse(entry);
-}
 
 function jsonResponse(data) {
     return {

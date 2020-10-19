@@ -8,7 +8,10 @@ const portal = require("/lib/xp/portal");
 const view = resolve("audit-log.html");
 
 exports.get = function () {
-    let selectionsEntries = auditData.getSelectionGroups();
+    let selectiongroups = auditData.getSelectionGroups();
+    let types = auditData.getAllTypes();
+
+    let typeAutoComplete = JSON.stringify(types);
 
     let serviceUrl = portal.serviceUrl({
         service: "get-audit",
@@ -20,9 +23,10 @@ exports.get = function () {
     });
 
     let model = {
-        selectionsEntries,
+        selectiongroups,
         assetsUrl,
         serviceUrl,
+        typeAutoComplete,
     };
 
     return {

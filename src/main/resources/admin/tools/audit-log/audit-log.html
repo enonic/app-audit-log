@@ -10,8 +10,11 @@
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
-    <script data-th-src="|${assetsUrl}/js/materialize.min.js|"></script>
-    <script>window.auditServiceUrl = "[[${serviceUrl}]]";</script>
+    <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
+    <script data-th-inline="javascript">
+        window.auditServiceUrl = /*[[${serviceUrl}]]*/;
+        window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
+    </script>
 </head>
 
 <body>
@@ -26,21 +29,20 @@
             <div class="icon-wrapper">
                 <div class="material-icons large">search</div>
             </div>
-            <input id="select-from" placeholder="From" class="datepicker" />
-            <input id="select-to" placeholder="To" class="datepicker" />
-            <input id="select-type" placeholder="Type" class="autocomplete" />
+            <input id="select-from" placeholder="From" class="datepicker" autocomplete="off" />
+            <input id="select-to" placeholder="To" class="datepicker" autocomplete="off" />
+            <input id="select-type" placeholder="Type" class="autocomplete" autocomplete="off" />
         </div>
 
         <div class="row">
             <section id="select-section" class="col s3">
                 <ul class="collapsible">
-                    <li class="day-group" data-th-each="group: ${selectionEntries}">
-                        <div class="day-header collapsible-header" data-th-attr="data-a='${group[0]}'">
-                            <time class="format-date" data-th-text="${day[0].date}"></time>
-                            <span class="badge" data-th-text="${#lists.size(day)}"></span>
+                    <li class="day-group" data-th-each="group: ${selectiongroups}">
+                        <div class="day-header collapsible-header" data-th-attr="data-a=${group.key}">
+                            <time class="format-date" data-th-text="${group.key}"></time>
+                            <span class="badge" data-th-text="${group.docCount}"></span>
                         </div>
-                        <div class="day-body collapsible-body">
-                        </div>
+                        <div class="day-body collapsible-body"></div>
                     </li>
                 </ul>
             </section>

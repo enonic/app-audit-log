@@ -4,24 +4,15 @@ const moment = require("/lib/moment.min.js");
 //const content = require("/lib/xp/content");
 const node = require("/lib/xp/node");
 
+/**
+ * Simple get the node from storrage call with the audit log
+ * @param {String} id
+ * @returns {Object} The node entry
+ */
 function getEntry(id) {
     let entry = auditlog.get({
         id: id,
     });
-
-    /* let changedContent = [];
-
-    if (entry.objects) {
-        entry.objects = [].concat(objects);
-        entry.objects.forEach((element) => {
-            // "objects": "com.enonic.cms.default:draft:b5c145d1-353c-43c5-85fb-35d02cbf7d89",
-            
-            let changed = content.get({
-                key: element,
-            }); 
-        });
-        entry.objects = changedContent;
-    } */
 
     return entry;
 
@@ -31,30 +22,33 @@ function getEntry(id) {
 }
 
 /**
- * 
+ *
  * @param {*} options
  * @param {String} [options.from] ISO 8601 datetime
- * @param {String} [options.to] ISO 8601 datetime 
- * @param {*} options.* desc 
+ * @param {String} [options.to] ISO 8601 datetime
+ * @param {*} options.* desc
+ * @returns {Array of Objects} The resulting enteries from the search done
  */
-function getEntries(options) {
+/*function getEntries(options) {
     let repoConnection = node.connect({
         repoId: "system.auditlog", // Please never connect to a system repo. Ever.
         branch: "master",
     });
 
-    let datetime = moment(date, "YYYY-MM-DD");
-    datetime.startOf("day");
-    let next = moment(datetime.toISOString()).add(1, "days");
-
     let query = "";
     if (options.from) {
+        let from = moment(options.from, "YYYY-MM-DD");
+        from.startOf("day");
+
         if (query != "") query += " AND ";
-        query += `time > dateTime('${datetime.toISOString()}') `
+        query += `time > dateTime('${datetime.toISOString()}') `;
     }
-    if (options.from) {
+    if (options.to) {
+        let to = moment(options.from, "YYYY-MM-DD");
+        to.startOf("day");
+
         if (query != "") query += " AND ";
-        query += `AND time < dateTime('${next.toISOString()}')`
+        query += `time < dateTime('${next.toISOString()}')`;
     }
 
     let result = repoConnection.query({
@@ -68,72 +62,171 @@ function getEntries(options) {
 
     if (options.displayData) {
         data = [];
-        result.hits.forEach(function(elem) {
+        result.hits.forEach(function (elem) {
             data.push(getEntry(elem.id));
         });
     }
 
     return data;
+} */
+
+/**
+ * Get all types of log entries.
+ * Aggregates all unique values sorted by the most used.
+ */
+function getAllTypes() {
+    let result = doQuery("", null, {
+        by_type: {
+            terms: {
+                field: "type",
+                order: "_count desc",
+            },
+        },
+    });
+
+    return result.aggregations.by_type.buckets;
 }
 
+/**
+ * Gets log entries for each day in format day and amount of log entries.
+ * Used to get all groups of log entries
+ * @param {Object} options the options passed to doQuery
+ */
 function getSelectionGroups(options) {
     if (!options) options = {}; //default param
+
+    let result = doQuery("", options, {
+        by_day: {
+            dateHistogram: {
+                field: "time",
+                interval: "1D",
+                minDocCount: 1,
+                format: "yyyy-MM-dd",
+                //order: "time asc", does not work
+            },
+        },
+    });
+
+    let groups = result.aggregations.by_day.buckets;
+    //"2020-10-01": [entryData]
+
+    //Insert into an array and sort each day group.
+    groups = groups.sort(function (a, b) {
+        if (a.key < b.key) return 1;
+        if (a.key > b.key) return -1;
+        //This should be impossible
+        return 0;
+    });
+
+    //log.info(JSON.stringify(groups[0], null, 4));
+
+    return groups;
+}
+
+/**
+ * Combined search for other methods
+ * Let you do decide how the search should be performed
+ * @param {String} [queryLine=""] the query to run
+ * @param {Object} [settings={}]
+ * @param {string|Moment} [settings.from] date YYYY-MM-DD or moment object
+ * @param {string|Moment} [settings.to] date YYYY-MM-DD or moment object
+ * @param {string} [settings.type] The type of event to filter for
+ * @param {string} [settings.sort] how to sort the query
+ * @param {Object} [aggregations]
+ */
+function doQuery(queryLine, settings, aggregations) {
+    let query = queryLine || "";
+    let options = settings ? settings : {};
+
+    if (options.from) {
+        let from;
+        if (moment.isMoment(options.from)) {
+            from = options.from;
+        } else {
+            from = moment(options.from, "YYYY-MM-DD");
+            from.startOf("day");
+        }
+
+        if (query != "") query += " AND ";
+        query += `time > dateTime('${from.toISOString()}') `;
+    }
+    if (options.to) {
+        let to;
+        if (moment.isMoment(options.to)) {
+            to = options.to;
+        } else {
+            to = moment(options.to, "YYYY-MM-DD");
+            to.startOf("day");
+        }
+
+        if (query != "") query += " AND ";
+        query += `time < dateTime('${to.toISOString()}')`;
+    }
+    if (options.type) {
+        if (query != "") query += " AND ";
+        query += `type = "${type}"`;
+    }
+
+    let queryParam = {
+        start: 0,
+        count: options.count ? options.count : 0,
+        query: query,
+        sort: options.sort ? options.sort : "_ts DESC",
+    };
+
+    queryParam.aggregations = aggregations ? aggregations : undefined;
 
     let repoConnection = node.connect({
         repoId: "system.auditlog", // Please never connect to a system repo. Ever.
         branch: "master",
     });
 
-    let result = repoConnection.query({
-        start: 0,
-        count: 0, // OPEN THE FLOOD GATE? Don't do this unless you know what you are doing.
-        query: "",
-        sort: "_ts DESC",
-        aggregations: {
-            by_day: {
-                dateHistogram: {
-                    field: "time",
-                    interval: "1D",
-                    minDocCount: 1,
-                    format: "yyyy-MM-dd",
-                },
-            },
-        },
-    });
+    let result = repoConnection.query(queryParam);
 
-    let groups = [];
-    //"2020-10-01": [entryData]
-
-    groups = result.aggregations.by_day.buckets;
-
-    log.info(groups);
-    
-    //let lastDate = "";
-    /* result.hits.forEach(function (hit) {
-        displayData(hit.id);
-
-        let getDate = data.timestamp.split("T")[0];
-        if (entries[getDate] != lastDate) {
-            entries[getDate] = new Array();
-        }
-        groups.push(data);
-    }); */
-
-    //Insert into an array and sort each day group.
-    /* let dayGroups = [];
-    for (const prop in entries) {
-        dayGroups.push(
-            entries[prop].sort(function (a, b) {
-                if (a.timestamp < b.timestamp) return -1;
-                if (a.timestamp > b.timestamp) return 1;
-                return 0;
-            })
-        );
-    } */
-
-    return groups;
+    return result;
 }
 
+/**
+ *
+ * @param {Object} options
+ * @param {Object} options.from date formated like YYYY-MM-DD or moment object
+ * @param {Object} [options.to] date fromated like YYYY-MM-DD or moment object
+ * @param {Object} [options.singleDay] is true sets nextDay to options.from + 1
+ * @returns {Array} log entries for the given time range
+ */
+function getSelectionsForDate(options) {
+    let datetime = moment(options.from, "YYYY-MM-DD");
+    datetime.startOf("day");
+
+    let next;
+    if (options.singleDay) {
+        next = moment(datetime);
+        next.add(1, "days");
+    } else {
+        next = moment(options.to, "YYYY-MM-DD");
+    }
+
+    let result = doQuery("", {
+        from: datetime,
+        to: next,
+        count: -1,
+        sort: "time DESC",
+        type: options.type || null,
+    });
+
+    let entries = [];
+    result.hits.forEach(function (entry) {
+        entries.push(displayData(entry.id));
+    });
+
+    return entries;
+}
+
+/**
+ * Gets the data needed for the frontend
+ * @param {String} id
+ * @returns {Object} processed data for the frontend
+ */
 function displayData(id) {
     let entry = auditlog.get({
         id: id,
@@ -144,45 +237,20 @@ function displayData(id) {
 
     let datetime = new moment(entry.time);
 
-    let simpleDate = datetime.format("YYYY-MM-DD");
+    //let simpleDate = datetime.format("YYYY-MM-DD");
     let simpleTime = datetime.format("HH:mm:ss");
 
     return {
-        id: entry.id,
+        id: entry._id,
         user: entry.user,
         type: entry.type,
-        date: simpleDate,
+        //date: simpleDate,
         time: simpleTime,
         timestamp: entry.time,
     };
 }
 
-function getSelectionForDate(date) {
-    let repoConnection = node.connect({
-        repoId: "system.auditlog", // Please never connect to a system repo. Ever.
-        branch: "master",
-    });
-
-    let datetime = moment(date, "YYYY-MM-DD");
-    datetime.startOf("day");
-    let next = moment(datetime.toISOString()).add(1, "days");
-
-    let result = repoConnection.query({
-        start: 0,
-        count: -1,
-        query: `time > dateTime('${datetime.toISOString()}') AND time < dateTime('${next.toISOString()}')`,
-        sort: "time DESC",
-    });
-
-    let entries = [];
-    result.hits.forEach(function(entry) {
-        entries.push(displayData(entry.id));
-    })
-
-    return entries;
-}
-
-/** Single flied methods */
+/** Single field methods */
 function getUsername(key) {
     let profile = auth.getPrincipal(key);
 
@@ -212,6 +280,8 @@ function getAuditType(type) {
 }
 
 //exports.getDisplayData = displayData;
-exports.getEntryData = getEntry;
+exports.getEntry = getEntry;
 exports.getSelectionGroups = getSelectionGroups;
-exports.getEntries = getEntries;
+exports.getSelectionsForDate = getSelectionsForDate;
+//exports.getEntries = getEntries;
+exports.getAllTypes = getAllTypes;

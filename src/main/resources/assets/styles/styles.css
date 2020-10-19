@@ -21,7 +21,7 @@
 
 .toolbar {
     display: grid;
-    grid-template-columns: auto repeat(3, 200px) 1fr;
+    grid-template-columns: auto repeat(3, 1fr) 400px;
     height: auto;
 }
 
@@ -62,7 +62,7 @@
 
 #select-section {
     overflow-y: auto;
-    height: calc(100vh - 44px);
+    height: calc(100vh - 88px);
     padding: 0;
 }
 
@@ -121,8 +121,8 @@
 }
 #preview {
     border: 2px solid lightgray;
-    font-size: 1.5rem;
-    max-height: calc(100vh - 44px);
+    font-size: 1rem;
+    max-height: calc(100vh - 88px);
     overflow-y: auto;
     padding: 10px;
     position: relative;
@@ -156,4 +156,72 @@
 
 .data .data {
     margin-left: 20px;
+}
+
+.loading-anim {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border: 1px solid white;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.loading-anim .dot {
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #666;
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+    animation-duration: 2s;
+    animation-direction: normal;
+    animation-iteration-count: 10;
+    animation-timing-function: ease-in-out;
+    animation-name: move;
+}
+
+.loading-anim .dot:nth-child(2) {
+    animation-delay: 0.1s;
+    width: 8px;
+    height: 8px;
+}
+.loading-anim .dot:nth-child(3) {
+    animation-delay: 0.2s;
+    width: 6px;
+    height: 6px;
+}
+.loading-anim .dot:nth-child(4) {
+    animation-delay: 0.3s;
+}
+.loading-anim .dot:nth-child(5) {
+    animation-delay: 0.4s;
+}
+.loading-anim .dot:nth-child(6) {
+    animation-delay: 0.5s;
+}
+
+@keyframes move {
+    0% {
+        left: 50%;
+        top: 10%;
+    }
+    25% {
+        left: 90%;
+        top: 50%;
+    }
+    50% {
+        left: 50%;
+        top: 90%;
+    }
+    75% {
+        left: 10%;
+        top: 50%;
+    }
+    100% {
+        left: 50%;
+        top: 10%;
+    }
 }
