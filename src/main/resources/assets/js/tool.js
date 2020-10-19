@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    //MaterialCss
-    var elems = document.querySelectorAll(".collapsible");
-    M.Collapsible.init(elems, {
-        onOpenStart: getEnteries, //Create entry list ajax
-    });
+    //M = materializecss
+
+    setupSelectionGroups();
 
     let data = {};
     window.typeAutoComplete.forEach((element) => {
@@ -28,29 +26,46 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function setupSelectionGroups() {
+    var elems = document.querySelectorAll(".collapsible");
+    M.Collapsible.init(elems, {
+        onOpenStart: getEnteries, //Create entry list ajax
+    });
+}
+
 function filterEntries() {
+    let options = getOptions();
+
+    clearAll();
+    getSelectionGroups(options);
+}
+
+/**
+ * Get the current filters that are active and return them as a options object.
+ */
+function getOptions() {
+    let options = {};
     let fromEl = document.getElementById("select-from");
-    let from = null;
     if (fromEl.value) {
-        from = fromEl.value;
+        options.from = fromEl.value;
     }
 
     let toEl = document.getElementById("select-to");
-    let to = null;
     if (toEl.value) {
-        to = toEl.value;
+        options.to = toEl.value;
     }
 
     let typeEl = document.getElementById("select-type");
-    let type = null;
     if (typeEl.value) {
-        type = typeEl.value;
+        options.type = typeEl.value;
     }
 
-    clearAll();
-    getSelectionGroups(from, to, type);
+    return options;
 }
 
+/**
+ * Clear all selection and reset the preview
+ */
 function clearAll() {
     let selection = document.querySelector("#select-section");
     while (selection.childNodes.length > 0) {
@@ -71,7 +86,12 @@ function clearAll() {
     );
 }
 
-function getSelectionGroups(from, to, type) {
+/**
+ * Get a new selection list based on the filters active
+ * and start generating a new list
+ * @param {Object} options Active filters
+ */
+function getSelectionGroups(options) {
     let selection = document.querySelector("#select-section");
 
     let loading = shortCreate("", "loading-anim");
@@ -83,26 +103,52 @@ function getSelectionGroups(from, to, type) {
 
     let data = {
         selectionGroup: true,
+        options: {},
     };
-    if (to) data.to = to;
-    if (from) data.from = from;
-    if (type) data.from = type;
+    if (options.to) data.options.to = options.to;
+    if (options.from) data.options.from = options.from;
+    if (options.type) data.options.type = options.type;
 
     data = JSON.stringify(data);
 
     let request = sendXMLHttpRequest(handleSelectionGroup, data);
 
     function handleSelectionGroup() {
-        let data = JSON.parse(request.response);
+        let responseData = JSON.parse(request.response);
 
-        console.log(data);
-
-        createSelectionGroups(data);
+        createSelectionGroups(responseData);
     }
 }
 
-function createSelectionGroups(data) {
-    //test;
+/**
+ * Creates a new selection list based on the data provided
+ * @param {Array} dataList all entries that need to be generated
+ */
+function createSelectionGroups(dataList) {
+    let selection = document.querySelector("#select-section");
+
+    while (selection.childNodes.length > 0) {
+        selection.firstChild.remove();
+    }
+    let ul = shortCreate("", "collapsible", "ul");
+
+    dataList.forEach((data) => {
+        let li = shortCreate("", "day-group", "li");
+        let header = shortCreate("", ["day-header", "collapsible-header"]);
+        let dayBody = shortCreate("", ["day-body", "collapsible-body"]);
+        li.appendChild(header);
+        li.appendChild(dayBody);
+
+        header.dataset.a = data.key;
+        header.appendChild(shortCreate(`${data.key}`, "format-date", "time"));
+        header.appendChild(shortCreate(`${data.docCount}`, "badge", "span"));
+
+        ul.append(li);
+    });
+    selection.appendChild(ul);
+
+    // Re initialize collabsable element
+    setupSelectionGroups();
 }
 
 /**
@@ -129,6 +175,7 @@ function getEnteries(element) {
 
     let data = JSON.stringify({
         singelDate: id,
+        options: getOptions(),
     });
 
     let request = sendXMLHttpRequest(handleOpenEntries, data);
@@ -307,7 +354,14 @@ function createListStructure(list, parent) {
 // A small util methods for fast dom element creation
 function shortCreate(text, className = null, tag = "div") {
     let elem = document.createElement(tag);
-    if (className) elem.classList.add(className);
+
+    if (Array.isArray(className)) {
+        className.forEach((singleClass) => {
+            elem.classList.add(singleClass);
+        });
+    } else if (className) {
+        elem.classList.add(className);
+    }
     if (text != null) elem.textContent = text;
     return elem;
 }

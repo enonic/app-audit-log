@@ -10,22 +10,28 @@ exports.post = function (req) {
 
     let body = JSON.parse(req.body);
     let options = body.options || {};
+    let from = options.from;
+    let to = options.to;
+    let type = options.type;
 
-    if (options.from && options.from.match(/^\d-\d-\d$/i) == false ||
-        options.to && options.to.match(/^\d*-\d*-\d*$/i) == false ||
-        options.type && options.type.match(/[ AND ]/i)) {
-        //This looks fishy
+    let andReg = /\DAND\D/i;
+    let dateReg = /\d*-\d*-\d*/i;
+
+    if (
+        (from && dateReg.test(from) == false) ||
+        (to && dateReg.test(to) == false) ||
+        (type && andReg.test(type))
+    ) {
         return {
             status: 500,
-        }
-    } 
+        };
+    }
 
     if (body.entryId) {
         let entry = auditData.getEntry(body.entryId);
 
         return jsonResponse(entry);
-    }
-    else if (body.singelDate) {
+    } else if (body.singelDate) {
         let entries = auditData.getSelectionsForDate({
             from: body.singelDate,
             singleDay: true,
@@ -34,17 +40,12 @@ exports.post = function (req) {
         });
 
         return jsonResponse(entries);
-    }
-    else if (body.selectionGroup) {
+    } else if (body.selectionGroup) {
         let selectionGroup = auditData.getSelectionGroups(options);
 
-        // The aggregation structure is located in getSelectionGroups auditlog-data 
+        // The aggregation structure is located in getSelectionGroups auditlog-data
         return jsonResponse(selectionGroup);
-    } 
-
-    /* let options = {};
-    if (body.from) options.from = body.from;
-    if (body.to) options.to = body.to;
+    }
 
     let enteries = auditData.getEntries(options);
 

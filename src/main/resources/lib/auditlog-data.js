@@ -22,55 +22,6 @@ function getEntry(id) {
 }
 
 /**
- *
- * @param {*} options
- * @param {String} [options.from] ISO 8601 datetime
- * @param {String} [options.to] ISO 8601 datetime
- * @param {*} options.* desc
- * @returns {Array of Objects} The resulting enteries from the search done
- */
-/*function getEntries(options) {
-    let repoConnection = node.connect({
-        repoId: "system.auditlog", // Please never connect to a system repo. Ever.
-        branch: "master",
-    });
-
-    let query = "";
-    if (options.from) {
-        let from = moment(options.from, "YYYY-MM-DD");
-        from.startOf("day");
-
-        if (query != "") query += " AND ";
-        query += `time > dateTime('${datetime.toISOString()}') `;
-    }
-    if (options.to) {
-        let to = moment(options.from, "YYYY-MM-DD");
-        to.startOf("day");
-
-        if (query != "") query += " AND ";
-        query += `time < dateTime('${next.toISOString()}')`;
-    }
-
-    let result = repoConnection.query({
-        start: 0,
-        count: -1,
-        query,
-        sort: "time DESC",
-    });
-
-    let data = result.hits;
-
-    if (options.displayData) {
-        data = [];
-        result.hits.forEach(function (elem) {
-            data.push(getEntry(elem.id));
-        });
-    }
-
-    return data;
-} */
-
-/**
  * Get all types of log entries.
  * Aggregates all unique values sorted by the most used.
  */
@@ -118,8 +69,6 @@ function getSelectionGroups(options) {
         return 0;
     });
 
-    //log.info(JSON.stringify(groups[0], null, 4));
-
     return groups;
 }
 
@@ -143,7 +92,7 @@ function doQuery(queryLine, settings, aggregations) {
         if (moment.isMoment(options.from)) {
             from = options.from;
         } else {
-            from = moment(options.from, "YYYY-MM-DD");
+            from = moment(options.from, "YYYY-MM-DD").utc(true);
             from.startOf("day");
         }
 
@@ -155,8 +104,8 @@ function doQuery(queryLine, settings, aggregations) {
         if (moment.isMoment(options.to)) {
             to = options.to;
         } else {
-            to = moment(options.to, "YYYY-MM-DD");
-            to.startOf("day");
+            to = moment(options.to, "YYYY-MM-DD").utc(true);
+            to.endOf("day");
         }
 
         if (query != "") query += " AND ";
@@ -164,7 +113,7 @@ function doQuery(queryLine, settings, aggregations) {
     }
     if (options.type) {
         if (query != "") query += " AND ";
-        query += `type = "${type}"`;
+        query += `type = "${options.type}"`;
     }
 
     let queryParam = {
@@ -196,14 +145,14 @@ function doQuery(queryLine, settings, aggregations) {
  */
 function getSelectionsForDate(options) {
     let datetime = moment(options.from, "YYYY-MM-DD");
-    datetime.startOf("day");
+    datetime.utc(true).startOf("day");
 
     let next;
     if (options.singleDay) {
-        next = moment(datetime);
+        next = moment(datetime).utc(true);
         next.add(1, "days");
     } else {
-        next = moment(options.to, "YYYY-MM-DD");
+        next = moment(options.to, "YYYY-MM-DD").utc(true);
     }
 
     let result = doQuery("", {
@@ -235,7 +184,7 @@ function displayData(id) {
     //Might want to filter out all system changes
     //let username = getUsername(entry.user);
 
-    let datetime = new moment(entry.time);
+    let datetime = new moment(entry.time).utc(true);
 
     //let simpleDate = datetime.format("YYYY-MM-DD");
     let simpleTime = datetime.format("HH:mm:ss");
