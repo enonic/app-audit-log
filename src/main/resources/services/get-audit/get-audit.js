@@ -1,4 +1,3 @@
-const portal = require("/lib/xp/portal");
 const auditData = require("/lib/auditlog-data");
 
 exports.post = function (req) {
@@ -12,15 +11,12 @@ exports.post = function (req) {
     let options = body.options || {};
     let from = options.from;
     let to = options.to;
-    let type = options.type;
 
-    let andReg = /\DAND\D/i;
     let dateReg = /\d*-\d*-\d*/i;
 
     if (
         (from && dateReg.test(from) == false) ||
-        (to && dateReg.test(to) == false) ||
-        (type && andReg.test(type))
+        (to && dateReg.test(to) == false)
     ) {
         return {
             status: 500,
@@ -33,9 +29,9 @@ exports.post = function (req) {
         return jsonResponse(entry);
     } else if (body.singelDate) {
         let entries = auditData.getSelectionsForDate({
-            from: body.singelDate,
             singleDay: true,
-            type: options.type || null,
+            from: body.singelDate,
+            fullText: options.fullText || null,
             to: options.to || null,
         });
 

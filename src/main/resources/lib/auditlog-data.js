@@ -111,9 +111,10 @@ function doQuery(queryLine, settings, aggregations) {
         if (query != "") query += " AND ";
         query += `time < dateTime('${to.toISOString()}')`;
     }
-    if (options.type) {
+    if (options.fullText) {
         if (query != "") query += " AND ";
-        query += `type = "${options.type}"`;
+        // full text
+        query += `fulltext("*", "'${options.fullText}'", "AND")`;
     }
 
     let queryParam = {
@@ -160,7 +161,7 @@ function getSelectionsForDate(options) {
         to: next,
         count: -1,
         sort: "time DESC",
-        type: options.type || null,
+        fullText: options.fullText || null,
     });
 
     let entries = [];

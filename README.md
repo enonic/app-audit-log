@@ -14,4 +14,5 @@ Oh and add `this.el.append(this.container);` on line 6560 of materialize.js in n
 
 | version   | xp version | comment   |
 |:---------:|:----------:|:---------:|
+| 1.1.0     | 7.3.0      | New filter |
 | 1.0.0     | 7.3.0      | Admin tool changes |

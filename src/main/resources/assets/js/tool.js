@@ -3,18 +3,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setupSelectionGroups();
 
-    let data = {};
+    /* let data = {};
     window.typeAutoComplete.forEach((element) => {
         data[element.key] = null;
-    });
-
-    var autoComplete = document.querySelectorAll(".autocomplete");
-    M.Autocomplete.init(autoComplete, {
+    }); */
+    var textSearch = document.querySelector("#search-text");
+    /*     M.Autocomplete.init(autoComplete, {
         data,
         minLength: 0,
-    });
+    }); */
     // Need to iterate over all if more the none
-    autoComplete[0].addEventListener("change", filterEntries);
+    textSearch.addEventListener("change", filterEntries);
 
     var datepickers = document.querySelectorAll(".datepicker");
     M.Datepicker.init(datepickers, {
@@ -34,10 +33,8 @@ function setupSelectionGroups() {
 }
 
 function filterEntries() {
-    let options = getOptions();
-
     clearAll();
-    getSelectionGroups(options);
+    getSelectionGroups();
 }
 
 /**
@@ -55,9 +52,9 @@ function getOptions() {
         options.to = toEl.value;
     }
 
-    let typeEl = document.getElementById("select-type");
-    if (typeEl.value) {
-        options.type = typeEl.value;
+    let searchEl = document.getElementById("search-text");
+    if (searchEl.value) {
+        options.fullText = searchEl.value;
     }
 
     return options;
@@ -91,7 +88,7 @@ function clearAll() {
  * and start generating a new list
  * @param {Object} options Active filters
  */
-function getSelectionGroups(options) {
+function getSelectionGroups() {
     let selection = document.querySelector("#select-section");
 
     let loading = shortCreate("", "loading-anim");
@@ -103,11 +100,8 @@ function getSelectionGroups(options) {
 
     let data = {
         selectionGroup: true,
-        options: {},
+        options: getOptions(),
     };
-    if (options.to) data.options.to = options.to;
-    if (options.from) data.options.from = options.from;
-    if (options.type) data.options.type = options.type;
 
     data = JSON.stringify(data);
 
@@ -146,7 +140,7 @@ function createSelectionGroups(dataList) {
         ul.append(li);
     });
     selection.appendChild(ul);
-
+    
     // Re initialize collabsable element
     setupSelectionGroups();
 }

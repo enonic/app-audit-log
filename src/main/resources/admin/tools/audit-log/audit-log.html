@@ -13,7 +13,7 @@
     <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
     <script data-th-inline="javascript">
         window.auditServiceUrl = /*[[${serviceUrl}]]*/;
-        window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
+        /*window.typeAutoComplete = JSON.parse({typeAutoComplete});*/
     </script>
 </head>
 
@@ -31,7 +31,8 @@
             </div>
             <input id="select-from" placeholder="From" class="datepicker" autocomplete="off" />
             <input id="select-to" placeholder="To" class="datepicker" autocomplete="off" />
-            <input id="select-type" placeholder="Type" class="autocomplete" autocomplete="off" />
+            <!--/* <input id="select-type" placeholder="Type" class="autocomplete" autocomplete="off" /> */-->
+            <input id="search-text" placeholder="ID, type, user" class="" autocomplete="off" />
         </div>
 
         <div class="row">
