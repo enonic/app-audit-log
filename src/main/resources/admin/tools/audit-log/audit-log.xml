@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="yes"?>
+<tool xmlns="urn:enonic:xp:model:1.0">
+	<display-name>Audit log browser</display-name>
+	<description>Enterprise viewer of system content changes</description>
+	<allow>
+		<principal>role:com.enonic.app.audit.log.admin</principal>
+		<principal>role:system.admin</principal>
+	</allow>
+</tool>

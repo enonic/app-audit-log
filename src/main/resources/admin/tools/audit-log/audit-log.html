@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit log browser</title>
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/materialize.min.css|">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
+    <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
+    <script data-th-inline="javascript">
+        window.auditServiceUrl = /*[[${serviceUrl}]]*/;
+        window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
+    </script>
+</head>
+
+<body>
+    <main id="audit-log">
+        <div class="appbar">
+            <div class="home-button app-icon system-info-button">
+                <!--/* img class="app-icon" src="{{assetsUrl}}/icons/application.svg" / */-->
+                <h1 class="app-name">Audit log browser</h1>
+            </div>
+        </div>
+        <div class="toolbar">
+            <div class="icon-wrapper">
+                <div class="material-icons large">search</div>
+            </div>
+            <input id="select-from" placeholder="From" class="datepicker" autocomplete="off" />
+            <input id="select-to" placeholder="To" class="datepicker" autocomplete="off" />
+            <input id="select-type" placeholder="Type" class="autocomplete" autocomplete="off" />
+        </div>
+
+        <div class="row">
+            <section id="select-section" class="col s3">
+                <ul class="collapsible">
+                    <li class="day-group" data-th-each="group: ${selectiongroups}">
+                        <div class="day-header collapsible-header" data-th-attr="data-a=${group.key}">
+                            <time class="format-date" data-th-text="${group.key}"></time>
+                            <span class="badge" data-th-text="${group.docCount}"></span>
+                        </div>
+                        <div class="day-body collapsible-body"></div>
+                    </li>
+                </ul>
+            </section>
+            <section id="preview" class="col s9 blue-grey lighten-5">
+                <div class="show-wrapper">
+                    <span class="placeholder">Free space, select something on the left.</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+
+</html>
