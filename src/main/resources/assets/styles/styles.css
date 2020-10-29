@@ -26,6 +26,12 @@
     height: auto;
 }
 
+@media screen and (max-width: 720px) {
+    .toolbar {
+        grid-template-columns: 100%;
+    }
+}
+
 .toolbar .icon-wrapper {
     display: inline-block;
     padding: 25px 10px;
@@ -35,19 +41,21 @@
     display: block;
 }
 
-.toolbar input {
+.toolbar label {
     font-weight: bold;
-    font-size: 13px;
-    margin: 0 5px;
-    width: calc(100% - 10px);
+    font-size: 1.5rem;
 }
 
 .toolbar input::placeholder {
     color: black;
     font-weight: bold;
 }
-/* All perpuse classes */
 
+#select-type-label {
+    font-size: 1rem;
+}
+
+/* All perpuse classes */
 .bold {
     font-weight: bold;
 }
@@ -94,16 +102,16 @@
 }
 
 #preview {
-    border: 2px solid lightgray;
     font-size: 1rem;
-    max-height: calc(100vh - 88px);
+    max-height: calc(100vh - 110px - 1em);
     overflow-y: auto;
-    padding: 10px;
+    padding: 1em;
     position: relative;
 }
 
 #preview .placeholder {
     color: #6d6d6d;
+    font-size: 2rem;
     margin: 10px;
     position: absolute;
     right: 50%;
@@ -112,24 +120,13 @@
 }
 
 .show-wrapper {
-    min-height: calc(100vh - 44px - 20px);
+    min-height: calc(100vh - 110px - 2em);
 }
 
 .show-wrapper .data {
     padding: 5px 2px;
     border: 1px solid black;
     margin-left: 5px;
-}
-
-.data .label {
-    display: inline-block;
-    font-weight: bold;
-    min-width: 100px;
-    margin-left: 1rem;
-}
-
-.data .data {
-    margin-left: 20px;
 }
 
 .loading-anim {

@@ -108,8 +108,6 @@ function doQuery(queryLine, settings, aggregations) {
         query += `fulltext("*", "'${options.fullText}'", "AND")`;
     }
 
-    log.info(query);
-
     let queryParam = {
         start: 0,
         count: options.count ? options.count : 0,

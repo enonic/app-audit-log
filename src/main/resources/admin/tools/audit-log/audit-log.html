@@ -41,7 +41,7 @@
                 <select id="select-type" class="type">
                     <option value=""></option>
                 </select>
-                <label for="select-type">Type</label>
+                <label id="select-type-label" for="select-type">Type</label>
             </div>
             <!--*/div class="input-field">
                 <input id="select-type" type="text" placeholder="Type" class="autocomplete" autocomplete="off" />
@@ -56,7 +56,7 @@
             <section id="select-section" class="col s4">
                 <ol class="select-list">
                     <li data-th-each="entry: ${selection}">
-                        <button class="entry" data-th-attr="data-a=${entry.id}">
+                        <button class="entry" data-th-attr="data-a=${entry._id}">
                             <time data-th-text="${entry.time}"></time>
                             <span data-th-text="${entry.type}"></span>
                             <span data-th-text="${entry.user}"></span>
@@ -64,7 +64,7 @@
                     </li>
                 </ol>
             </section>
-            <section id="preview" class="col s8 blue-grey lighten-5">
+            <section id="preview" class="col s8">
                 <div class="show-wrapper">
                     <span class="placeholder">Free space, select something on the left.</span>
                 </div>

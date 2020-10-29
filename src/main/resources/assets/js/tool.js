@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     //M = materializecss
 
-    //setupSelectionGroups();
-    
+    setupSelectionList();
+
     let type = document.getElementById("select-type");
     // let data = {};
     window.typeAutoComplete.forEach((element) => {
@@ -32,16 +32,38 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function setupSelectionGroups() {
+function setupSelectionList() {
+    let selectionList = document.querySelector("#select-section .select-list");
+    console.log(selectionList);
+
+    selectionList.childNodes.forEach(function (selectEl) {
+        selectEl.addEventListener("click", handleSelect);
+        selectEl.addEventListener("keyDown", handleSelect);
+    });
+
+    function handleSelect(event) {
+        if ((event.code = "Enter" || event.code == undefined)) {
+            let clickEl = event.currentTarget;
+            let target = clickEl.querySelector("button");
+            let id = target.dataset.a;
+            if (id) {
+                getEntry(id);
+            }
+        }
+    }
+}
+
+/* function setupSelectionGroups() {
     var elems = document.querySelectorAll(".collapsible");
     M.Collapsible.init(elems, {
         onOpenStart: getEnteries, //Create entry list ajax
     });
-}
+} */
 
 function filterEntries() {
     clearAll();
     updateEntries();
+    setupSelectionList();
 }
 
 /**
@@ -76,7 +98,7 @@ function getOptions() {
  * Clear all selection and reset the preview
  */
 function clearAll() {
-    let selection = document.querySelector("#select-section");
+    let selection = document.querySelector("#select-section .select-list");
     while (selection.childNodes.length > 0) {
         selection.firstChild.remove();
     }
@@ -86,13 +108,13 @@ function clearAll() {
         preview.firstChild.remove();
     }
 
-    preview.appendChild(
-        shortCreate(
-            "Free space, select something on the left",
-            "placeholder",
-            "span"
-        )
+    let helpText = shortCreate(
+        "Free space, select something on the left",
+        "placeholder",
+        "div"
     );
+
+    preview.appendChild(helpText);
 }
 
 /**
@@ -122,7 +144,7 @@ function updateEntries() {
     function handleSelectionGroup() {
         let responseData = JSON.parse(request.response);
 
-        createEntries(responseData);
+        createSelectionList(responseData);
     }
 }
 
@@ -130,7 +152,7 @@ function updateEntries() {
  * Creates a new selection list based on the data provided
  * @param {Array} dataList all entries that need to be generated
  */
-function createEntries(dataList) {
+function createSelectionList(dataList) {
     let selection = document.querySelector("#select-section");
 
     while (selection.childNodes.length > 0) {
@@ -143,17 +165,17 @@ function createEntries(dataList) {
         let button = shortCreate("", "entry", "button");
         li.appendChild(button);
 
-        li.dataset.a = data.id;
+        button.dataset.a = data._id;
         button.appendChild(shortCreate(`${data.time}`, "", "time"));
-        button.appendChild(shortCreate(`${data.type}`, "", "span"));
-        button.appendChild(shortCreate(`${data.user}`, "", "span"));
+        button.appendChild(shortCreate(`${data.type}`, ""));
+        button.appendChild(shortCreate(`${data.user}`, ""));
 
         domList.append(li);
     });
     selection.appendChild(domList);
 
-    // Re initialize collabsable element
-    //setupSelectionGroups();
+    // Apply event listners etc.
+    setupSelectionList();
 }
 
 /**
@@ -308,45 +330,89 @@ function getEntry(id) {
 
 //Does all the dom manipulation to show a single log entry
 function createEntry(entry) {
-    let showEntry = document.createElement("div");
+    let showEntry = document.createElement("section");
     showEntry.id = "entry-show";
 
-    for (const prop in entry) {
-        let node = shortCreate(null, "data");
-        if (typeof entry[prop] == "object") {
-            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
+    // Top section
+    let topBlock = shortCreate(null, "item-data-group");
+    let headline = shortCreate(`${entry.type}`, "headline", "h1");
+    let subheader = shortCreate(`${entry._id}`, "section-headline", "h2");
 
-            if (Array.isArray(entry[prop])) {
-                createListStructure(entry[prop], node);
-            } else {
-                createObjectStructure(entry[prop], node);
-            }
-        } else {
-            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
-            node.appendChild(shortCreate(`${entry[prop]}`, "", "span"));
+    showEntry.appendChild(topBlock);
+    topBlock.appendChild(headline);
+    topBlock.appendChild(subheader);
+
+    let topTable = shortCreate(null, "propList", "table");
+    topBlock.appendChild(topTable);
+
+    for (const prop in entry) {
+        if (prop != "data") {
+            let tr = shortCreate(null, "", "tr");
+            let labelEl = shortCreate(`${prop}:`, "", "td");
+            let valueEl = shortCreate(`${entry[prop]}`, "", "td");
+            tr.appendChild(labelEl);
+            tr.appendChild(valueEl);
+            topTable.appendChild(tr);
         }
-        showEntry.appendChild(node);
     }
 
-    return showEntry;
-}
+    // Data section
+    let dataBlock = shortCreate(null, "item-data-group");
+    //dataBlock.appendChild();
+    showEntry.appendChild(dataBlock);
 
-// Recusive function that handles all data structures
-function createObjectStructure(data, parent) {
-    for (const prop in data) {
-        let node = shortCreate(null, "data");
+    let dataHeader = shortCreate("Data", "section-headline", "h2");
+    let dataTable = shortCreate(null, "", "table");
+
+    dataBlock.appendChild(dataHeader);
+    dataBlock.appendChild(dataTable);
+
+    let data = entry.data;
+
+    createObjectStructure(data, dataTable);
+
+    /* for (const prop in data) {
+        let tr = shortCreate(null, "", "tr");
+
         if (typeof data[prop] == "object") {
-            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
+            node.appendChild(shortCreate(`${prop}:`, "", "td"));
+
             if (Array.isArray(data[prop])) {
                 createListStructure(data[prop], node);
             } else {
                 createObjectStructure(data[prop], node);
             }
         } else {
-            node.appendChild(shortCreate(`${prop}:`, "label", "span"));
-            node.appendChild(shortCreate(`${data[prop]}`, "", "span"));
+            node.appendChild(shortCreate(`${prop}:`, "", "td"));
+            node.appendChild(shortCreate(`${data[prop]}`, "", "td"));
         }
-        parent.appendChild(node);
+        dataTable.appendChild(node);
+    } */
+
+    return showEntry;
+}
+
+// Recusive function that handles all data structures
+function createObjectStructure(data, parent) {
+    let table = shortCreate(null, "", "table");
+    parent.appendChild(table);
+
+    for (const prop in data) {
+        let tr = shortCreate(null, "", "tr");
+        if (typeof data[prop] == "object") {
+            let topTd = shortCreate(null, "", "td");
+            tr.appendChild(shortCreate(`${prop}:`, "", "td"));
+            tr.appendChild(topTd);
+            if (Array.isArray(data[prop])) {
+                createListStructure(data[prop], topTd);
+            } else {
+                createObjectStructure(data[prop], topTd);
+            }
+        } else {
+            tr.appendChild(shortCreate(`${prop}:`, "label", "td"));
+            tr.appendChild(shortCreate(`${data[prop]}`, "", "td"));
+        }
+        table.appendChild(tr);
     }
 }
 
