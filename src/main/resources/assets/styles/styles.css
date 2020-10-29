@@ -21,13 +21,14 @@
 
 .toolbar {
     display: grid;
-    grid-template-columns: auto repeat(3, 1fr) 400px;
+    grid-template-columns: auto repeat(4, 1fr);
+    column-gap: 10px;
     height: auto;
 }
 
 .toolbar .icon-wrapper {
     display: inline-block;
-    padding: 10px;
+    padding: 25px 10px;
 }
 
 .toolbar .icon-wrapper div {
@@ -62,63 +63,36 @@
 
 #select-section {
     overflow-y: auto;
-    height: calc(100vh - 88px);
+    height: calc(100vh - 130px);
     padding: 0;
 }
 
-#select-section .day-header {
+#select-section .select-list li:nth-child(odd) .entry {
+    background-color: var(--gray);
+}
+
+#select-section .select-list li .entry:hover {
+    background-color: var(--dark-gray);
+    color: white;
+}
+
+#select-section .select-list li .entry:focus {
+    background-color: #2196f3;
+    color: white;
+}
+
+.entry {
+    background-color: white;
     border: none;
-    border-bottom: 1px solid gray;
-    display: block;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     font-size: 16px;
-    margin: 0;
-    padding: 10px 15px;
+    padding: 1rem;
     text-align: left;
     width: 100%;
 }
 
-#select-section .day-header:hover {
-    background-color: var(--dark-gray);
-    border-bottom-color: transparent;
-    color: white;
-}
-
-.day-header:hover span {
-    color: white;
-}
-
-.day-header time {
-    font-weight: bold;
-}
-
-#select-section .day-body {
-    padding: 0;
-}
-
-.entry {
-    border: none;
-    cursor: pointer;
-    display: block;
-    font-size: 16px;
-    margin: 0 0 0 15px;
-    padding: 10px 15px;
-    text-align: left;
-    width: calc(100% - 15px);
-}
-
-.entry:nth-child(odd) {
-    background-color: var(--gray);
-}
-
-.entry:hover {
-    background-color: var(--dark-gray);
-    color: white;
-}
-
-.entry.selected {
-    background-color: #2196f3;
-    color: white;
-}
 #preview {
     border: 2px solid lightgray;
     font-size: 1rem;

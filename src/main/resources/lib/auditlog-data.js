@@ -43,33 +43,20 @@ function getAllTypes() {
  * Used to get all groups of log entries
  * @param {Object} options the options passed to doQuery
  */
-function getSelectionGroups(options) {
+function getSelection(options) {
     if (!options) options = {}; //default param
+    if (options.count == undefined) {
+        options.count = 100;
+    }
 
-    let result = doQuery("", options, {
-        by_day: {
-            dateHistogram: {
-                field: "time",
-                interval: "1D",
-                minDocCount: 1,
-                format: "yyyy-MM-dd",
-                //order: "time asc", does not work
-            },
-        },
+    let result = doQuery("", options);
+
+    let entries = [];
+    result.hits.forEach(function (el) {
+        entries.push(auditlog.get({ id: el.id }));
     });
 
-    let groups = result.aggregations.by_day.buckets;
-    //"2020-10-01": [entryData]
-
-    //Insert into an array and sort each day group.
-    groups = groups.sort(function (a, b) {
-        if (a.key < b.key) return 1;
-        if (a.key > b.key) return -1;
-        //This should be impossible
-        return 0;
-    });
-
-    return groups;
+    return entries;
 }
 
 /**
@@ -111,11 +98,17 @@ function doQuery(queryLine, settings, aggregations) {
         if (query != "") query += " AND ";
         query += `time < dateTime('${to.toISOString()}')`;
     }
+    if (options.type) {
+        if (query != "") query += " AND ";
+        query += `type = '${options.type}'`;
+    }
     if (options.fullText) {
         if (query != "") query += " AND ";
         // full text
         query += `fulltext("*", "'${options.fullText}'", "AND")`;
     }
+
+    log.info(query);
 
     let queryParam = {
         start: 0,
@@ -144,23 +137,23 @@ function doQuery(queryLine, settings, aggregations) {
  * @param {Object} [options.singleDay] is true sets nextDay to options.from + 1
  * @returns {Array} log entries for the given time range
  */
-function getSelectionsForDate(options) {
-    let datetime = moment(options.from, "YYYY-MM-DD");
-    datetime.utc(true).startOf("day");
+function getEntriesForUser(options) {
+    /* let datetime = moment(options.from, "YYYY-MM-DD");
+    datetime.utc(true).startOf("day"); */
 
-    let next;
+    /* let next;
     if (options.singleDay) {
         next = moment(datetime).utc(true);
         next.add(1, "days");
     } else {
         next = moment(options.to, "YYYY-MM-DD").utc(true);
-    }
+    } */
 
-    let result = doQuery("", {
-        from: datetime,
-        to: next,
+    let result = doQuery(`user = '${options.user}'`, {
+        from: options.from,
+        to: options.to,
         count: -1,
-        sort: "time DESC",
+        sort: "  DESC",
         fullText: options.fullText || null,
     });
 
@@ -230,7 +223,7 @@ function getAuditType(type) {
 
 //exports.getDisplayData = displayData;
 exports.getEntry = getEntry;
-exports.getSelectionGroups = getSelectionGroups;
-exports.getSelectionsForDate = getSelectionsForDate;
+exports.getSelection = getSelection;
+exports.getEntriesForUser = getEntriesForUser;
 //exports.getEntries = getEntries;
 exports.getAllTypes = getAllTypes;

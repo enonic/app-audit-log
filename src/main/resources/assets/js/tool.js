@@ -1,18 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
     //M = materializecss
 
-    setupSelectionGroups();
-
-    /* let data = {};
+    //setupSelectionGroups();
+    
+    let type = document.getElementById("select-type");
+    // let data = {};
     window.typeAutoComplete.forEach((element) => {
-        data[element.key] = null;
-    }); */
-    var textSearch = document.querySelector("#search-text");
-    /*     M.Autocomplete.init(autoComplete, {
+        // data[element.key] = null;
+        let option = document.createElement("option");
+        option.value = element.key;
+        option.textContent = element.key;
+        type.appendChild(option);
+    });
+    M.FormSelect.init(type, {});
+    /* M.Autocomplete.init(type, {
         data,
         minLength: 0,
     }); */
-    // Need to iterate over all if more the none
+    type.addEventListener("change", filterEntries);
+
+    var textSearch = document.getElementById("search-text");
     textSearch.addEventListener("change", filterEntries);
 
     var datepickers = document.querySelectorAll(".datepicker");
@@ -34,7 +41,7 @@ function setupSelectionGroups() {
 
 function filterEntries() {
     clearAll();
-    getSelectionGroups();
+    updateEntries();
 }
 
 /**
@@ -50,6 +57,11 @@ function getOptions() {
     let toEl = document.getElementById("select-to");
     if (toEl.value) {
         options.to = toEl.value;
+    }
+
+    let typeEl = document.getElementById("select-type");
+    if (typeEl.value) {
+        options.type = typeEl.value;
     }
 
     let searchEl = document.getElementById("search-text");
@@ -88,7 +100,7 @@ function clearAll() {
  * and start generating a new list
  * @param {Object} options Active filters
  */
-function getSelectionGroups() {
+function updateEntries() {
     let selection = document.querySelector("#select-section");
 
     let loading = shortCreate("", "loading-anim");
@@ -99,7 +111,7 @@ function getSelectionGroups() {
     selection.appendChild(loading);
 
     let data = {
-        selectionGroup: true,
+        selection: true,
         options: getOptions(),
     };
 
@@ -110,7 +122,7 @@ function getSelectionGroups() {
     function handleSelectionGroup() {
         let responseData = JSON.parse(request.response);
 
-        createSelectionGroups(responseData);
+        createEntries(responseData);
     }
 }
 
@@ -118,31 +130,30 @@ function getSelectionGroups() {
  * Creates a new selection list based on the data provided
  * @param {Array} dataList all entries that need to be generated
  */
-function createSelectionGroups(dataList) {
+function createEntries(dataList) {
     let selection = document.querySelector("#select-section");
 
     while (selection.childNodes.length > 0) {
         selection.firstChild.remove();
     }
-    let ul = shortCreate("", "collapsible", "ul");
+    let domList = shortCreate("", "select-list", "ol");
 
     dataList.forEach((data) => {
-        let li = shortCreate("", "day-group", "li");
-        let header = shortCreate("", ["day-header", "collapsible-header"]);
-        let dayBody = shortCreate("", ["day-body", "collapsible-body"]);
-        li.appendChild(header);
-        li.appendChild(dayBody);
+        let li = shortCreate("", "", "li");
+        let button = shortCreate("", "entry", "button");
+        li.appendChild(button);
 
-        header.dataset.a = data.key;
-        header.appendChild(shortCreate(`${data.key}`, "format-date", "time"));
-        header.appendChild(shortCreate(`${data.docCount}`, "badge", "span"));
+        li.dataset.a = data.id;
+        button.appendChild(shortCreate(`${data.time}`, "", "time"));
+        button.appendChild(shortCreate(`${data.type}`, "", "span"));
+        button.appendChild(shortCreate(`${data.user}`, "", "span"));
 
-        ul.append(li);
+        domList.append(li);
     });
-    selection.appendChild(ul);
-    
+    selection.appendChild(domList);
+
     // Re initialize collabsable element
-    setupSelectionGroups();
+    //setupSelectionGroups();
 }
 
 /**
@@ -150,7 +161,7 @@ function createSelectionGroups(dataList) {
  * Also adds a loading animtation
  * @param {HTMLElement} element the dom element that was clicked
  */
-function getEnteries(element) {
+/* function getEnteries(element) {
     let container = element.querySelector(".day-body");
 
     //If its not empty ignore it!
@@ -168,7 +179,7 @@ function getEnteries(element) {
     let id = element.querySelector(".day-header").dataset.a;
 
     let data = JSON.stringify({
-        singelDate: id,
+        user: id,
         options: getOptions(),
     });
 
@@ -184,14 +195,14 @@ function getEnteries(element) {
 
         setupEntries(data, container);
     }
-}
+} */
 
 /**
  * Method for creating the expanded entry list when pressing on the dropdown.
  * @param {Array} entriesData The selection entries
  * @param {HTMLElement} container parent container (When pressed to open)
  */
-function setupEntries(entriesData, container) {
+/* function setupEntries(entriesData, container) {
     let entries = [];
     entriesData.forEach(function (dataEntry) {
         let domEntry = shortCreate(
@@ -242,7 +253,7 @@ function setupEntries(entriesData, container) {
             return true;
         }
     }
-}
+} */
 
 /**
  * Shorthand function for sendign ajax request

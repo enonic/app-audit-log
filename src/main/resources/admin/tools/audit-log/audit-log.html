@@ -13,7 +13,7 @@
     <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
     <script data-th-inline="javascript">
         window.auditServiceUrl = /*[[${serviceUrl}]]*/;
-        /*window.typeAutoComplete = JSON.parse({typeAutoComplete});*/
+        window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
     </script>
 </head>
 
@@ -29,25 +29,42 @@
             <div class="icon-wrapper">
                 <div class="material-icons large">search</div>
             </div>
-            <input id="select-from" placeholder="From" class="datepicker" autocomplete="off" />
-            <input id="select-to" placeholder="To" class="datepicker" autocomplete="off" />
-            <!--/* <input id="select-type" placeholder="Type" class="autocomplete" autocomplete="off" /> */-->
-            <input id="search-text" placeholder="ID, type, user" class="" autocomplete="off" />
+            <div class="input-field">
+                <input id="select-from" placeholder="" type="text" class="datepicker" autocomplete="off" />
+                <label for="select-from">From</label>
+            </div>
+            <div class="input-field">
+                <input id="select-to" placeholder="" type="text" class="datepicker" autocomplete="off" />
+                <label for="select-to">To</label>
+            </div>
+            <div class="input-field">
+                <select id="select-type" class="type">
+                    <option value=""></option>
+                </select>
+                <label for="select-type">Type</label>
+            </div>
+            <!--*/div class="input-field">
+                <input id="select-type" type="text" placeholder="Type" class="autocomplete" autocomplete="off" />
+            </div*/-->
+            <div class="input-field">
+                <input id="search-text" placeholder="" type="text" class="" autocomplete="off" />
+                <label for="search-text">Text</label>
+            </div>
         </div>
 
         <div class="row">
-            <section id="select-section" class="col s3">
-                <ul class="collapsible">
-                    <li class="day-group" data-th-each="group: ${selectiongroups}">
-                        <div class="day-header collapsible-header" data-th-attr="data-a=${group.key}">
-                            <time class="format-date" data-th-text="${group.key}"></time>
-                            <span class="badge" data-th-text="${group.docCount}"></span>
-                        </div>
-                        <div class="day-body collapsible-body"></div>
+            <section id="select-section" class="col s4">
+                <ol class="select-list">
+                    <li data-th-each="entry: ${selection}">
+                        <button class="entry" data-th-attr="data-a=${entry.id}">
+                            <time data-th-text="${entry.time}"></time>
+                            <span data-th-text="${entry.type}"></span>
+                            <span data-th-text="${entry.user}"></span>
+                        </button>
                     </li>
-                </ul>
+                </ol>
             </section>
-            <section id="preview" class="col s9 blue-grey lighten-5">
+            <section id="preview" class="col s8 blue-grey lighten-5">
                 <div class="show-wrapper">
                     <span class="placeholder">Free space, select something on the left.</span>
                 </div>
