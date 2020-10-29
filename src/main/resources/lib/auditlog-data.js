@@ -14,6 +14,8 @@ function getEntry(id) {
         id: id,
     });
 
+    entry.cleanType = getAuditType(entry.type);
+
     return entry;
 
     /* if (entry.data.result.pendingContents) {
@@ -53,7 +55,11 @@ function getSelection(options) {
 
     let entries = [];
     result.hits.forEach(function (el) {
-        entries.push(auditlog.get({ id: el.id }));
+        let log = auditlog.get({ id: el.id });
+        log.time = moment(log.time).format("YYYY-MM-DD HH:mm:SS");
+        log.user = formatUser(log.user);
+        log.type = getAuditType(log.type);
+        entries.push(log);
     });
 
     return entries;
@@ -195,6 +201,10 @@ function getUsername(key) {
     let profile = auth.getPrincipal(key);
 
     return profile.displayName;
+}
+
+function formatUser(userKey) {
+    return userKey.replace("user:system:", "");
 }
 
 /*  */

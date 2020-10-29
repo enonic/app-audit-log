@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function setupSelectionList() {
     let selectionList = document.querySelector("#select-section .select-list");
-    console.log(selectionList);
 
     selectionList.childNodes.forEach(function (selectEl) {
         selectEl.addEventListener("click", handleSelect);
@@ -335,12 +334,11 @@ function createEntry(entry) {
 
     // Top section
     let topBlock = shortCreate(null, "item-data-group");
-    let headline = shortCreate(`${entry.type}`, "headline", "h1");
-    let subheader = shortCreate(`${entry._id}`, "section-headline", "h2");
+    let headline = shortCreate(`${entry.cleanType}`, "headline", "h1");
+    //let subheader = shortCreate(`${entry._id}`, "section-headline", "h2");
 
     showEntry.appendChild(topBlock);
     topBlock.appendChild(headline);
-    topBlock.appendChild(subheader);
 
     let topTable = shortCreate(null, "propList", "table");
     topBlock.appendChild(topTable);
@@ -349,8 +347,15 @@ function createEntry(entry) {
         if (prop != "data") {
             let tr = shortCreate(null, "", "tr");
             let labelEl = shortCreate(`${prop}:`, "", "td");
-            let valueEl = shortCreate(`${entry[prop]}`, "", "td");
+            let valueEl = shortCreate(null, "", "td");
             tr.appendChild(labelEl);
+
+            if (Array.isArray(entry[prop])) {
+                createListStructure(entry[prop], valueEl);
+            } else {
+                valueEl.textContent = `${entry[prop]}`;
+            }
+            
             tr.appendChild(valueEl);
             topTable.appendChild(tr);
         }
@@ -417,8 +422,8 @@ function createObjectStructure(data, parent) {
 }
 
 function createListStructure(list, parent) {
-    list.forEach((item) => {
-        parent.appendChild(shortCreate(`${item}`));
+    list.forEach(function (item) {
+        parent.appendChild(shortCreate(`${item}`, null));
     });
 }
 
