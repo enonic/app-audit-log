@@ -177,7 +177,7 @@ function createSelectionList(dataList) {
 }
 
 /**
- * Shorthand function for sendign ajax request
+ * Shorthand function for sending ajax request
  * @param {function} handler
  * @param {*} data
  * @returns {request} The xml request object

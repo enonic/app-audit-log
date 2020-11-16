@@ -46,8 +46,21 @@ task materialcssJs (type: Copy) {
     into "$buildDir/resources/main/assets/js"
 }
 
+task buildSass(type:Exec) {
+    // See the sass.js for how the sass is compiled
+    commandLine "node", "build_scripts/sass.js"
+    inputs.files('src/main/resources/assets/styles')
+    outputs.file('build/resources/main/assets/styles/main.min.css')
+
+    // Clean sometimes picks this up? Debug mostly
+    doLast {
+        assert file('build/resources/main/assets/styles/style.min.css').exists()
+    }
+}
+
 jar {
     includeEmptyDirs = false
+    dependsOn += buildSass
     dependsOn += materialcssStyles
     dependsOn += materialcssJs
 } 
