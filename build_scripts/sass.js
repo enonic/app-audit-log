@@ -1,7 +1,7 @@
 var sass = require("sass");
 var fs = require("fs");
 
-let outFile = "build/resources/main/assets/styles/style.min.css"
+let outFile = "build/resources/main/assets/styles/styles.min.css"
 
 sass.render({
     file: "src/main/resources/assets/styles/styles.scss",
