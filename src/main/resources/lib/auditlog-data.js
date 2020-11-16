@@ -14,8 +14,6 @@ function getEntry(id) {
         id: id,
     });
 
-    entry.cleanType = getAuditType(entry.type);
-
     return entry;
 
     /* if (entry.data.result.pendingContents) {
@@ -47,9 +45,6 @@ function getAllTypes() {
  */
 function getSelection(options) {
     if (!options) options = {}; //default param
-    if (options.count == undefined) {
-        options.count = 100;
-    }
 
     let result = doQuery("", options);
 
@@ -58,7 +53,7 @@ function getSelection(options) {
         let log = auditlog.get({ id: el.id });
         log.time = moment(log.time).format("YYYY-MM-DD HH:mm:SS");
         log.user = formatUser(log.user);
-        log.type = getAuditType(log.type);
+        log.type = log.type;
         entries.push(log);
     });
 
@@ -116,7 +111,7 @@ function doQuery(queryLine, settings, aggregations) {
 
     let queryParam = {
         start: 0,
-        count: options.count ? options.count : 0,
+        count: 100,
         query: query,
         sort: options.sort ? options.sort : "_ts DESC",
     };

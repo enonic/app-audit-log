@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit log browser</title>
-    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/materialize.min.css|">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
@@ -53,23 +53,11 @@
         </div>
 
         <div class="row">
-            <section id="select-section" class="col s4">
-                <div class="list-header">
-                    <div>Time</div>
-                    <div>Type</div>
-                    <div>User</div>
-                </div>
+            <section id="select-section" class="col s5">
                 <ol class="select-list">
-                    <li data-th-each="entry: ${selection}">
-                        <button class="entry" data-th-attr="data-a=${entry._id}">
-                            <time data-th-text="${entry.time}"></time>
-                            <span data-th-text="${entry.type}"></span>
-                            <span data-th-text="${entry.user}"></span>
-                        </button>
-                    </li>
                 </ol>
             </section>
-            <section id="preview" class="col s8">
+            <section id="preview" class="col s7">
                 <div class="show-wrapper">
                     <span class="placeholder">Free space, select something on the left.</span>
                 </div>

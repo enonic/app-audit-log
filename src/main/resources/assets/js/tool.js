@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    //M = materializecss
-
+    // Initial selection list rendering
+    updateEntries();
     setupSelectionList();
 
     let type = document.getElementById("select-type");
@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
         option.textContent = element.key;
         type.appendChild(option);
     });
+    // M = materializecss
     M.FormSelect.init(type, {});
     /* M.Autocomplete.init(type, {
         data,
@@ -122,14 +123,14 @@ function clearAll() {
  * @param {Object} options Active filters
  */
 function updateEntries() {
-    let selection = document.querySelector("#select-section");
+    let selection = document.querySelector("#select-section .select-list");
 
     let loading = shortCreate("", "loading-anim");
     //Add loadinganimation
     for (let i = 0; i < 3; i++) {
         loading.appendChild(shortCreate("", "dot"));
     }
-    selection.appendChild(loading);
+    selection.prepend(loading);
 
     let data = {
         selection: true,
@@ -152,12 +153,11 @@ function updateEntries() {
  * @param {Array} dataList all entries that need to be generated
  */
 function createSelectionList(dataList) {
-    let selection = document.querySelector("#select-section");
+    let selection = document.querySelector("#select-section .select-list");
 
     while (selection.childNodes.length > 0) {
         selection.firstChild.remove();
     }
-    let domList = shortCreate("", "select-list", "ol");
 
     dataList.forEach((data) => {
         let li = shortCreate("", "", "li");
@@ -165,116 +165,16 @@ function createSelectionList(dataList) {
         li.appendChild(button);
 
         button.dataset.a = data._id;
-        button.appendChild(shortCreate(`${data.time}`, "", "time"));
         button.appendChild(shortCreate(`${data.type}`, ""));
         button.appendChild(shortCreate(`${data.user}`, ""));
+        button.appendChild(shortCreate(`${data.time}`, "", "time"));
 
-        domList.append(li);
+        selection.append(li);
     });
-    selection.appendChild(domList);
 
     // Apply event listners etc.
     setupSelectionList();
 }
-
-/**
- * Uses ajax to get all entries from a single day.
- * Also adds a loading animtation
- * @param {HTMLElement} element the dom element that was clicked
- */
-/* function getEnteries(element) {
-    let container = element.querySelector(".day-body");
-
-    //If its not empty ignore it!
-    if (container.childNodes.length > 0) {
-        return;
-    }
-    //Add loadinganimation
-    let loading = shortCreate("", "loading-anim");
-    for (let i = 0; i < 3; i++) {
-        loading.appendChild(shortCreate("", "dot"));
-    }
-
-    container.appendChild(loading);
-
-    let id = element.querySelector(".day-header").dataset.a;
-
-    let data = JSON.stringify({
-        user: id,
-        options: getOptions(),
-    });
-
-    let request = sendXMLHttpRequest(handleOpenEntries, data);
-
-    function handleOpenEntries() {
-        let data = JSON.parse(request.response);
-
-        //Clear loading animation
-        while (container.childNodes.length > 0) {
-            container.firstChild.remove();
-        }
-
-        setupEntries(data, container);
-    }
-} */
-
-/**
- * Method for creating the expanded entry list when pressing on the dropdown.
- * @param {Array} entriesData The selection entries
- * @param {HTMLElement} container parent container (When pressed to open)
- */
-/* function setupEntries(entriesData, container) {
-    let entries = [];
-    entriesData.forEach(function (dataEntry) {
-        let domEntry = shortCreate(
-            `${dataEntry.time}  ${dataEntry.type}`,
-            "entry",
-            "button"
-        );
-        domEntry.innerHTML += `<br>${dataEntry.user}`;
-        domEntry.dataset.h = dataEntry.id;
-        container.appendChild(domEntry);
-        entries.push(domEntry);
-    });
-
-    entries.forEach(function (entry) {
-        entry.addEventListener("click", handleSelected);
-        entry.addEventListener("keyDown", handleSelected);
-    });
-
-    function unselectAll() {
-        let list = document.getElementsByClassName("entry");
-        for (entry of list) {
-            entry.classList.remove("selected");
-        }
-    }
-
-    function handleSelected(event) {
-        if ((event.code = "Enter" || event.code == undefined)) {
-            let pressed = toggleEntry(event.currentTarget);
-            if (pressed) {
-                let id = event.currentTarget.dataset.h;
-                if (id) {
-                    getEntry(id);
-                }
-            }
-        }
-    }
-
-    function toggleEntry(target) {
-        let active = target.classList.contains("selected");
-
-        unselectAll();
-        // Switch state
-        if (active) {
-            target.classList.remove("selected");
-            return false;
-        } else {
-            target.classList.add("selected");
-            return true;
-        }
-    }
-} */
 
 /**
  * Shorthand function for sendign ajax request
@@ -329,101 +229,87 @@ function getEntry(id) {
 
 //Does all the dom manipulation to show a single log entry
 function createEntry(entry) {
-    let showEntry = document.createElement("section");
+    let showEntry = document.createElement("div");
     showEntry.id = "entry-show";
+    showEntry.classList += "item-statistics-panel";
+    let header = shortCreate(null, "header");
+    header.id = "previewHeader";
 
-    // Top section
-    let topBlock = shortCreate(null, "item-data-group");
-    let headline = shortCreate(`${entry.cleanType}`, "headline", "h1");
-    //let subheader = shortCreate(`${entry._id}`, "section-headline", "h2");
+    // header
+    let image = shortCreate(null, null, "img");
+    image.style.visibility = "hidden";
+    header.appendChild(image);
+    let title = shortCreate(`Log entry`, "title", "h1");
+    header.appendChild(title);
+    showEntry.appendChild(header);
 
-    showEntry.appendChild(topBlock);
-    topBlock.appendChild(headline);
+    let propPanel = shortCreate(null, "properties-panel");
+    showEntry.appendChild(propPanel);
 
-    let topTable = shortCreate(null, "propList", "table");
-    topBlock.appendChild(topTable);
+    // top property list
+    let itemGroup = shortCreate(null, "item-data-group");
+    propPanel.appendChild(itemGroup);
 
     for (const prop in entry) {
+        let propList = shortCreate(null, "data-list", "ul");
+        itemGroup.appendChild(propList);
+
         if (prop != "data") {
-            let tr = shortCreate(null, "", "tr");
-            let labelEl = shortCreate(`${prop}:`, "", "td");
-            let valueEl = shortCreate(null, "", "td");
-            tr.appendChild(labelEl);
+            let listheader = shortCreate(`${prop}`, "list-header", "li");
+            propList.appendChild(listheader);
+            let valueEl = shortCreate(null, null, "li");
 
             if (Array.isArray(entry[prop])) {
-                createListStructure(entry[prop], valueEl);
+                createListStructure(entry[prop], propList, "li");
             } else {
                 valueEl.textContent = `${entry[prop]}`;
+                propList.appendChild(valueEl);
             }
-            
-            tr.appendChild(valueEl);
-            topTable.appendChild(tr);
         }
     }
 
     // Data section
     let dataBlock = shortCreate(null, "item-data-group");
-    //dataBlock.appendChild();
-    showEntry.appendChild(dataBlock);
+    propPanel.appendChild(dataBlock);
 
-    let dataHeader = shortCreate("Data", "section-headline", "h2");
-    let dataTable = shortCreate(null, "", "table");
-
+    let dataHeader = shortCreate("Data", "", "h2");
     dataBlock.appendChild(dataHeader);
-    dataBlock.appendChild(dataTable);
 
     let data = entry.data;
 
-    createObjectStructure(data, dataTable);
-
-    /* for (const prop in data) {
-        let tr = shortCreate(null, "", "tr");
-
-        if (typeof data[prop] == "object") {
-            node.appendChild(shortCreate(`${prop}:`, "", "td"));
-
-            if (Array.isArray(data[prop])) {
-                createListStructure(data[prop], node);
-            } else {
-                createObjectStructure(data[prop], node);
-            }
-        } else {
-            node.appendChild(shortCreate(`${prop}:`, "", "td"));
-            node.appendChild(shortCreate(`${data[prop]}`, "", "td"));
-        }
-        dataTable.appendChild(node);
-    } */
+    createObjectStructure(data, dataBlock);
 
     return showEntry;
 }
 
 // Recusive function that handles all data structures
 function createObjectStructure(data, parent) {
-    let table = shortCreate(null, "", "table");
-    parent.appendChild(table);
-
     for (const prop in data) {
-        let tr = shortCreate(null, "", "tr");
+        let propList = shortCreate(null, "data-list", "ul");
+        parent.appendChild(propList);
+
         if (typeof data[prop] == "object") {
-            let topTd = shortCreate(null, "", "td");
-            tr.appendChild(shortCreate(`${prop}:`, "", "td"));
-            tr.appendChild(topTd);
+            let header = shortCreate(`${prop}`, "list-header", "li");
+            propList.appendChild(header);
             if (Array.isArray(data[prop])) {
-                createListStructure(data[prop], topTd);
+                createListStructure(data[prop], propList, "li");
             } else {
-                createObjectStructure(data[prop], topTd);
+                propList.classList.add("align-top");
+                propList.classList.add("nested");
+                let item = shortCreate(null, null, "li");
+                propList.appendChild(item);
+                createObjectStructure(data[prop], item);
             }
         } else {
-            tr.appendChild(shortCreate(`${prop}:`, "label", "td"));
-            tr.appendChild(shortCreate(`${data[prop]}`, "", "td"));
+            propList.appendChild(shortCreate(`${prop}`, "list-header", "li"));
+            propList.appendChild(shortCreate(`${data[prop]}`, "", "li"));
         }
-        table.appendChild(tr);
     }
 }
 
-function createListStructure(list, parent) {
+function createListStructure(list, parent, tag) {
     list.forEach(function (item) {
-        parent.appendChild(shortCreate(`${item}`, null));
+        parent.appendChild(shortCreate(`${item}`, null, tag));
     });
 }
 
