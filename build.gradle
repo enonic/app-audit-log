@@ -58,6 +58,16 @@ task buildSass(type:Exec) {
     }
 }
 
+task buildJS(type:Exec) {
+    commandLine "npm run build"
+    inputs.files('src/main/resources/assets/js')
+    outputs.file('build/resources/main/assets/js/tool.js')
+
+    doLast {
+        assert file('build/resources/main/assets/js/tool.js')
+    }
+}
+
 jar {
     includeEmptyDirs = false
     dependsOn += buildSass

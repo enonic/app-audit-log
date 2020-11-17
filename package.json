@@ -1,9 +1,19 @@
 {
     "name": "Audit-log",
     "version": "0.0.0",
+    "scripts": {
+        "build": "node_modules/.bin/parcel build src/main/resources/assets/js/main.es6 --dist-dir build/resources/main/assets/js --target xp"
+    },
+    "targets": {
+        "xp": {
+            "outputFormat": "global",
+            "sourceMap": false
+        }
+    },
     "dependencies": {},
     "devDependencies": {
         "@materializecss/materialize": "^1.0.0",
+        "parcel": "^2.0.0-nightly.447",
         "sass": "^1.29.0"
     }
 }
