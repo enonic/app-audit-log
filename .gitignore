@@ -12,6 +12,9 @@ Icon
 # Nodemodules
 node_modules
 
+# Parcel
+.parcel-cache
+
 # Thumbnails
 ._*
 
