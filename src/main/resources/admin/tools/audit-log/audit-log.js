@@ -1,8 +1,9 @@
 const thymeleaf = require("/lib/thymeleaf");
-const auditlog = require("/lib/xp/auditlog");
-const nodeLib = require("/lib/xp/node");
+//const auditlog = require("/lib/xp/auditlog");
+//const nodeLib = require("/lib/xp/node");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
+const adminLib = require('/lib/xp/admin');
 // const moment = require("/lib/moment.min.js");
 
 const view = resolve("audit-log.html");
@@ -25,6 +26,8 @@ exports.get = function () {
         assetsUrl,
         serviceUrl,
         typeAutoComplete,
+        launcherPath: adminLib.getLauncherPath(),
+        launcherUrl: adminLib.getLauncherUrl(),
     };
 
     return {
@@ -39,3 +42,4 @@ function errorMessage(message) {
         body: `<div class="error">${message}</div>`,
     };
 }
+

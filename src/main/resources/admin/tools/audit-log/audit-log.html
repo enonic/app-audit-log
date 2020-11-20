@@ -11,9 +11,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/js/tool.js|"></script>
     <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
+    <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
     <script data-th-inline="javascript">
         window.auditServiceUrl = /*[[${serviceUrl}]]*/;
         window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
+        var CONFIG = {
+            //adminUrl: '{{adminUrl}}', // Not needed?
+            //appId: 'toolstarter', 
+            launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
+            services: {}, // Workaround for i18nUrl BUG
+        };
     </script>
 </head>
 
@@ -21,8 +28,8 @@
     <main id="audit-log">
         <div class="appbar">
             <div class="home-button app-icon system-info-button">
-                <!--/* img class="app-icon" src="{{assetsUrl}}/icons/application.svg" / */-->
-                <h1 class="app-name">Audit log browser</h1>
+                <img class="app-icon" data-th-src="|${assetsUrl}/application.svg|" />
+                <span class="app-name">Audit log browser</span>
             </div>
         </div>
         <div class="toolbar">
