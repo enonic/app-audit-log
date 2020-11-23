@@ -27,8 +27,8 @@
 <body>
     <main id="audit-log">
         <div class="appbar">
-            <div class="home-button app-icon system-info-button">
-                <img class="app-icon" data-th-src="|${assetsUrl}/application.svg|" />
+            <div class="home-button system-info-button">
+                <img class="app-icon audit-icon" data-th-src="|${assetsUrl}/application.svg|" />
                 <span class="app-name">Audit log browser</span>
             </div>
         </div>
@@ -50,9 +50,6 @@
                 </select>
                 <label id="select-type-label" for="select-type">Type</label>
             </div>
-            <!--*/div class="input-field">
-                <input id="select-type" type="text" placeholder="Type" class="autocomplete" autocomplete="off" />
-            </div*/-->
             <div class="input-field">
                 <input id="search-text" placeholder="" type="text" class="" autocomplete="off" />
                 <label for="search-text">Text</label>
@@ -61,6 +58,7 @@
 
         <div class="row">
             <section id="select-section" class="col s5">
+                <span class="total"></span>
                 <ol class="select-list">
                 </ol>
             </section>

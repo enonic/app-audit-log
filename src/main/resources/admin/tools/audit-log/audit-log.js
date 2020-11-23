@@ -1,10 +1,7 @@
 const thymeleaf = require("/lib/thymeleaf");
-//const auditlog = require("/lib/xp/auditlog");
-//const nodeLib = require("/lib/xp/node");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
 const adminLib = require('/lib/xp/admin');
-// const moment = require("/lib/moment.min.js");
 
 const view = resolve("audit-log.html");
 

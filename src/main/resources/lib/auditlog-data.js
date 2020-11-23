@@ -48,16 +48,19 @@ function getSelection(options) {
 
     let result = doQuery("", options);
 
-    let entries = [];
+    let selections = [];
     result.hits.forEach(function (el) {
         let log = auditlog.get({ id: el.id });
         log.time = moment(log.time).format("YYYY-MM-DD HH:mm:SS");
         log.user = formatUser(log.user);
         log.type = log.type;
-        entries.push(log);
+        selections.push(log);
     });
 
-    return entries;
+    return {
+        selections,
+        total: result.total,
+    };
 }
 
 /**

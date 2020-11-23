@@ -153,13 +153,16 @@ function updateEntries() {
  * @param {Array} dataList all entries that need to be generated
  */
 function createSelectionList(dataList) {
+    let total = document.querySelector('#select-section .total');
     let selection = document.querySelector("#select-section .select-list");
+
+    total.textContent = `Total: ${dataList.total}`;
 
     while (selection.childNodes.length > 0) {
         selection.firstChild.remove();
     }
 
-    dataList.forEach((data) => {
+    dataList.selections.forEach((data) => {
         let li = shortCreate("", "", "li");
         let button = shortCreate("", "entry", "button");
         li.appendChild(button);

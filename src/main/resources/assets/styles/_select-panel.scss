@@ -1,0 +1,45 @@
+#select-type-label {
+    transform: scale(0.8);
+}
+
+#select-section {
+    font-size: 1rem;
+    padding: 0;
+    border-right: 1px solid var(--dark-gray);
+
+    .total {
+        display: block;
+        padding: 1rem; 
+    }
+
+    .select-list {
+        overflow-y: auto;
+        height: calc(100vh - 166px);
+
+        li .entry {
+            &:hover {
+                background-color: var(--dark-gray);
+                color: white;
+            }
+            &:focus {
+                background-color: #2196f3;
+                color: white;
+            }
+        }
+    }
+}
+
+.entry {
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1rem;
+    text-align: left;
+    width: 100%;
+
+    time {
+        display: inline-block;
+    }
+}
