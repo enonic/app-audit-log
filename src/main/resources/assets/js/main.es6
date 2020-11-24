@@ -3,12 +3,11 @@ const util = require("./util.es6");
 const shortCreate = util.shortCreate;
 const sendXMLHttpRequest = util.sendXMLHttpRequest;
 
-let asyncLoading = false;
-
 // Main function called on page load
 document.addEventListener("DOMContentLoaded", function () {
     let selectionList = document.querySelector("#select-section .select-list");
     let total = 0;
+    let asyncLoading = false;
     // Initial selection list rendering
     newSelectionList();
     setupSelectionList();
@@ -68,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
         clearAll();
         newSelectionList();
         setupSelectionList();
-        infiniteScrollSelectionList();
     }
 
     /**
@@ -201,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let request = sendXMLHttpRequest(
             handleUpdateSelection,
-            JSON.stringify(data),
+            JSON.stringify(data)
         );
 
         function handleUpdateSelection() {
@@ -215,6 +213,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function replaceWithNewSelection(replaceElements, data) {
         if (replaceElements.length != data.length) {
+            console.log({
+                replaceLen: replaceElements.length,
+                dataLen: data.length,
+            });
             console.error("Data and replacements do not match");
         }
 
@@ -225,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
             button.classList.remove("tombstone");
 
             if (i == 0) {
-                button.style.backgroundColor = "purple";   
+                button.style.backgroundColor = "purple";
             }
 
             button.dataset.a = node._id;
@@ -236,33 +238,44 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function infiniteScrollSelectionList(total) {
+    function infiniteScrollSelectionList() {
         //Note total amount so we don't fetch unused items
         let currentSelection = [0, 100];
-
+        selectionList.even
         selectionList.addEventListener("scroll", function () {
             let scroll = selectionList.scrollTop;
             let scrollOnlyHeight =
                 selectionList.scrollHeight - selectionList.clientHeight;
-            /* TODO Change to percentage of total maybe 10%? */
-            if (scroll > scrollOnlyHeight - 300 && asyncLoading == false) {
-                console.log({currentSelection});
-                asyncLoading = true;
-                currentSelection[0] += 50;
-                currentSelection[1] =
-                    currentSelection[1] + 50 > total
-                        ? total
-                        : currentSelection[1] + 50;
-                let tombStoneItems = createSelectionTombstones(50, "append");
 
-                // 50 are replaced that leaves 50 normal ones
+            if (
+                scroll > scrollOnlyHeight - 300 &&
+                asyncLoading == false &&
+                currentSelection[1] < total
+            ) {
+                let oneJump = 25;
+                asyncLoading = true;
+                let oldListSize = currentSelection[1];
+
+                currentSelection[0] += oneJump;
+                currentSelection[1] =
+                    currentSelection[1] + oneJump > total
+                        ? total
+                        : currentSelection[1] + oneJump;
+
+                let nextListSize = currentSelection[1];
+                let nodesToRequest = nextListSize - oldListSize;
+                let tombStoneItems = createSelectionTombstones(
+                    nodesToRequest,
+                    "append"
+                );
+
                 updateSelectionList(
-                    currentSelection[1] - 50,
-                    50,
+                    oldListSize,
+                    nodesToRequest,
                     tombStoneItems
                 );
-                // Fill in received data
-            }
+            } 
+            // TODO back to top infinite scroller
         });
     }
 

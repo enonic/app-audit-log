@@ -51,8 +51,8 @@ function getSelection(options) {
     let selections = [];
     result.hits.forEach(function (el) {
         let log = auditlog.get({ id: el.id });
-        log.time = moment(log.time).format("YYYY-MM-DD HH:mm:SS");
-        log.user = getUsername(log.user);
+        log.time = moment.utc(log.time).format("YYYY-MM-DD HH:mm:ss");
+        log.user = formatUser(log.user);
         log.type = log.type;
         selections.push(log);
     });
