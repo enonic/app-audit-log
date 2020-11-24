@@ -52,7 +52,7 @@ function getSelection(options) {
     result.hits.forEach(function (el) {
         let log = auditlog.get({ id: el.id });
         log.time = moment(log.time).format("YYYY-MM-DD HH:mm:SS");
-        log.user = formatUser(log.user);
+        log.user = getUsername(log.user);
         log.type = log.type;
         selections.push(log);
     });
@@ -112,9 +112,13 @@ function doQuery(queryLine, settings, aggregations) {
         query += `fulltext("*", "'${options.fullText}'", "AND")`;
     }
 
+    if (options.count > 100) {
+        log.console.error("Wrong params in query. Audit log");
+    }
+
     let queryParam = {
-        start: 0,
-        count: 100,
+        start: options.start || 0,
+        count: options.count || 100,
         query: query,
         sort: options.sort ? options.sort : "_ts DESC",
     };

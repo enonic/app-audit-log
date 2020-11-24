@@ -25,6 +25,17 @@
                 background-color: #2196f3;
                 color: white;
             }
+
+            &.tombstone {
+                *:after {
+                    content: "";
+                    background-color: var(--gray);
+                    border-radius: 5px;
+                    display: block;
+                    height: 1rem;
+                    width: 50%;
+                }
+            }
         }
     }
 }

@@ -3,10 +3,14 @@ const util = require("./util.es6");
 const shortCreate = util.shortCreate;
 const sendXMLHttpRequest = util.sendXMLHttpRequest;
 
+let asyncLoading = false;
+
 // Main function called on page load
 document.addEventListener("DOMContentLoaded", function () {
+    let selectionList = document.querySelector("#select-section .select-list");
+    let total = 0;
     // Initial selection list rendering
-    updateSelectionList();
+    newSelectionList();
     setupSelectionList();
     infiniteScrollSelectionList();
 
@@ -38,164 +42,264 @@ document.addEventListener("DOMContentLoaded", function () {
         showClearBtn: true,
         onClose: clearAndUpdate,
     });
-});
 
-function setupSelectionList() {
-    let selectionList = document.querySelector("#select-section .select-list");
+    function setupSelectionList() {
+        selectionList.childNodes.forEach(function (selectEl) {
+            selectEl.addEventListener("click", handleSelect);
+            selectEl.addEventListener("keyDown", handleSelect);
+        });
 
-    selectionList.childNodes.forEach(function (selectEl) {
-        selectEl.addEventListener("click", handleSelect);
-        selectEl.addEventListener("keyDown", handleSelect);
-    });
-
-    function handleSelect(event) {
-        if ((event.code = "Enter" || event.code == undefined)) {
-            let clickEl = event.currentTarget;
-            let target = clickEl.querySelector("button");
-            let id = target.dataset.a;
-            if (id) {
-                preview.getEntry(id);
+        function handleSelect(event) {
+            if ((event.code = "Enter" || event.code == undefined)) {
+                let clickEl = event.currentTarget;
+                let target = clickEl.querySelector("button");
+                let id = target.dataset.a;
+                if (id) {
+                    preview.getEntry(id);
+                }
             }
         }
     }
-}
 
-/**
- * Clear the panels and get a new selection list
- */
-function clearAndUpdate() {
-    clearAll();
-    updateSelectionList();
-    setupSelectionList();
-    infiniteScrollSelectionList();
-}
-
-/**
- * Get the current filters that are active and return them as a options object.
- */
-function getOptions() {
-    let options = {};
-    let fromEl = document.getElementById("select-from");
-    if (fromEl.value) {
-        options.from = fromEl.value;
-    }
-
-    let toEl = document.getElementById("select-to");
-    if (toEl.value) {
-        options.to = toEl.value;
-    }
-
-    let typeEl = document.getElementById("select-type");
-    if (typeEl.value) {
-        options.type = typeEl.value;
-    }
-
-    let searchEl = document.getElementById("search-text");
-    if (searchEl.value) {
-        options.fullText = searchEl.value;
-    }
-
-    return options;
-}
-
-/**
- * Clear all selection and reset the preview
- */
-function clearAll() {
-    let selection = document.querySelector("#select-section .select-list");
-    while (selection.childNodes.length > 0) {
-        selection.firstChild.remove();
+    /**
+     * Clear the panels and get a new selection list
+     */
+    function clearAndUpdate() {
+        clearAll();
+        newSelectionList();
+        setupSelectionList();
+        infiniteScrollSelectionList();
     }
 
     /**
-     * Preview. Could refactor into preview.es6
+     * Get the current filters that are active and return them as a options object.
      */
-    let previewPanel = document.querySelector(".show-wrapper");
-    while (previewPanel.childNodes.length > 0) {
-        previewPanel.firstChild.remove();
-    }
-
-    let helpText = shortCreate(
-        "Free space, select something on the left",
-        "placeholder",
-        "div"
-    );
-
-    previewPanel.appendChild(helpText);
-}
-
-/**
- * Get a new selection list based on the filters active
- * and start generating a new list
- * @param {Object} options Active filters
- */
-function updateSelectionList() {
-    let selection = document.querySelector("#select-section .select-list");
-
-    let loading = shortCreate("", "loading-anim");
-    //Add loadinganimation
-    for (let i = 0; i < 3; i++) {
-        loading.appendChild(shortCreate("", "dot"));
-    }
-    selection.prepend(loading);
-
-    let data = {
-        selection: true,
-        options: getOptions(),
-    };
-
-    data = JSON.stringify(data);
-
-    let request = sendXMLHttpRequest(handleSelectionGroup, data);
-
-    function handleSelectionGroup() {
-        let responseData = JSON.parse(request.response);
-
-        createSelectionList(responseData);
-    }
-}
-
-/**
- * Creates a new selection list based on the data provided
- * @param {Array} dataList all entries that need to be generated
- */
-function createSelectionList(dataList) {
-    let total = document.querySelector("#select-section .total");
-    let selection = document.querySelector("#select-section .select-list");
-
-    total.textContent = `Total: ${dataList.total}`;
-
-    while (selection.childNodes.length > 0) {
-        selection.firstChild.remove();
-    }
-
-    dataList.selections.forEach((data) => {
-        let li = shortCreate("", "", "li");
-        let button = shortCreate("", "entry", "button");
-        li.appendChild(button);
-
-        button.dataset.a = data._id;
-        button.appendChild(shortCreate(`${data.type}`, ""));
-        button.appendChild(shortCreate(`${data.user}`, ""));
-        button.appendChild(shortCreate(`${data.time}`, "", "time"));
-
-        selection.append(li);
-    });
-
-    // Apply event listners etc.
-    setupSelectionList();
-}
-
-function infiniteScrollSelectionList() {
-    let selectionList = document.querySelector("#select-section .select-list");
-    let loading = false;
-
-    selectionList.addEventListener("scroll", function() {
-        let scroll = selectionList.scrollTop;
-        let scrollOnlyHeight = selectionList.scrollHeight - selectionList.clientHeight;
-        if (scroll > scrollOnlyHeight - 300) {
-            // resycle elements back into view
-            console.log("Load new!");
+    function getOptions() {
+        let options = {};
+        let fromEl = document.getElementById("select-from");
+        if (fromEl.value) {
+            options.from = fromEl.value;
         }
-    });
-}
+
+        let toEl = document.getElementById("select-to");
+        if (toEl.value) {
+            options.to = toEl.value;
+        }
+
+        let typeEl = document.getElementById("select-type");
+        if (typeEl.value) {
+            options.type = typeEl.value;
+        }
+
+        let searchEl = document.getElementById("search-text");
+        if (searchEl.value) {
+            options.fullText = searchEl.value;
+        }
+
+        return options;
+    }
+
+    /**
+     * Clear all selection and reset the preview
+     */
+    function clearAll() {
+        while (selectionList.childNodes.length > 0) {
+            selectionList.firstChild.remove();
+        }
+
+        /**
+         * Preview. Could refactor into preview.es6
+         */
+        let previewPanel = document.querySelector(".show-wrapper");
+        while (previewPanel.childNodes.length > 0) {
+            previewPanel.firstChild.remove();
+        }
+
+        let helpText = shortCreate(
+            "Free space, select something on the left",
+            "placeholder",
+            "div"
+        );
+
+        previewPanel.appendChild(helpText);
+    }
+
+    /**
+     * Get a new selection list based on the filters active
+     * and start generating a new list
+     * @param {Object} options Active filters
+     */
+    function newSelectionList(loading = true) {
+        if (loading) {
+            let loading = shortCreate("", "loading-anim");
+            //Add loadinganimation
+            for (let i = 0; i < 3; i++) {
+                loading.appendChild(shortCreate("", "dot"));
+            }
+            selectionList.prepend(loading);
+        }
+
+        let data = {
+            selection: true,
+            options: getOptions(),
+        };
+
+        let request = sendXMLHttpRequest(
+            handleSelectionGroup,
+            JSON.stringify(data)
+        );
+
+        function handleSelectionGroup() {
+            let responseData = JSON.parse(request.response);
+            total = responseData.total;
+
+            createSelectionList(responseData);
+        }
+    }
+
+    /**
+     * Creates a new selection list based on the data provided
+     * @param {Array} dataList all entries that need to be generated
+     */
+    function createSelectionList(dataList) {
+        let totalEl = document.querySelector("#select-section .total");
+
+        totalEl.textContent = `Total: ${total}`;
+
+        while (selectionList.childNodes.length > 0) {
+            selectionList.firstChild.remove();
+        }
+
+        dataList.selections.forEach((data) => {
+            let li = shortCreate("", "", "li");
+            let button = shortCreate("", "entry", "button");
+            li.appendChild(button);
+
+            button.dataset.a = data._id;
+            button.appendChild(shortCreate(`${data.type}`, ""));
+            button.appendChild(shortCreate(`${data.user}`, ""));
+            button.appendChild(shortCreate(`${data.time}`, "", "time"));
+
+            selectionList.append(li);
+        });
+
+        // Apply event listners etc.
+        setupSelectionList();
+    }
+
+    /**
+     * Updated the list with new audit-logs
+     * Get start of logs and count is the amount of logs to fetch. eks: start: 100: count: 50
+     * @param {Number} start
+     * @param {number} count
+     */
+    function updateSelectionList(start, count, replaceElements) {
+        let data = {
+            selection: true,
+            options: { ...getOptions(), start, count },
+        };
+
+        let request = sendXMLHttpRequest(
+            handleUpdateSelection,
+            JSON.stringify(data),
+        );
+
+        function handleUpdateSelection() {
+            let responseData = JSON.parse(request.response);
+
+            replaceWithNewSelection(replaceElements, responseData.selections);
+
+            asyncLoading = false;
+        }
+    }
+
+    function replaceWithNewSelection(replaceElements, data) {
+        if (replaceElements.length != data.length) {
+            console.error("Data and replacements do not match");
+        }
+
+        for (let i = 0; i < data.length; i++) {
+            let node = data[i];
+            let placeholder = replaceElements[i];
+            let button = placeholder.querySelector(".entry");
+            button.classList.remove("tombstone");
+
+            if (i == 0) {
+                button.style.backgroundColor = "purple";   
+            }
+
+            button.dataset.a = node._id;
+            let children = button.querySelectorAll("*");
+            children[0].textContent = `${node.type}`;
+            children[1].textContent = `${node.user}`;
+            children[2].textContent = `${node.time}`;
+        }
+    }
+
+    function infiniteScrollSelectionList(total) {
+        //Note total amount so we don't fetch unused items
+        let currentSelection = [0, 100];
+
+        selectionList.addEventListener("scroll", function () {
+            let scroll = selectionList.scrollTop;
+            let scrollOnlyHeight =
+                selectionList.scrollHeight - selectionList.clientHeight;
+            /* TODO Change to percentage of total maybe 10%? */
+            if (scroll > scrollOnlyHeight - 300 && asyncLoading == false) {
+                console.log({currentSelection});
+                asyncLoading = true;
+                currentSelection[0] += 50;
+                currentSelection[1] =
+                    currentSelection[1] + 50 > total
+                        ? total
+                        : currentSelection[1] + 50;
+                let tombStoneItems = createSelectionTombstones(50, "append");
+
+                // 50 are replaced that leaves 50 normal ones
+                updateSelectionList(
+                    currentSelection[1] - 50,
+                    50,
+                    tombStoneItems
+                );
+                // Fill in received data
+            }
+        });
+    }
+
+    /**
+     * Placeholders/tombstones for new entries fill be used when content is fetched
+     * @param {Boolean} [append=true]
+     */
+    function createSelectionTombstones(amount, append) {
+        let selectionItems = [...selectionList.querySelectorAll("li")];
+        let oldGroup;
+        //Get the 50 first or last nodes
+        if (append === "append") {
+            oldGroup = selectionItems.slice(0, amount);
+        } else {
+            const length = selectionItems.length;
+            oldGroup = selectionItems.slice(length - amount, length);
+        }
+
+        oldGroup.forEach((element) => {
+            let button = element.querySelector(".entry");
+            button.classList.add("tombstone");
+            // Change the event listner not to crash on empty value
+            button.dataset.a = "";
+
+            let divs = [...element.querySelectorAll(".entry *")];
+            divs[0].textContent = "";
+            divs[1].textContent = "";
+            divs[2].textContent = "";
+            selectionList.removeChild(element);
+
+            if (append) {
+                selectionList.append(element);
+            } else {
+                selectionList.prepend(element);
+            }
+        });
+
+        return oldGroup;
+    }
+});
