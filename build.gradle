@@ -78,7 +78,7 @@ task buildJS(type: NpmTask) {
 sourceSets {
 	main {
 		resources {
-			exclude "**/*.scss"
+            exclude "**/*.scss"
             exclude "**/*.es6"
 		}
 	}	

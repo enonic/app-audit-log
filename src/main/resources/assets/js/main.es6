@@ -5,7 +5,7 @@ const sendXMLHttpRequest = util.sendXMLHttpRequest;
 
 // Main function called on page load
 document.addEventListener("DOMContentLoaded", function () {
-    let selectionList = document.querySelector("#select-section .select-list");
+    const selectionList = document.querySelector("#select-section .select-list");
     let total = 0;
     let asyncLoading = false;
     // Initial selection list rendering
@@ -13,27 +13,21 @@ document.addEventListener("DOMContentLoaded", function () {
     setupSelectionList();
     infiniteScrollSelectionList();
 
-    let type = document.getElementById("select-type");
-    // let data = {};
+    const type = document.getElementById("select-type");
     window.typeAutoComplete.forEach((element) => {
-        // data[element.key] = null;
-        let option = document.createElement("option");
+        const option = document.createElement("option");
         option.value = element.key;
         option.textContent = element.key;
         type.appendChild(option);
     });
     // M = materializecss
     M.FormSelect.init(type, {});
-    /* M.Autocomplete.init(type, {
-        data,
-        minLength: 0,
-    }); */
     type.addEventListener("change", clearAndUpdate);
 
-    var textSearch = document.getElementById("search-text");
+    const textSearch = document.getElementById("search-text");
     textSearch.addEventListener("change", clearAndUpdate);
 
-    var datepickers = document.querySelectorAll(".datepicker");
+    const datepickers = document.querySelectorAll(".datepicker");
     M.Datepicker.init(datepickers, {
         autoClose: true,
         format: "yyyy-mm-dd",
@@ -50,9 +44,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function handleSelect(event) {
             if ((event.code = "Enter" || event.code == undefined)) {
-                let clickEl = event.currentTarget;
-                let target = clickEl.querySelector("button");
-                let id = target.dataset.a;
+                const clickEl = event.currentTarget;
+                const target = clickEl.querySelector("button");
+                const id = target.dataset.a;
                 if (id) {
                     preview.getEntry(id);
                 }
@@ -73,23 +67,23 @@ document.addEventListener("DOMContentLoaded", function () {
      * Get the current filters that are active and return them as a options object.
      */
     function getOptions() {
-        let options = {};
-        let fromEl = document.getElementById("select-from");
+        const options = {};
+        const fromEl = document.getElementById("select-from");
         if (fromEl.value) {
             options.from = fromEl.value;
         }
 
-        let toEl = document.getElementById("select-to");
+        const toEl = document.getElementById("select-to");
         if (toEl.value) {
             options.to = toEl.value;
         }
 
-        let typeEl = document.getElementById("select-type");
+        const typeEl = document.getElementById("select-type");
         if (typeEl.value) {
             options.type = typeEl.value;
         }
 
-        let searchEl = document.getElementById("search-text");
+        const searchEl = document.getElementById("search-text");
         if (searchEl.value) {
             options.fullText = searchEl.value;
         }
@@ -108,12 +102,12 @@ document.addEventListener("DOMContentLoaded", function () {
         /**
          * Preview. Could refactor into preview.es6
          */
-        let previewPanel = document.querySelector(".show-wrapper");
+        const previewPanel = document.querySelector(".show-wrapper");
         while (previewPanel.childNodes.length > 0) {
             previewPanel.firstChild.remove();
         }
 
-        let helpText = shortCreate(
+        const helpText = shortCreate(
             "Free space, select something on the left",
             "placeholder",
             "div"
@@ -129,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function newSelectionList(loading = true) {
         if (loading) {
-            let loading = shortCreate("", "loading-anim");
+            const loading = shortCreate("", "loading-anim");
             //Add loadinganimation
             for (let i = 0; i < 3; i++) {
                 loading.appendChild(shortCreate("", "dot"));
@@ -137,18 +131,18 @@ document.addEventListener("DOMContentLoaded", function () {
             selectionList.prepend(loading);
         }
 
-        let data = {
+        const data = {
             selection: true,
             options: getOptions(),
         };
 
-        let request = sendXMLHttpRequest(
+        const request = sendXMLHttpRequest(
             handleSelectionGroup,
             JSON.stringify(data)
         );
 
         function handleSelectionGroup() {
-            let responseData = JSON.parse(request.response);
+            const responseData = JSON.parse(request.response);
             total = responseData.total;
 
             createSelectionList(responseData);
@@ -160,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {Array} dataList all entries that need to be generated
      */
     function createSelectionList(dataList) {
-        let totalEl = document.querySelector("#select-section .total");
+        const totalEl = document.querySelector("#select-section .total");
 
         totalEl.textContent = `Total: ${total}`;
 
@@ -192,18 +186,18 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {number} count
      */
     function updateSelectionList(start, count, replaceElements) {
-        let data = {
+        const data = {
             selection: true,
             options: { ...getOptions(), start, count },
         };
 
-        let request = sendXMLHttpRequest(
+        sendXMLHttpRequest(
             handleUpdateSelection,
             JSON.stringify(data)
         );
 
-        function handleUpdateSelection() {
-            let responseData = JSON.parse(request.response);
+        function handleUpdateSelection(request) {
+            const responseData = JSON.parse(request.response);
 
             replaceWithNewSelection(replaceElements, responseData.selections);
 
@@ -213,10 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function replaceWithNewSelection(replaceElements, data) {
         if (replaceElements.length != data.length) {
-            console.log({
-                replaceLen: replaceElements.length,
-                dataLen: data.length,
-            });
             console.error("Data and replacements do not match");
         }
 
@@ -236,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function infiniteScrollSelectionList() {
         //Note total amount so we don't fetch unused items
         let currentSelection = [0, 100];
-        selectionList.even
+
         selectionList.addEventListener("scroll", function () {
             let scroll = selectionList.scrollTop;
             let scrollOnlyHeight =
@@ -279,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {Boolean} [append=true]
      */
     function createSelectionTombstones(amount, append) {
-        let selectionItems = [...selectionList.querySelectorAll("li")];
+        const selectionItems = [...selectionList.querySelectorAll("li")];
         let oldGroup;
         //Get the 50 first or last nodes
         if (append === "append") {
@@ -290,12 +280,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         oldGroup.forEach((element) => {
-            let button = element.querySelector(".entry");
+            const button = element.querySelector(".entry");
             button.classList.add("tombstone");
             // Change the event listner not to crash on empty value
             button.dataset.a = "";
 
-            let divs = [...element.querySelectorAll(".entry *")];
+            const divs = [...element.querySelectorAll(".entry *")];
             divs[0].textContent = "";
             divs[1].textContent = "";
             divs[2].textContent = "";
