@@ -222,16 +222,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         for (let i = 0; i < data.length; i++) {
             let node = data[i];
-            let placeholder = replaceElements[i];
-            let button = placeholder.querySelector(".entry");
+            let button = replaceElements[i].querySelector(".entry");
             button.classList.remove("tombstone");
-
-            if (i == 0) {
-                button.style.backgroundColor = "purple";
-            }
-
             button.dataset.a = node._id;
-            let children = button.querySelectorAll("*");
+
+            let children = button.childNodes;
             children[0].textContent = `${node.type}`;
             children[1].textContent = `${node.user}`;
             children[2].textContent = `${node.time}`;
