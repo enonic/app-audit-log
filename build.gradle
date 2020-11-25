@@ -60,6 +60,11 @@ task buildSass(type:Exec) {
     }
 }
 
+node {
+    version = "14.12.0"
+    download = true
+}
+
 task buildJS(type: NpmTask) {
     args = ["run", "build"]
     inputs.files("src/main/resources/assets/js")
