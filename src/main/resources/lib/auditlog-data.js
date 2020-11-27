@@ -31,6 +31,7 @@ function getAllTypes() {
             terms: {
                 field: "type",
                 order: "_count desc",
+                size: 100,
             },
         },
     });
