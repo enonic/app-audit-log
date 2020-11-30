@@ -5,7 +5,9 @@ const sendXMLHttpRequest = util.sendXMLHttpRequest;
 
 // Main function called on page load
 document.addEventListener("DOMContentLoaded", function () {
-    const selectionList = document.querySelector("#select-section .select-list");
+    const selectionList = document.querySelector(
+        "#select-section .select-list"
+    );
     let total = 0;
     let asyncLoading = false;
     // Initial selection list rendering
@@ -168,9 +170,13 @@ document.addEventListener("DOMContentLoaded", function () {
             li.appendChild(button);
 
             button.dataset.a = data._id;
-            button.appendChild(shortCreate(`${data.type}`, ""));
-            button.appendChild(shortCreate(`${data.user}`, ""));
-            button.appendChild(shortCreate(`${data.time}`, "", "time"));
+            let leftD = document.createElement("div");
+            let rightD = document.createElement("div");
+            leftD.appendChild(shortCreate(`${data.type}`, "h6"));
+            leftD.appendChild(shortCreate(`${data.time}`, "", "time"));
+            rightD.appendChild(shortCreate(`${data.user}`, ""));
+            button.appendChild(leftD);
+            button.appendChild(rightD);
 
             selectionList.append(li);
         });
@@ -191,10 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: { ...getOptions(), start, count },
         };
 
-        sendXMLHttpRequest(
-            handleUpdateSelection,
-            JSON.stringify(data)
-        );
+        sendXMLHttpRequest(handleUpdateSelection, JSON.stringify(data));
 
         function handleUpdateSelection(request) {
             const responseData = JSON.parse(request.response);
@@ -225,9 +228,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function infiniteScrollSelectionList() {
         //Note total amount so we don't fetch unused items
-        let currentSelection = [0, 100];
-
         selectionList.addEventListener("scroll", function () {
+            let selectionSize = selectionList.children.length;
             let scroll = selectionList.scrollTop;
             let scrollOnlyHeight =
                 selectionList.scrollHeight - selectionList.clientHeight;
@@ -239,16 +241,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ) {
                 let oneJump = 25;
                 asyncLoading = true;
-                let oldListSize = currentSelection[1];
 
-                currentSelection[0] += oneJump;
-                currentSelection[1] =
-                    currentSelection[1] + oneJump > total
-                        ? total
-                        : currentSelection[1] + oneJump;
+                let nextBatch =  oneJump;
+                if (selectionSize + oneJump > total) {
+                    nextBatch = selectionSize - total;
+                }
+                
 
-                let nextListSize = currentSelection[1];
-                let nodesToRequest = nextListSize - oldListSize;
                 let tombStoneItems = createSelectionTombstones(
                     nodesToRequest,
                     "append"
@@ -259,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     nodesToRequest,
                     tombStoneItems
                 );
-            } 
+            }
             // TODO back to top infinite scroller
         });
     }
@@ -268,36 +267,52 @@ document.addEventListener("DOMContentLoaded", function () {
      * Placeholders/tombstones for new entries fill be used when content is fetched
      * @param {Boolean} [append=true]
      */
-    function createSelectionTombstones(amount, append) {
-        const selectionItems = [...selectionList.querySelectorAll("li")];
-        let oldGroup;
-        //Get the 50 first or last nodes
-        if (append === "append") {
-            oldGroup = selectionItems.slice(0, amount);
-        } else {
-            const length = selectionItems.length;
-            oldGroup = selectionItems.slice(length - amount, length);
+    function createSelectionTombstones(amount,) {        
+
+        for (let i=0; i<amount; i++) {
+            let selectItem = document.createElement("li");
+            const button = shortCreate("", [".entry", ".tombstone"], "button");
+            selectItem.appendChild(button);
+            
+            let leftD = document.createElement("div");
+            let rightD = document.createElement("div");
+
+            button.appendChild(leftD);
+            button.appendChild(rightD);
+
+            selectionList.append(selectItem);
         }
 
-        oldGroup.forEach((element) => {
-            const button = element.querySelector(".entry");
-            button.classList.add("tombstone");
-            // Change the event listner not to crash on empty value
-            button.dataset.a = "";
-
-            const divs = [...element.querySelectorAll(".entry *")];
-            divs[0].textContent = "";
-            divs[1].textContent = "";
-            divs[2].textContent = "";
-            selectionList.removeChild(element);
-
-            if (append) {
-                selectionList.append(element);
-            } else {
-                selectionList.prepend(element);
-            }
-        });
-
         return oldGroup;
+    }
+
+    function createSelectionElement(data) {
+        let selectItem = document.createElement("li");
+
+        let entryClasses = ["entry"];
+        if (data) {
+            entryClasses.appendChild("tombstone");
+        }
+        const button = shortCreate("", entryClasses, "button");
+        selectItem.appendChild(button);
+        
+        let leftD = document.createElement("div");
+        let rightD = document.createElement("div");
+
+        button.appendChild(leftD);
+        button.appendChild(rightD);
+
+        if (data) {
+            leftD.appendChild(shortCreate(`${data.type}`, "h6"));
+            leftD.appendChild(shortCreate(`${data.time}`, "", "time"));
+            rightD.appendChild(shortCreate(`${data.user}`, ""));
+            button.dataset.a = data._id;
+        } else {
+            leftD.appendChild(document.createElement("h6"));
+            leftD.appendChild(document.createElement("time"));
+            rightD.appendChild(document.createElement(""));
+        }
+
+        return selectItem;
     }
 });

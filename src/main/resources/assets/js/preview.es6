@@ -44,8 +44,10 @@ function createEntry(entry) {
     let image = shortCreate(null, null, "img");
     image.style.visibility = "hidden";
     header.appendChild(image);
-    let title = shortCreate(`Log entry`, "title", "h1");
+    let title = shortCreate(`${entry.type}`, "title", "h1");
+    let path = shortCreate(`${entry.user}`, "path", "h4");
     header.appendChild(title);
+    header.appendChild(path);
     showEntry.appendChild(header);
 
     let propPanel = shortCreate(null, "properties-panel");

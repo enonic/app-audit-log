@@ -27,7 +27,7 @@
             }
 
             &.tombstone {
-                *:after {
+                * *:after {
                     content: "";
                     background-color: var(--gray);
                     border-radius: 5px;
@@ -45,10 +45,14 @@
     border: none;
     cursor: pointer;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    padding: 1rem;
+    grid-template-columns: 1fr 1fr;
+    padding: 1rem 0;
     text-align: left;
     width: 100%;
+
+    * {
+        padding: 0 1rem;
+    }
 
     time {
         display: inline-block;
