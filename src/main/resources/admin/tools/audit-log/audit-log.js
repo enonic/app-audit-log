@@ -6,9 +6,8 @@ const adminLib = require('/lib/xp/admin');
 const view = resolve("audit-log.html");
 
 exports.get = function () {
-    let types = auditData.getAllTypes();
-
-    let typeAutoComplete = JSON.stringify(types);
+    let types = JSON.stringify(auditData.getAllTypes());
+    let users = JSON.stringify(auditData.getAllUsers());
 
     let serviceUrl = portal.serviceUrl({
         service: "get-audit",
@@ -22,7 +21,8 @@ exports.get = function () {
     let model = {
         assetsUrl,
         serviceUrl,
-        typeAutoComplete,
+        allUsers: users,
+        allTypes: types,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
     };

@@ -12,14 +12,14 @@
     <script data-th-src="|${assetsUrl}/js/main.js|"></script>
     <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
     <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
-    <script data-th-inline="javascript">
-        window.auditServiceUrl = /*[[${serviceUrl}]]*/;
-        window.typeAutoComplete = JSON.parse(/*[[${typeAutoComplete}]]*/);
+    <script data-th-inline="javascript"> 
         var CONFIG = {
-            //adminUrl: '{{adminUrl}}', // Not needed?
-            //appId: 'toolstarter', 
+            auditServiceUrl: /*[[${serviceUrl}]]*/,
+            allUsers: JSON.parse(/*[[${allUsers}]]*/),
+            allTypes: JSON.parse(/*[[${allTypes}]]*/),        
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
+            icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
         };
     </script>
 </head>
@@ -32,33 +32,39 @@
                 <span class="app-name">Audit log browser</span>
             </div>
         </div>
-        <div class="toolbar">
+        <div id="top-toolbar" class="toolbar">
             <div class="icon-wrapper">
                 <div class="material-icons large">search</div>
             </div>
             <div class="input-field">
-                <input id="select-from" placeholder="" type="text" class="datepicker" autocomplete="off" />
                 <label for="select-from">From</label>
+                <input id="select-from" class="browser-default datepicker" placeholder="" type="text"
+                    autocomplete="off" />
             </div>
             <div class="input-field">
-                <input id="select-to" placeholder="" type="text" class="datepicker" autocomplete="off" />
                 <label for="select-to">To</label>
+                <input id="select-to" class="browser-default datepicker" placeholder="" type="text"
+                    autocomplete="off" />
             </div>
             <div class="input-field">
+                <label>User</label>
+                <input id="select-user" class="browser-default autocomplete" type="text" />
+            </div>
+            <div class="input-field">
+                <label id="select-type-label" for="select-type">Type</label>
                 <select id="select-type" class="type">
                     <option value="">Any</option>
                 </select>
-                <label id="select-type-label" for="select-type">Type</label>
             </div>
             <div class="input-field">
-                <input id="search-text" placeholder="" type="text" class="" autocomplete="off" />
                 <label for="search-text">Text</label>
+                <input id="search-text" class="browser-default" placeholder="" type="text" autocomplete="off" />
             </div>
         </div>
 
         <div class="row">
             <section id="select-section" class="col s5">
-                <span class="total"></span>
+                <div class="total tree-grid-toolbar toolbar"></div>
                 <ol class="select-list">
                 </ol>
             </section>

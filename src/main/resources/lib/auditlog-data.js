@@ -4,6 +4,14 @@ const moment = require("/lib/moment.min.js");
 //const content = require("/lib/xp/content");
 const node = require("/lib/xp/node");
 
+//exports.getDisplayData = displayData;
+exports.getEntry = getEntry;
+exports.getSelection = getSelection;
+exports.getEntriesForUser = getEntriesForUser;
+//exports.getEntries = getEntries;
+exports.getAllTypes = getAllTypes;
+exports.getAllUsers = getAllUsers;
+
 /**
  * Simple get the node from storrage call with the audit log
  * @param {String} id
@@ -37,6 +45,20 @@ function getAllTypes() {
     });
 
     return result.aggregations.by_type.buckets;
+}
+
+function getAllUsers() {
+    let result = auth.findUsers({
+        count: -1,
+        query: "",
+    });
+
+    let data = {};
+    result.hits.forEach(function(user) {
+        data[user.key] = '';
+    });
+
+    return data; 
 }
 
 /**
@@ -106,6 +128,10 @@ function doQuery(queryLine, settings, aggregations) {
     if (options.type) {
         if (query != "") query += " AND ";
         query += `type = '${options.type}'`;
+    }
+    if (options.user) {
+        if (query != "") query += " AND ";
+        query += `user = '${options.user}'`;
     }
     if (options.fullText) {
         if (query != "") query += " AND ";
@@ -231,10 +257,3 @@ function getAuditType(type) {
             return type;
     }
 }
-
-//exports.getDisplayData = displayData;
-exports.getEntry = getEntry;
-exports.getSelection = getSelection;
-exports.getEntriesForUser = getEntriesForUser;
-//exports.getEntries = getEntries;
-exports.getAllTypes = getAllTypes;

@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     infiniteScrollSelectionList();
 
     const type = document.getElementById("select-type");
-    window.typeAutoComplete.forEach((element) => {
+    CONFIG.allTypes.forEach((element) => {
         const option = document.createElement("option");
         option.value = element.key;
         option.textContent = element.key;
@@ -29,6 +29,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const textSearch = document.getElementById("search-text");
     textSearch.addEventListener("change", clearAndUpdate);
 
+    const userSearch = document.getElementById("select-user");
+    M.Autocomplete.init(userSearch, {
+        onAutocomplete: clearAndUpdate,
+        data: CONFIG.allUsers, 
+        limit: 20,
+        minLength: 2,
+    });
+    //userSearch.addEventListener("change", clearAndUpdate);
+
     const datepickers = document.querySelectorAll(".datepicker");
     M.Datepicker.init(datepickers, {
         autoClose: true,
@@ -38,8 +47,16 @@ document.addEventListener("DOMContentLoaded", function () {
         onClose: clearAndUpdate,
     });
 
-    function setupSelectionList() {
-        selectionList.childNodes.forEach(function (selectEl) {
+    function getUsers() {
+        console.log(this);
+        clearAndUpdate();
+    }
+
+    function setupSelectionList(elements) {
+        if (elements == undefined) {
+            element = selectionList.childNodes;
+        }
+        element.forEach(function (selectEl) {
             selectEl.addEventListener("click", handleSelect);
             selectEl.addEventListener("keyDown", handleSelect);
         });
@@ -85,6 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
             options.type = typeEl.value;
         }
 
+        const userEl = document.getElementById("select-user");
+        if (userEl.value) {
+            options.user = userEl.value;
+        }
+
         const searchEl = document.getElementById("search-text");
         if (searchEl.value) {
             options.fullText = searchEl.value;
@@ -94,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /**
-     * Clear all selection and reset the preview
+     * Clear selection list and reset the preview
      */
     function clearAll() {
         while (selectionList.childNodes.length > 0) {
@@ -165,20 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         dataList.selections.forEach((data) => {
-            let li = shortCreate("", "", "li");
-            let button = shortCreate("", "entry", "button");
-            li.appendChild(button);
-
-            button.dataset.a = data._id;
-            let leftD = document.createElement("div");
-            let rightD = document.createElement("div");
-            leftD.appendChild(shortCreate(`${data.type}`, "h6"));
-            leftD.appendChild(shortCreate(`${data.time}`, "", "time"));
-            rightD.appendChild(shortCreate(`${data.user}`, ""));
-            button.appendChild(leftD);
-            button.appendChild(rightD);
-
-            selectionList.append(li);
+            selectionList.appendChild(createSelectionElement(data));
         });
 
         // Apply event listners etc.
@@ -186,10 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /**
-     * Updated the list with new audit-logs
-     * Get start of logs and count is the amount of logs to fetch. eks: start: 100: count: 50
-     * @param {Number} start
-     * @param {number} count
+     * Updated the list with new audit-logs. They are fetched from server.
+     * @param {Number} start from number to get the logs. eg get from log 100.
+     * @param {number} count how many logs to get.
      */
     function updateSelectionList(start, count, replaceElements) {
         const data = {
@@ -214,52 +222,52 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         for (let i = 0; i < data.length; i++) {
-            let node = data[i];
+            const node = data[i];
             let button = replaceElements[i].querySelector(".entry");
             button.classList.remove("tombstone");
             button.dataset.a = node._id;
 
-            let children = button.childNodes;
-            children[0].textContent = `${node.type}`;
-            children[1].textContent = `${node.user}`;
-            children[2].textContent = `${node.time}`;
+            const nested = button.childNodes;
+            nested[0].childNodes[0].textContent = `${node.type}`;
+            nested[0].childNodes[1].textContent = `${node.time}`;
+            nested[1].childNodes[0].textContent = `${node.user}`;
         }
     }
 
+    /**
+     * Sets up the scroll listener and deals with the ajax calls needed to get new entrys.
+     * Should only be called once on page load. Multiple evnt listners will break the page.
+     */
     function infiniteScrollSelectionList() {
         //Note total amount so we don't fetch unused items
+        let selectionSize = selectionList.children.length;
+
         selectionList.addEventListener("scroll", function () {
-            let selectionSize = selectionList.children.length;
-            let scroll = selectionList.scrollTop;
-            let scrollOnlyHeight =
+            const scroll = selectionList.scrollTop;
+            const scrollOnlyHeight =
                 selectionList.scrollHeight - selectionList.clientHeight;
 
             if (
                 scroll > scrollOnlyHeight - 300 &&
                 asyncLoading == false &&
-                currentSelection[1] < total
+                selectionSize < total
             ) {
-                let oneJump = 25;
+                const oneJump = 25;
                 asyncLoading = true;
 
-                let nextBatch =  oneJump;
+                let nextBatch = oneJump;
                 if (selectionSize + oneJump > total) {
-                    nextBatch = selectionSize - total;
+                    nextBatch = total - selectionSize;
                 }
-                
-
-                let tombStoneItems = createSelectionTombstones(
-                    nodesToRequest,
-                    "append"
-                );
+                selectionSize += nextBatch;
+                const tombStoneItems = createSelectionTombstones(nextBatch);
 
                 updateSelectionList(
-                    oldListSize,
-                    nodesToRequest,
+                    selectionSize - nextBatch,
+                    nextBatch,
                     tombStoneItems
                 );
             }
-            // TODO back to top infinite scroller
         });
     }
 
@@ -267,35 +275,28 @@ document.addEventListener("DOMContentLoaded", function () {
      * Placeholders/tombstones for new entries fill be used when content is fetched
      * @param {Boolean} [append=true]
      */
-    function createSelectionTombstones(amount,) {        
-
-        for (let i=0; i<amount; i++) {
-            let selectItem = document.createElement("li");
-            const button = shortCreate("", [".entry", ".tombstone"], "button");
-            selectItem.appendChild(button);
-            
-            let leftD = document.createElement("div");
-            let rightD = document.createElement("div");
-
-            button.appendChild(leftD);
-            button.appendChild(rightD);
-
-            selectionList.append(selectItem);
+    function createSelectionTombstones(amount) {
+        const group = [];
+        for (let i = 0; i < amount; i++) {
+            let tombstone = createSelectionElement();
+            group.push(tombstone);
+            selectionList.appendChild(tombstone);
         }
+        setupSelectionList(group)
 
-        return oldGroup;
+        return group;
     }
 
     function createSelectionElement(data) {
         let selectItem = document.createElement("li");
 
         let entryClasses = ["entry"];
-        if (data) {
-            entryClasses.appendChild("tombstone");
+        if (data == null || data == undefined) {
+            entryClasses.push("tombstone");
         }
         const button = shortCreate("", entryClasses, "button");
         selectItem.appendChild(button);
-        
+
         let leftD = document.createElement("div");
         let rightD = document.createElement("div");
 
@@ -305,12 +306,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (data) {
             leftD.appendChild(shortCreate(`${data.type}`, "h6"));
             leftD.appendChild(shortCreate(`${data.time}`, "", "time"));
-            rightD.appendChild(shortCreate(`${data.user}`, ""));
+            rightD.appendChild(shortCreate(`${data.user}`, "user", "div"));
             button.dataset.a = data._id;
         } else {
             leftD.appendChild(document.createElement("h6"));
             leftD.appendChild(document.createElement("time"));
-            rightD.appendChild(document.createElement(""));
+            rightD.appendChild(shortCreate(null, "user", "div"));
         }
 
         return selectItem;

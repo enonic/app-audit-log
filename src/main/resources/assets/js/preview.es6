@@ -41,11 +41,11 @@ function createEntry(entry) {
     header.id = "previewHeader";
 
     // header
-    let image = shortCreate(null, null, "img");
-    image.style.visibility = "hidden";
-    header.appendChild(image);
+    let icon = document.createElement("img");
+    icon.src = CONFIG.icon;
     let title = shortCreate(`${entry.type}`, "title", "h1");
     let path = shortCreate(`${entry.user}`, "path", "h4");
+    header.appendChild(icon);
     header.appendChild(title);
     header.appendChild(path);
     showEntry.appendChild(header);

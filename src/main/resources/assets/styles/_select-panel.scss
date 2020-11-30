@@ -9,21 +9,50 @@
 
     .total {
         display: block;
-        padding: 1rem; 
+        margin: 0;
+        padding-left: 1.5rem;
     }
 
     .select-list {
         overflow-y: auto;
-        height: calc(100vh - 196px);
+        height: calc(100vh - 210px);
 
         li .entry {
+            background-color: white;
+            border: none;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 0.5rem;
+            text-align: left;
+            width: 100%;
+
+            & > * {
+                padding: 0 1rem;
+            }
+
+            time {
+                display: inline-block;
+                color: #777;
+                font-size: 14px;
+            }
+
+            /* Did not think i would ever user this */
+            div .user {
+                padding: 0.5rem 0;
+            }
+
             &:hover {
                 background-color: var(--dark-gray);
-                color: white;
+                * {
+                    color: white;
+                }
             }
             &:focus {
                 background-color: #2196f3;
-                color: white;
+                * {
+                    color: white;
+                }
             }
 
             &.tombstone {
@@ -37,24 +66,5 @@
                 }
             }
         }
-    }
-}
-
-.entry {
-    background-color: white;
-    border: none;
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 1rem 0;
-    text-align: left;
-    width: 100%;
-
-    * {
-        padding: 0 1rem;
-    }
-
-    time {
-        display: inline-block;
     }
 }

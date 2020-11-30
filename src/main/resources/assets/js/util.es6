@@ -22,7 +22,7 @@ export function shortCreate(text, className = null, tag = "div") {
  */
 export function sendXMLHttpRequest(handler, data, error = XMLHttpError) {
     let request = new XMLHttpRequest();
-    request.open("POST", window.auditServiceUrl);
+    request.open("POST", CONFIG.auditServiceUrl);
     request.setRequestHeader("Content-type", "application/json");
 
     request.responseType = "application/json";
