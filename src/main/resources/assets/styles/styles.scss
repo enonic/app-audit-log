@@ -44,6 +44,8 @@
         cursor: pointer;
         display: inline-block;
         padding: 25px 10px;
+        user-select: none;
+
         div {
             display: block;
         }

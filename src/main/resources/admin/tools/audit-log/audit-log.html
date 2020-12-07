@@ -33,27 +33,32 @@
             </div>
         </div>
         <div id="top-toolbar" class="toolbar">
-            <div class="input-field">
-                <input id="select-from" class="datepicker" placeholder="From" type="text"
-                autocomplete="off" />
+            <div class="icon-wrapper">
+                <div class="material-icons large">search</div>
             </div>
             <div class="input-field">
-                <input id="select-to" class="datepicker" placeholder="To" type="text"
+                <input id="select-from" class="datepicker" placeholder="" type="text"
                 autocomplete="off" />
+                <label for="select-from">From</label>
             </div>
             <div class="input-field">
-                <input id="select-user" class="autocomplete" placeholder="User" type="text" />
+                <input id="select-to" class="datepicker" placeholder="" type="text"
+                autocomplete="off" />
+                <label for="select-to">To</label>
+            </div>
+            <div class="input-field">
+                <input id="select-user" class="autocomplete" type="text" />
+                <label>User</label>
             </div>
             <div class="input-field">
                 <select id="select-type" class="type">
-                    <option value="">Any type</option>
+                    <option value="">Any</option>
                 </select>
+                <label id="select-type-label" for="select-type">Type</label>
             </div>
             <div class="input-field">
-                <input id="search-text" class="" placeholder="Search" type="text" autocomplete="off" />
-            </div>
-            <div class="icon-wrapper" id="search-button">
-                <div class="material-icons large">search</div>
+                <input id="search-text" class="" placeholder="" type="text" autocomplete="off" />
+                <label for="search-text">Text</label>
             </div>
         </div>
 

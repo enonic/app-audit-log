@@ -52,6 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
         clearAndUpdate();
     });
 
+    // TODO Material initialize the text fields
+
 
     function setupSelectionList(elements) {
         if (elements == undefined) {
