@@ -47,10 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
         onClose: clearAndUpdate,
     });
 
-    function getUsers() {
-        console.log(this);
+    const button = document.getElementById("search-button");
+    button.addEventListener("click", function() {
         clearAndUpdate();
-    }
+    });
+
 
     function setupSelectionList(elements) {
         if (elements == undefined) {

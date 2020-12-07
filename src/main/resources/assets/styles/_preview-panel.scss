@@ -6,8 +6,8 @@
     position: relative;
 
     .placeholder {
-        color: #6d6d6d;
-        font-size: 2rem;
+        color: #d3d3d3;
+        font-size: 21px;
         margin: 10px;
         position: absolute;
         right: 50%;
@@ -29,6 +29,10 @@
 
     .title {
         overflow: visible;
+    }
+
+    .path {
+        font-size: 18px;
     }
 }
 

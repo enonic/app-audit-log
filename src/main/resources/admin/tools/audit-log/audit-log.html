@@ -33,32 +33,27 @@
             </div>
         </div>
         <div id="top-toolbar" class="toolbar">
-            <div class="icon-wrapper">
-                <div class="material-icons large">search</div>
+            <div class="input-field">
+                <input id="select-from" class="datepicker" placeholder="From" type="text"
+                autocomplete="off" />
             </div>
             <div class="input-field">
-                <label for="select-from">From</label>
-                <input id="select-from" class="browser-default datepicker" placeholder="" type="text"
-                    autocomplete="off" />
+                <input id="select-to" class="datepicker" placeholder="To" type="text"
+                autocomplete="off" />
             </div>
             <div class="input-field">
-                <label for="select-to">To</label>
-                <input id="select-to" class="browser-default datepicker" placeholder="" type="text"
-                    autocomplete="off" />
+                <input id="select-user" class="autocomplete" placeholder="User" type="text" />
             </div>
             <div class="input-field">
-                <label>User</label>
-                <input id="select-user" class="browser-default autocomplete" type="text" />
-            </div>
-            <div class="input-field">
-                <label id="select-type-label" for="select-type">Type</label>
                 <select id="select-type" class="type">
-                    <option value="">Any</option>
+                    <option value="">Any type</option>
                 </select>
             </div>
             <div class="input-field">
-                <label for="search-text">Text</label>
-                <input id="search-text" class="browser-default" placeholder="" type="text" autocomplete="off" />
+                <input id="search-text" class="" placeholder="Search" type="text" autocomplete="off" />
+            </div>
+            <div class="icon-wrapper" id="search-button">
+                <div class="material-icons large">search</div>
             </div>
         </div>
 

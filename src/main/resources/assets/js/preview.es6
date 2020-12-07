@@ -44,7 +44,7 @@ function createEntry(entry) {
     let icon = document.createElement("img");
     icon.src = CONFIG.icon;
     let title = shortCreate(`${entry.type}`, "title", "h1");
-    let path = shortCreate(`${entry.user}`, "path", "h4");
+    let path = shortCreate(`${entry.time}`, "path", "h4");
     header.appendChild(icon);
     header.appendChild(title);
     header.appendChild(path);
@@ -61,7 +61,7 @@ function createEntry(entry) {
         let propList = shortCreate(null, "data-list", "ul");
         itemGroup.appendChild(propList);
 
-        if (prop != "data") {
+        if (prop != "data" && prop != "type" && prop != "time") {
             let listheader = shortCreate(`${prop}`, "list-header", "li");
             propList.appendChild(listheader);
             let valueEl = shortCreate(null, null, "li");
