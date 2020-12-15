@@ -12,11 +12,11 @@
     <script data-th-src="|${assetsUrl}/js/main.js|"></script>
     <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
     <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
-    <script data-th-inline="javascript"> 
+    <script data-th-inline="javascript">
         var CONFIG = {
             auditServiceUrl: /*[[${serviceUrl}]]*/,
             allUsers: JSON.parse(/*[[${allUsers}]]*/),
-            allTypes: JSON.parse(/*[[${allTypes}]]*/),        
+            allTypes: JSON.parse(/*[[${allTypes}]]*/),
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
             icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
@@ -32,18 +32,15 @@
                 <span class="app-name">Audit log browser</span>
             </div>
         </div>
-        <div id="top-toolbar" class="toolbar">
-            <div class="icon-wrapper">
-                <div class="material-icons large">search</div>
-            </div>
+        <div id="top-toolbar" class="toolbar row">
             <div class="input-field">
-                <input id="select-from" class="datepicker" placeholder="" type="text"
-                autocomplete="off" />
+                <input id="select-from" class="datepicker" type="text"
+                    autocomplete="off" />
                 <label for="select-from">From</label>
             </div>
             <div class="input-field">
-                <input id="select-to" class="datepicker" placeholder="" type="text"
-                autocomplete="off" />
+                <input id="select-to" class="datepicker" type="text"
+                    autocomplete="off" />
                 <label for="select-to">To</label>
             </div>
             <div class="input-field">
@@ -57,8 +54,11 @@
                 <label id="select-type-label" for="select-type">Type</label>
             </div>
             <div class="input-field">
-                <input id="search-text" class="" placeholder="" type="text" autocomplete="off" />
+                <input id="search-text" class="" type="text" autocomplete="off" />
                 <label for="search-text">Text</label>
+            </div>
+            <div class="icon-wrapper" id="search-button">
+                <div class="material-icons large">search</div>
             </div>
         </div>
 

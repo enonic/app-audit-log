@@ -1,42 +1,52 @@
 const thymeleaf = require("/lib/thymeleaf");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
-const adminLib = require('/lib/xp/admin');
+const adminLib = require("/lib/xp/admin");
+const license = require("/lib/license");
 
 const view = resolve("audit-log.html");
+const licenseView = resolve("license.html");
 
 exports.get = function () {
-    let types = JSON.stringify(auditData.getAllTypes());
-    let users = JSON.stringify(auditData.getAllUsers());
+    const types = JSON.stringify(auditData.getAllTypes());
+    const users = JSON.stringify(auditData.getAllUsers());
+    const licenseDetail = license.validateLicense({
+        appKey: app.name,
+    });
 
-    let serviceUrl = portal.serviceUrl({
+    log.info(JSON.stringify(licenseDetail, null, 4));
+
+    const serviceUrl = portal.serviceUrl({
         service: "get-audit",
         type: "absolute",
     });
 
-    let assetsUrl = portal.assetUrl({
+    const licenseUrl = portal.serviceUrl({
+        service: "license",
+        type: "absolute",
+    })
+
+    const assetsUrl = portal.assetUrl({
         path: "",
     });
 
-    let model = {
+    const model = {
         assetsUrl,
         serviceUrl,
+        licenseUrl,
         allUsers: users,
         allTypes: types,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
     };
 
-    return {
-        body: thymeleaf.render(view, model),
-    };
+    if (licenseDetail == null || licenseDetail.expired) {
+        return {
+            body: thymeleaf.render(licenseView, model),
+        };
+    } else {
+        return {
+            body: thymeleaf.render(view, model),
+        };
+    }
 };
-
-// Content studio built in error message
-function errorMessage(message) {
-    return {
-        contentType: "text/html",
-        body: `<div class="error">${message}</div>`,
-    };
-}
-

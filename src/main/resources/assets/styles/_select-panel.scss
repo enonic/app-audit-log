@@ -43,10 +43,7 @@
             }
 
             &:hover {
-                background-color: var(--dark-gray);
-                * {
-                    color: white;
-                }
+                background-color: var(--light-gray);
             }
             &:focus {
                 background-color: #2196f3;

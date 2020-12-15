@@ -1,0 +1,18 @@
+#license {
+    &.centerAll {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+    }
+    
+    input[type="file"] {
+        font-size: 14px;
+    }
+
+    label {
+        position: static;
+        color: white;
+        background-color: var(--mat-blue);
+    }
+}

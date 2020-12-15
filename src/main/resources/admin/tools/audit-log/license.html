@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/materialize.min.css|">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.min.css|" />
+    <script data-th-src="|${assetsUrl}/js/license.js|"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Document</title>
+    <script data-th-inline="javascript">
+        let CONFIG = {
+            licenseUrl: /*[[${licenseUrl}]]*/,
+        };
+    </script>
+</head>
+
+<body>
+    <div id="license" class="centerAll">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <h1>No license or invalid license</h1>
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <div class="input-field">
+                        <input id="upload" autocomplete="off" name="licenseFile" type="file" style="display:none"/>
+                        <label class="btn" for="upload">Upload license</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 @import "select-panel";
 @import "preview-panel";
+@import "license";
 @import "material_override";
 @import "shared";
 
@@ -7,6 +8,7 @@
     --entry-padding: 0.8em;
     --gray: #ccc;
     --dark-gray: #6d6d6d;
+    --light-gray: #eee;
     --mat-blue: #2196f3;
 }
 
@@ -35,7 +37,7 @@
 
 #top-toolbar {
     display: grid;
-    grid-template-columns: 100px 100px 250px 250px 5fr auto;
+    grid-template-columns: 100px 100px 250px 275px 5fr auto;
     column-gap: 2rem;
     padding: 1rem;
     height: auto;
@@ -75,7 +77,7 @@
         }
 
         label {
-            position: static;
+            //position: static;
             font-size: 1rem;
         }
     }

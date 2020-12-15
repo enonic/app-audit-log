@@ -1,0 +1,6 @@
+<service>
+    <allow>
+        <principal>role:system.admin</principal>
+        <principal>role:com.enonic.audit.log.use</principal>
+    </allow>
+</service>

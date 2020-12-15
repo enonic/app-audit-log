@@ -28,15 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const textSearch = document.getElementById("search-text");
     textSearch.addEventListener("change", clearAndUpdate);
+    textSearch.addEventListener("keyup", onEnter);
 
     const userSearch = document.getElementById("select-user");
     M.Autocomplete.init(userSearch, {
-        onAutocomplete: clearAndUpdate,
         data: CONFIG.allUsers, 
         limit: 20,
         minLength: 2,
     });
-    //userSearch.addEventListener("change", clearAndUpdate);
+    userSearch.addEventListener("change", clearAndUpdate);
+    userSearch.addEventListener("keyup", onEnter);
 
     const datepickers = document.querySelectorAll(".datepicker");
     M.Datepicker.init(datepickers, {
@@ -52,8 +53,11 @@ document.addEventListener("DOMContentLoaded", function () {
         clearAndUpdate();
     });
 
-    // TODO Material initialize the text fields
-
+    function onEnter(e) {
+        if (e.code = "Enter") {
+            clearAndUpdate();
+        }
+    }
 
     function setupSelectionList(elements) {
         if (elements == undefined) {

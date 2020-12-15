@@ -2,7 +2,7 @@
     "name": "Audit-log",
     "version": "0.0.0",
     "scripts": {
-        "build": "node_modules/.bin/parcel build src/main/resources/assets/js/main.es6 --dist-dir build/resources/main/assets/js --target xp"
+        "build": "node_modules/.bin/parcel build src/main/resources/assets/js/main.es6 src/main/resources/assets/js/license.es6 --dist-dir build/resources/main/assets/js --target xp"
     },
     "targets": {
         "xp": {
