@@ -11,8 +11,6 @@ exports.post = function (req) {
         appKey: app.name,
     });
 
-    log.info(JSON.stringify(licenseDetails, null, 4));
-
     const isValid = licenseDetails && !licenseDetails.expired;
 
     if (isValid) {

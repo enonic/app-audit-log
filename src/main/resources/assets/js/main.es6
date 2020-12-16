@@ -235,9 +235,10 @@ document.addEventListener("DOMContentLoaded", function () {
             button.dataset.a = node._id;
 
             const nested = button.childNodes;
-            nested[0].childNodes[0].textContent = `${node.type}`;
-            nested[0].childNodes[1].textContent = `${node.time}`;
-            nested[1].childNodes[0].textContent = `${node.user}`;
+            //Replace icon will go here
+            nested[1].childNodes[0].textContent = `${node.type}`;
+            nested[1].childNodes[1].textContent = `${node.time}`;
+            nested[2].childNodes[0].textContent = `${node.user}`;
         }
     }
 
@@ -304,9 +305,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const button = shortCreate("", entryClasses, "button");
         selectItem.appendChild(button);
 
+        let icon = document.createElement("img");
+        icon.src = CONFIG.icon;
         let leftD = document.createElement("div");
         let rightD = document.createElement("div");
 
+        button.appendChild(icon);
         button.appendChild(leftD);
         button.appendChild(rightD);
 

@@ -14,8 +14,6 @@ exports.get = function () {
         appKey: app.name,
     });
 
-    log.info(JSON.stringify(licenseDetail, null, 4));
-
     const serviceUrl = portal.serviceUrl({
         service: "get-audit",
         type: "absolute",
