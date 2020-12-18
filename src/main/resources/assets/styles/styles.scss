@@ -29,6 +29,14 @@
     position: initial;
     width: 100%;
     justify-content: space-between;
+
+    .topbar-license {
+        height: 100%;
+        margin-right: 50px;
+        color: white;
+        font-size: 15px;
+        line-height: 44px;
+    }
 }
 
 .app-name {
@@ -69,12 +77,12 @@
             }
 
             &::placeholder {
-               color: black; 
+                color: black;
             }
         }
 
         select {
-            border-bottom: 1px solid var(--mat-blue);   
+            border-bottom: 1px solid var(--mat-blue);
         }
 
         label {
