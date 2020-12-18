@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const userSearch = document.getElementById("select-user");
     M.Autocomplete.init(userSearch, {
-        data: CONFIG.allUsers, 
+        data: CONFIG.allUsers,
         limit: 20,
         minLength: 2,
     });
@@ -49,12 +49,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const button = document.getElementById("search-button");
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
         clearAndUpdate();
     });
 
     function onEnter(e) {
-        if (e.code = "Enter") {
+        if ((e.code = "Enter")) {
             clearAndUpdate();
         }
     }
@@ -71,7 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
         function handleSelect(event) {
             if ((event.code = "Enter" || event.code == undefined)) {
                 const clickEl = event.currentTarget;
-                const target = clickEl.querySelector("button");
+                const target = clickEl.querySelector(".entry");
+                const clickElements = selectionList.querySelectorAll(".entry.active");
+                clickElements.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+                target.classList.add("active");
                 const id = target.dataset.a;
                 if (id) {
                     preview.getEntry(id);
@@ -290,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
             group.push(tombstone);
             selectionList.appendChild(tombstone);
         }
-        setupSelectionList(group)
+        setupSelectionList(group);
 
         return group;
     }
@@ -302,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (data == null || data == undefined) {
             entryClasses.push("tombstone");
         }
-        const button = shortCreate("", entryClasses, "button");
+        const button = shortCreate("", entryClasses, "div");
         selectItem.appendChild(button);
 
         let icon = document.createElement("img");

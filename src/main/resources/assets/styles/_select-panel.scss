@@ -15,7 +15,7 @@
 
     .select-list {
         overflow-y: auto;
-        height: calc(100vh - 210px);
+        height: calc(100vh - 190px);
 
         li .entry {
             background-color: white;
@@ -52,7 +52,8 @@
             &:hover {
                 background-color: var(--light-gray);
             }
-            &:focus {
+
+            &:focus, &.active {
                 background-color: #2196f3;
                 * {
                     color: white;
