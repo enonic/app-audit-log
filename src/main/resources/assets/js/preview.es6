@@ -44,10 +44,11 @@ function createEntry(entry) {
     let icon = document.createElement("img");
     icon.src = CONFIG.icon;
     let title = shortCreate(`${entry.type}`, "title", "h1");
-    let path = shortCreate(`${entry.time}`, "path", "h4");
+    const time = moment.utc(entry.time).format("YYYY-MM-DD HH:mm:ss");
+    let timestamp = shortCreate(`${time}`, "path", "h4");
     header.appendChild(icon);
     header.appendChild(title);
-    header.appendChild(path);
+    header.appendChild(timestamp);
     showEntry.appendChild(header);
 
     let propPanel = shortCreate(null, "properties-panel");

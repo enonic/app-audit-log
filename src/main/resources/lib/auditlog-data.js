@@ -1,6 +1,6 @@
 const auth = require("/lib/xp/auth");
 const auditlog = require("/lib/xp/auditlog");
-const moment = require("/lib/moment.min.js");
+const moment = require("/assets/lib/moment.min.js");
 //const content = require("/lib/xp/content");
 const node = require("/lib/xp/node");
 
@@ -74,9 +74,7 @@ function getSelection(options) {
     let selections = [];
     result.hits.forEach(function (el) {
         let log = auditlog.get({ id: el.id });
-        log.time = moment.utc(log.time).format("YYYY-MM-DD HH:mm:ss");
         log.user = formatUser(log.user);
-        log.type = log.type;
         selections.push(log);
     });
 

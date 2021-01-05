@@ -36,7 +36,7 @@ exports.get = function () {
         allTypes: types,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
-        licenseText: `Licensed to ${licenseDetail.issuedTo}`
+        licenseText: licenseDetail ? `Licensed to ${licenseDetail.issuedTo}` : "Error",
     };
 
     if (licenseDetail == null || licenseDetail.expired) {

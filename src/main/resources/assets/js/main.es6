@@ -320,8 +320,9 @@ document.addEventListener("DOMContentLoaded", function () {
         button.appendChild(rightD);
 
         if (data) {
+            const time = moment.utc(data.time).format("YYYY-MM-DD HH:mm:ss");
             leftD.appendChild(shortCreate(`${data.type}`, "h6"));
-            leftD.appendChild(shortCreate(`${data.time}`, "", "time"));
+            leftD.appendChild(shortCreate(`${time}`, "", "time"));
             rightD.appendChild(shortCreate(`${data.user}`, "user", "div"));
             button.dataset.a = data._id;
         } else {
