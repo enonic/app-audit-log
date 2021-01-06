@@ -44,7 +44,7 @@ function createEntry(entry) {
     let icon = document.createElement("img");
     icon.src = CONFIG.icon;
     let title = shortCreate(`${entry.type}`, "title", "h1");
-    const time = moment.utc(entry.time).format("YYYY-MM-DD HH:mm:ss");
+    const time = util.formatDate(new Date(entry.time));
     let timestamp = shortCreate(`${time}`, "path", "h4");
     header.appendChild(icon);
     header.appendChild(title);

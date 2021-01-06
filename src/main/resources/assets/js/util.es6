@@ -41,3 +41,14 @@ export function sendXMLHttpRequest(handler, data, error = XMLHttpError) {
 function XMLHttpError() {
     console.error("XMLHttpRequest failed");
 }
+
+export function formatDate(date) {
+    new Date().getDate
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    const sec = date.getSeconds();
+    return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+}
