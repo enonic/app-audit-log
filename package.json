@@ -13,7 +13,7 @@
     "dependencies": {},
     "devDependencies": {
         "@materializecss/materialize": "^1.0.0",
-        "parcel": "^2.0.0-nightly.447",
+        "parcel": "^2.0.0-nightly.532",
         "highlight.js": ">=10.4.1",
         "sass": "^1.32.0"
     }
