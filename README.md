@@ -1,17 +1,21 @@
-# App audit log
-Audit log app
+# Audit log browser
+Show all audit log entries.
 
-Initial setup needs npm install runned.  
+This app lets you browse and search for different audit log entries. 
+It is required to have an enonic lisence to use the application. 
 
-<!-- 
-This might be needed: 
-Oh and add `this.el.append(this.container);` on line 6560 of materialize.js in node_modules ... it did not work properly 
-Trying to change this in the next version 
--->
+Easly find an entry and see all the details about the given entry. Possible to filter by audit log type, time or search for any id, or path in the full text search. 
 
+Overview over all the different components in the audit-log application: 
+![Preview of the audit-log frontend](docimg/doc-screenshot.png)
 
-## compatability
+**Objects:**
+The objects fields is all affected tiems in the format: `repoid:contentid`. (a large publish entry can have hundres of elements in the objects field)
+
+**Feel free to make feature requests!**
+
+## Compatability
 
 | version   | xp version | comment   |
 |:---------:|:----------:|:---------:|
-| 1.0.0     | 7.3.0      | Release |
+| 1.0.0     | 7.3.0      | Release   |
