@@ -10,7 +10,7 @@ Overview over all the different components in the audit-log application:
 ![Preview of the audit-log frontend](docimg/doc-screenshot.png)
 
 **Objects:**
-The objects fields is all affected tiems in the format: `repoid:contentid`. (a large publish entry can have hundres of elements in the objects field)
+The objects fields is all affected nodes in the format: `repoid:branch:contentid`. (a large publish log entry can have hundres of elements in the objects field)
 
 **Feel free to make feature requests!**
 
