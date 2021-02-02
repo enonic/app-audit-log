@@ -1,12 +1,10 @@
-const preview = require("./preview.es6");
-const util = require("./util.es6");
-const shortCreate = util.shortCreate;
-const sendXMLHttpRequest = util.sendXMLHttpRequest;
+import { getEntry } from './preview';
+import { sendXMLHttpRequest, shortCreate } from './util';
 
 // Main function called on page load
-document.addEventListener("DOMContentLoaded", function () {
-    const selectionList = document.querySelector(
-        "#select-section .select-list"
+document.addEventListener('DOMContentLoaded', function () {
+    const selectionElement: HTMLElement = document.querySelector(
+        '#select-section .select-list'
     );
     let total = 0;
     let asyncLoading = false;
@@ -15,68 +13,66 @@ document.addEventListener("DOMContentLoaded", function () {
     setupSelectionList();
     infiniteScrollSelectionList();
 
-    const type = document.getElementById("select-type");
+    const type = document.getElementById('select-type');
     CONFIG.allTypes.forEach((element) => {
-        const option = document.createElement("option");
+        const option = document.createElement('option');
         option.value = element.key;
         option.textContent = element.key;
         type.appendChild(option);
     });
     // M = materializecss
     M.FormSelect.init(type, {});
-    type.addEventListener("change", clearAndUpdate);
+    type.addEventListener('change', clearAndUpdate);
 
-    const textSearch = document.getElementById("search-text");
-    textSearch.addEventListener("change", clearAndUpdate);
-    textSearch.addEventListener("keyup", onEnter);
+    const textSearch = document.getElementById('search-text');
+    textSearch.addEventListener('change', clearAndUpdate);
+    textSearch.addEventListener('keyup', onEnter);
 
-    const userSearch = document.getElementById("select-user");
+    const userSearch = document.getElementById('select-user');
     M.Autocomplete.init(userSearch, {
         data: CONFIG.allUsers,
         limit: 20,
         minLength: 2,
     });
-    userSearch.addEventListener("change", clearAndUpdate);
-    userSearch.addEventListener("keyup", onEnter);
+    userSearch.addEventListener('change', clearAndUpdate);
+    userSearch.addEventListener('keyup', onEnter);
 
-    const datepickers = document.querySelectorAll(".datepicker");
+    const datepickers = document.querySelectorAll('.datepicker');
     M.Datepicker.init(datepickers, {
         autoClose: true,
-        format: "yyyy-mm-dd",
+        format: 'yyyy-mm-dd',
         defaultDate: Date.now(),
         showClearBtn: true,
         onClose: clearAndUpdate,
     });
 
-    const button = document.getElementById("search-button");
-    button.addEventListener("click", function () {
+    const button = document.getElementById('search-button');
+    button.addEventListener('click', function () {
         clearAndUpdate();
     });
 
-    function onEnter(e) {
-        if ((e.code = "Enter")) {
+    function onEnter(e: KeyboardEvent) {
+        if ((e.code === 'Enter')) {
             clearAndUpdate();
         }
     }
 
-    function setupSelectionList(elements) {
-        if (elements == undefined) {
-            element = selectionList.childNodes;
-        }
-        element.forEach(function (selectEl) {
-            selectEl.addEventListener("click", handleSelect);
-            selectEl.addEventListener("keyDown", handleSelect);
+    function setupSelectionList(elements: NodeList = selectionElement.childNodes) {
+        elements.forEach(function (selectEl: HTMLElement) {
+            selectEl.addEventListener('click', handleSelect);
+            selectEl.addEventListener('keyDown', handleSelect);
         });
 
-        function handleSelect(event) {
-            if ((event.code = "Enter" || event.code == undefined)) {
-                const clickEl = event.currentTarget;
-                const target = clickEl.querySelector(".entry");
-                const clickElements = selectionList.querySelectorAll(".entry.active");
+        function handleSelect(event: Event) {
+            if (event.type === 'click' || (event.type === 'keyDown' &&
+                (event as KeyboardEvent).code === 'Enter')) {
+                const clickEl = event.;
+                const target = clickEl.querySelector('.entry');
+                const clickElements = selectionElement.querySelectorAll('.entry.active');
                 clickElements.forEach(function (item) {
-                    item.classList.remove("active");
+                    item.classList.remove('active');
                 });
-                target.classList.add("active");
+                target.classList.add('active');
                 const id = target.dataset.a;
                 if (id) {
                     preview.getEntry(id);
@@ -99,27 +95,27 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function getOptions() {
         const options = {};
-        const fromEl = document.getElementById("select-from");
+        const fromEl = document.getElementById('select-from');
         if (fromEl.value) {
             options.from = fromEl.value;
         }
 
-        const toEl = document.getElementById("select-to");
+        const toEl = document.getElementById('select-to');
         if (toEl.value) {
             options.to = toEl.value;
         }
 
-        const typeEl = document.getElementById("select-type");
+        const typeEl = document.getElementById('select-type');
         if (typeEl.value) {
             options.type = typeEl.value;
         }
 
-        const userEl = document.getElementById("select-user");
+        const userEl = document.getElementById('select-user');
         if (userEl.value) {
             options.user = userEl.value;
         }
 
-        const searchEl = document.getElementById("search-text");
+        const searchEl = document.getElementById('search-text');
         if (searchEl.value) {
             options.fullText = searchEl.value;
         }
@@ -138,15 +134,15 @@ document.addEventListener("DOMContentLoaded", function () {
         /**
          * Preview. Could refactor into preview.es6
          */
-        const previewPanel = document.querySelector(".show-wrapper");
+        const previewPanel = document.querySelector('.show-wrapper');
         while (previewPanel.childNodes.length > 0) {
             previewPanel.firstChild.remove();
         }
 
         const helpText = shortCreate(
-            "Free space, select something on the left",
-            "placeholder",
-            "div"
+            'Free space, select something on the left',
+            'placeholder',
+            'div'
         );
 
         previewPanel.appendChild(helpText);
@@ -159,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     function newSelectionList(loading = true) {
         if (loading) {
-            const loading = shortCreate("", "loading-anim");
+            const loading = shortCreate('', 'loading-anim');
             //Add loadinganimation
             for (let i = 0; i < 3; i++) {
-                loading.appendChild(shortCreate("", "dot"));
+                loading.appendChild(shortCreate('', 'dot'));
             }
             selectionList.prepend(loading);
         }
@@ -190,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * @param {Array} dataList all entries that need to be generated
      */
     function createSelectionList(dataList) {
-        const totalEl = document.querySelector("#select-section .total");
+        const totalEl = document.querySelector('#select-section .total');
 
         totalEl.textContent = `Total: ${total}`;
 
@@ -230,13 +226,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function replaceWithNewSelection(replaceElements, data) {
         if (replaceElements.length != data.length) {
-            console.error("Data and replacements do not match");
+            console.error('Data and replacements do not match');
         }
 
         for (let i = 0; i < data.length; i++) {
             const node = data[i];
-            let button = replaceElements[i].querySelector(".entry");
-            button.classList.remove("tombstone");
+            let button = replaceElements[i].querySelector('.entry');
+            button.classList.remove('tombstone');
             button.dataset.a = node._id;
 
             const nested = button.childNodes;
@@ -255,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //Note total amount so we don't fetch unused items
         let selectionSize = selectionList.children.length;
 
-        selectionList.addEventListener("scroll", function () {
+        selectionList.addEventListener('scroll', function () {
             const scroll = selectionList.scrollTop;
             const scrollOnlyHeight =
                 selectionList.scrollHeight - selectionList.clientHeight;
@@ -301,19 +297,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function createSelectionElement(data) {
-        let selectItem = document.createElement("li");
+        let selectItem = document.createElement('li');
 
-        let entryClasses = ["entry"];
+        let entryClasses = ['entry'];
         if (data == null || data == undefined) {
-            entryClasses.push("tombstone");
+            entryClasses.push('tombstone');
         }
-        const button = shortCreate("", entryClasses, "div");
+        const button = shortCreate('', entryClasses, 'div');
         selectItem.appendChild(button);
 
-        let icon = document.createElement("img");
+        let icon = document.createElement('img');
         icon.src = CONFIG.icon;
-        let leftD = document.createElement("div");
-        let rightD = document.createElement("div");
+        let leftD = document.createElement('div');
+        let rightD = document.createElement('div');
 
         button.appendChild(icon);
         button.appendChild(leftD);
@@ -321,14 +317,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (data) {
             const time = util.formatDate(new Date(data.time));
-            leftD.appendChild(shortCreate(`${data.type}`, "h6"));
-            leftD.appendChild(shortCreate(`${time}`, "", "time"));
-            rightD.appendChild(shortCreate(`${data.user}`, "user", "div"));
+            leftD.appendChild(shortCreate(`${data.type}`, 'h6'));
+            leftD.appendChild(shortCreate(`${time}`, '', 'time'));
+            rightD.appendChild(shortCreate(`${data.user}`, 'user', 'div'));
             button.dataset.a = data._id;
         } else {
-            leftD.appendChild(document.createElement("h6"));
-            leftD.appendChild(document.createElement("time"));
-            rightD.appendChild(shortCreate(null, "user", "div"));
+            leftD.appendChild(document.createElement('h6'));
+            leftD.appendChild(document.createElement('time'));
+            rightD.appendChild(shortCreate(null, 'user', 'div'));
         }
 
         return selectItem;

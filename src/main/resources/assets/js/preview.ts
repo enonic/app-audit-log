@@ -1,6 +1,4 @@
-const util = require("./util.es6");
-const shortCreate = util.shortCreate;
-const sendXMLHttpRequest = util.sendXMLHttpRequest;
+import { shortCreate, sendXMLHttpRequest } from './util';
 
 /**
  * Request and show an log entry in the preview panel

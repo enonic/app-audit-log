@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+    "types": [
+      "jquery",
+      "jqueryui",
+      "q"
+    ],
+    "lib": [
+      "es2015",
+      "es2015.promise",
+      "dom"
+    ]
+  },
+  "files": [
+    "./src/main/resources/assets/js/widgets/layers/main.ts"
+  ],
+  "include": [
+    "src/**/*",
+    "../lib-admin-ui/src/main/resources/assets/admin/common/js/**/*.ts",
+    ".xp/dev/lib-admin-ui/**/*.ts",
+  ]
+}
