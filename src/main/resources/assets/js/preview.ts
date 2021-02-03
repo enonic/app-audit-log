@@ -1,10 +1,18 @@
-import { shortCreate, sendXMLHttpRequest } from './util';
+import { shortCreate, sendXMLHttpRequest, formatDate } from './util';
+
+interface Entry {
+    type: string;
+    time: Date;
+    props: any;
+    data: any;
+}
 
 /**
  * Request and show an log entry in the preview panel
+ *
  * @param {String} id
  */
-export function getEntry(id) {
+export function getEntry(id: string) {
     let data = JSON.stringify({
         entryId: id,
     });
@@ -13,13 +21,13 @@ export function getEntry(id) {
     //Service retrieving a audit log entry
     function handleResponse() {
         let response = request.response;
-        if (request.status == 200 && response) {
+        if (request.status === 200 && response) {
             let entry = JSON.parse(response);
-            let placeholder = document.querySelector("#preview .placeholder");
+            let placeholder = document.querySelector('#preview .placeholder');
             if (placeholder) {
                 placeholder.remove();
             }
-            let show = document.querySelector("#preview .show-wrapper");
+            let show = document.querySelector('#preview .show-wrapper');
             while (show.childNodes.length > 0) {
                 show.firstChild.remove();
             }
@@ -31,42 +39,41 @@ export function getEntry(id) {
 }
 
 //Does all the dom manipulation to show a single log entry
-function createEntry(entry) {
-    let showEntry = document.createElement("div");
-    showEntry.id = "entry-show";
-    showEntry.classList += "item-statistics-panel";
-    let header = shortCreate(null, "header");
-    header.id = "previewHeader";
+function createEntry(entry: Entry) {
+    let showEntry = document.createElement('div');
+    showEntry.id = 'entry-show';
+    showEntry.classList.add('item-statistics-panel');
+    let header = shortCreate(null, 'header');
+    header.id = 'previewHeader';
 
     // header
-    let icon = document.createElement("img");
+    let icon = document.createElement('img');
     icon.src = CONFIG.icon;
-    let title = shortCreate(`${entry.type}`, "title", "h1");
-    const time = util.formatDate(new Date(entry.time));
-    let timestamp = shortCreate(`${time}`, "path", "h4");
+    let title = shortCreate(`${entry.type}`, 'title', 'h1');
+    const time = formatDate(new Date(entry.time));
+    let timestamp = shortCreate(`${time}`, 'path', 'h4');
     header.appendChild(icon);
     header.appendChild(title);
     header.appendChild(timestamp);
     showEntry.appendChild(header);
 
-    let propPanel = shortCreate(null, "properties-panel");
+    let propPanel = shortCreate(null, 'properties-panel');
     showEntry.appendChild(propPanel);
 
     // top property list
-    let itemGroup = shortCreate(null, "item-data-group");
+    let itemGroup = shortCreate(null, 'item-data-group');
     propPanel.appendChild(itemGroup);
 
     for (const prop in entry) {
-        let propList = shortCreate(null, "data-list", "ul");
-        itemGroup.appendChild(propList);
-
-        if (prop != "data" && prop != "type" && prop != "time") {
-            let listheader = shortCreate(`${prop}`, "list-header", "li");
+        if (prop !== 'data' && prop !== 'type' && prop !== 'time') {
+            let propList = shortCreate(null, 'data-list', 'ul');
+            itemGroup.appendChild(propList);
+            let listheader = shortCreate(`${prop}`, 'list-header', 'li');
             propList.appendChild(listheader);
-            let valueEl = shortCreate(null, null, "li");
+            let valueEl = shortCreate(null, null, 'li');
 
             if (Array.isArray(entry[prop])) {
-                createListStructure(entry[prop], propList, "li");
+                createListStructure(entry[prop], propList, 'li');
             } else {
                 valueEl.textContent = `${entry[prop]}`;
                 propList.appendChild(valueEl);
@@ -75,10 +82,10 @@ function createEntry(entry) {
     }
 
     // Data section
-    let dataBlock = shortCreate(null, "item-data-group");
+    let dataBlock = shortCreate(null, 'item-data-group');
     propPanel.appendChild(dataBlock);
 
-    let dataHeader = shortCreate("Data", "", "h2");
+    let dataHeader = shortCreate('Data', '', 'h2');
     dataBlock.appendChild(dataHeader);
 
     let data = entry.data;
@@ -89,33 +96,35 @@ function createEntry(entry) {
 }
 
 // Recusive function that handles all data structures
-function createObjectStructure(data, parent) {
+function createObjectStructure(data: any, parent: HTMLElement) {
     for (const prop in data) {
-        let propList = shortCreate(null, "data-list", "ul");
-        parent.appendChild(propList);
+        if (typeof data[prop] == 'object') {
 
-        if (typeof data[prop] == "object") {
-            let header = shortCreate(`${prop}`, "list-header", "li");
-            propList.appendChild(header);
+            let header = shortCreate(`${prop}`, 'list-header', 'li');
+            let propList = shortCreate(null, 'data-list', 'ul')
+                .appendChild(header);
+            parent.appendChild(propList);
+
             if (Array.isArray(data[prop])) {
-                createListStructure(data[prop], propList, "li");
+                createListStructure(data[prop], propList, 'li');
             } else {
-                propList.classList.add("align-top");
-                propList.classList.add("nested");
-                let item = shortCreate(null, null, "li");
+                propList.classList.add('align-top');
+                propList.classList.add('nested');
+                let item = shortCreate(null, null, 'li');
                 propList.appendChild(item);
                 createObjectStructure(data[prop], item);
             }
         } else {
-            propList.appendChild(shortCreate(`${prop}`, "list-header", "li"));
-            propList.appendChild(shortCreate(`${data[prop]}`, "", "li"));
+            let propList = shortCreate(null, 'data-list', 'ul');
+            propList.appendChild(shortCreate(`${prop}`, 'list-header', 'li'));
+            propList.appendChild(shortCreate(`${data[prop]}`, '', 'li'));
         }
     }
 }
 
 // Creates a list out of an array value
-function createListStructure(list, parent, tag) {
-    list.forEach(function (item) {
+function createListStructure(list: string[], parent: HTMLElement, tag: string) {
+    list.forEach(function (item: string) {
         parent.appendChild(shortCreate(`${item}`, null, tag));
     });
 }

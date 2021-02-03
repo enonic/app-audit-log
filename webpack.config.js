@@ -15,7 +15,7 @@ module.exports = {
     performance: { hints: false },
     context: path.join(__dirname, "/src/main/resources/assets"),
     entry: {
-        "js/widgets/layers": "./js/main.ts",
+        "js/": "./js/main.ts",
         "styles/": "./styles.scss",
     },
     output: {
@@ -32,7 +32,7 @@ module.exports = {
                 use: [
                     {
                         loader: "ts-loader",
-                        options: { configFile: "tsconfig.json" },
+                        options: { configFile: "./tsconfig.json" },
                     },
                 ],
             },

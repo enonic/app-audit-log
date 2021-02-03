@@ -1,5 +1,22 @@
 import { getEntry } from './preview';
-import { sendXMLHttpRequest, shortCreate } from './util';
+import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
+
+interface GlobalConfig {
+    auditServiceUrl: string;
+    allUsers: Array<string>;
+    allTypes: Array<{
+        key: number;
+        docCount: string;
+    }>;
+    launcherUrl: string;
+    services: object;
+    icon: string;
+}
+
+declare global {
+    const CONFIG: GlobalConfig;
+    const M: Object; //Materialcss
+}
 
 // Main function called on page load
 document.addEventListener('DOMContentLoaded', function () {
@@ -16,12 +33,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const type = document.getElementById('select-type');
     CONFIG.allTypes.forEach((element) => {
         const option = document.createElement('option');
-        option.value = element.key;
-        option.textContent = element.key;
+        option.value = element.key.toString();
+        option.textContent = element.key.toString();
         type.appendChild(option);
     });
     // M = materializecss
-    M.FormSelect.init(type, {});
+    (M as any).FormSelect.init(type, {});
     type.addEventListener('change', clearAndUpdate);
 
     const textSearch = document.getElementById('search-text');
@@ -29,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     textSearch.addEventListener('keyup', onEnter);
 
     const userSearch = document.getElementById('select-user');
-    M.Autocomplete.init(userSearch, {
+    (M as any).Autocomplete.init(userSearch, {
         data: CONFIG.allUsers,
         limit: 20,
         minLength: 2,
@@ -38,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     userSearch.addEventListener('keyup', onEnter);
 
     const datepickers = document.querySelectorAll('.datepicker');
-    M.Datepicker.init(datepickers, {
+    (M as any).Datepicker.init(datepickers, {
         autoClose: true,
         format: 'yyyy-mm-dd',
         defaultDate: Date.now(),
@@ -46,8 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
         onClose: clearAndUpdate,
     });
 
-    const button = document.getElementById('search-button');
-    button.addEventListener('click', function () {
+    const searchbutton = document.getElementById('search-button');
+    searchbutton.addEventListener('click', function () {
         clearAndUpdate();
     });
 
@@ -57,7 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function setupSelectionList(elements: NodeList = selectionElement.childNodes) {
+    // Htmlelements and nodelist should be the same
+    function setupSelectionList(elements: HTMLElement[] | NodeList = selectionElement.childNodes) {
         elements.forEach(function (selectEl: HTMLElement) {
             selectEl.addEventListener('click', handleSelect);
             selectEl.addEventListener('keyDown', handleSelect);
@@ -66,16 +84,16 @@ document.addEventListener('DOMContentLoaded', function () {
         function handleSelect(event: Event) {
             if (event.type === 'click' || (event.type === 'keyDown' &&
                 (event as KeyboardEvent).code === 'Enter')) {
-                const clickEl = event.;
-                const target = clickEl.querySelector('.entry');
+                const clickEl = event.target;
+                const target: HTMLElement = (clickEl as HTMLElement).querySelector('.entry');
                 const clickElements = selectionElement.querySelectorAll('.entry.active');
-                clickElements.forEach(function (item) {
+                clickElements.forEach(function (item: HTMLElement) {
                     item.classList.remove('active');
                 });
                 target.classList.add('active');
                 const id = target.dataset.a;
                 if (id) {
-                    preview.getEntry(id);
+                    getEntry(id);
                 }
             }
         }
@@ -94,28 +112,31 @@ document.addEventListener('DOMContentLoaded', function () {
      * Get the current filters that are active and return them as a options object.
      */
     function getOptions() {
-        const options = {};
-        const fromEl = document.getElementById('select-from');
+        const options: {
+            [key: string]: String;
+        } = {};
+
+        const fromEl = document.getElementById('select-from') as HTMLInputElement;
         if (fromEl.value) {
             options.from = fromEl.value;
         }
 
-        const toEl = document.getElementById('select-to');
+        const toEl = document.getElementById('select-to') as HTMLInputElement;
         if (toEl.value) {
             options.to = toEl.value;
         }
 
-        const typeEl = document.getElementById('select-type');
+        const typeEl = document.getElementById('select-type') as HTMLInputElement;
         if (typeEl.value) {
             options.type = typeEl.value;
         }
 
-        const userEl = document.getElementById('select-user');
+        const userEl = document.getElementById('select-user') as HTMLInputElement;
         if (userEl.value) {
             options.user = userEl.value;
         }
 
-        const searchEl = document.getElementById('search-text');
+        const searchEl = document.getElementById('search-text') as HTMLInputElement;
         if (searchEl.value) {
             options.fullText = searchEl.value;
         }
@@ -127,8 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
      * Clear selection list and reset the preview
      */
     function clearAll() {
-        while (selectionList.childNodes.length > 0) {
-            selectionList.firstChild.remove();
+        while (selectionElement.childNodes.length > 0) {
+            selectionElement.firstChild.remove();
         }
 
         /**
@@ -142,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const helpText = shortCreate(
             'Free space, select something on the left',
             'placeholder',
-            'div'
+            'div',
         );
 
         previewPanel.appendChild(helpText);
@@ -151,16 +172,17 @@ document.addEventListener('DOMContentLoaded', function () {
     /**
      * Get a new selection list based on the filters active
      * and start generating a new list
+     *
      * @param {Object} options Active filters
      */
-    function newSelectionList(loading = true) {
+    function newSelectionList(loading: boolean = true) {
         if (loading) {
-            const loading = shortCreate('', 'loading-anim');
+            const loadingElement = shortCreate('', 'loading-anim');
             //Add loadinganimation
             for (let i = 0; i < 3; i++) {
-                loading.appendChild(shortCreate('', 'dot'));
+                loadingElement.appendChild(shortCreate('', 'dot'));
             }
-            selectionList.prepend(loading);
+            selectionElement.prepend(loadingElement);
         }
 
         const data = {
@@ -175,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function handleSelectionGroup() {
             const responseData = JSON.parse(request.response);
-            total = responseData.total;
 
             createSelectionList(responseData);
         }
@@ -183,19 +204,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      * Creates a new selection list based on the data provided
+     *
      * @param {Array} dataList all entries that need to be generated
      */
-    function createSelectionList(dataList) {
+    function createSelectionList(data: any) {
         const totalEl = document.querySelector('#select-section .total');
+        total = data.total;
+        totalEl.textContent = `Total: ${data.total}`;
 
-        totalEl.textContent = `Total: ${total}`;
-
-        while (selectionList.childNodes.length > 0) {
-            selectionList.firstChild.remove();
+        while (selectionElement.childNodes.length > 0) {
+            selectionElement.firstChild.remove();
         }
 
-        dataList.selections.forEach((data) => {
-            selectionList.appendChild(createSelectionElement(data));
+        data.selections.forEach((selectData) => {
+            selectionElement.appendChild(createSelectionElement(selectData));
         });
 
         // Apply event listners etc.
@@ -204,10 +226,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      * Updated the list with new audit-logs. They are fetched from server.
+     *
      * @param {Number} start from number to get the logs. eg get from log 100.
      * @param {number} count how many logs to get.
      */
-    function updateSelectionList(start, count, replaceElements) {
+    function updateSelectionList(start: number, count: number, replaceElements: HTMLElement[]) {
         const data = {
             selection: true,
             options: { ...getOptions(), start, count },
@@ -215,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sendXMLHttpRequest(handleUpdateSelection, JSON.stringify(data));
 
-        function handleUpdateSelection(request) {
+        function handleUpdateSelection(request: XMLHttpRequest) {
             const responseData = JSON.parse(request.response);
 
             replaceWithNewSelection(replaceElements, responseData.selections);
@@ -224,15 +247,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function replaceWithNewSelection(replaceElements, data) {
-        if (replaceElements.length != data.length) {
+    function replaceWithNewSelection(replaceElements: HTMLElement[], data: any) {
+        if (replaceElements.length !== data.length) {
             console.error('Data and replacements do not match');
         }
 
         for (let i = 0; i < data.length; i++) {
             const node = data[i];
-            let button = replaceElements[i].querySelector('.entry');
+            let button: HTMLElement = replaceElements[i].querySelector('.entry');
             button.classList.remove('tombstone');
+            // eslint-disable-next-line no-underscore-dangle
             button.dataset.a = node._id;
 
             const nested = button.childNodes;
@@ -249,16 +273,16 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function infiniteScrollSelectionList() {
         //Note total amount so we don't fetch unused items
-        let selectionSize = selectionList.children.length;
+        let selectionSize = selectionElement.children.length;
 
-        selectionList.addEventListener('scroll', function () {
-            const scroll = selectionList.scrollTop;
+        selectionElement.addEventListener('scroll', function () {
+            const scroll = selectionElement.scrollTop;
             const scrollOnlyHeight =
-                selectionList.scrollHeight - selectionList.clientHeight;
+                selectionElement.scrollHeight - selectionElement.clientHeight;
 
             if (
                 scroll > scrollOnlyHeight - 300 &&
-                asyncLoading == false &&
+                asyncLoading === false &&
                 selectionSize < total
             ) {
                 const oneJump = 25;
@@ -282,25 +306,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      * Placeholders/tombstones for new entries fill be used when content is fetched
+     *
      * @param {Boolean} [append=true]
      */
-    function createSelectionTombstones(amount) {
+    function createSelectionTombstones(amount: Number) {
         const group = [];
         for (let i = 0; i < amount; i++) {
             let tombstone = createSelectionElement();
             group.push(tombstone);
-            selectionList.appendChild(tombstone);
+            selectionElement.appendChild(tombstone);
         }
         setupSelectionList(group);
 
         return group;
     }
 
-    function createSelectionElement(data) {
+    function createSelectionElement(data: any = null) {
         let selectItem = document.createElement('li');
 
         let entryClasses = ['entry'];
-        if (data == null || data == undefined) {
+        if (data == null || data === undefined) {
             entryClasses.push('tombstone');
         }
         const button = shortCreate('', entryClasses, 'div');
@@ -316,10 +341,11 @@ document.addEventListener('DOMContentLoaded', function () {
         button.appendChild(rightD);
 
         if (data) {
-            const time = util.formatDate(new Date(data.time));
+            const time = formatDate(new Date(data.time));
             leftD.appendChild(shortCreate(`${data.type}`, 'h6'));
             leftD.appendChild(shortCreate(`${time}`, '', 'time'));
             rightD.appendChild(shortCreate(`${data.user}`, 'user', 'div'));
+            // eslint-disable-next-line no-underscore-dangle
             button.dataset.a = data._id;
         } else {
             leftD.appendChild(document.createElement('h6'));

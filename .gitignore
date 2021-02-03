@@ -51,6 +51,10 @@ gradle-app.setting
 
 ## Directory-based project format:
 .idea/
+
+# vscode
+.vscode
+
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:

@@ -1,6 +1,6 @@
 /* Util methods */
 // Create elements but with class and text content params
-export function shortCreate(text, className = null, tag = "div") {
+export function shortCreate(text: string, className: string | string[] = null, tag: string = 'div') {
     let elem = document.createElement(tag);
 
     if (Array.isArray(className)) {
@@ -10,22 +10,25 @@ export function shortCreate(text, className = null, tag = "div") {
     } else if (className) {
         elem.classList.add(className);
     }
-    if (text != null) elem.textContent = text;
+    if (text != null) {
+        elem.textContent = text;
+    }
     return elem;
 }
 
 /**
  * Shorthand function for sending ajax request
+ *
  * @param {function} handler
  * @param {*} data
  * @returns {request} The xml request object
  */
-export function sendXMLHttpRequest(handler, data, error = XMLHttpError) {
+export function sendXMLHttpRequest(handler: CallableFunction, data: any, error: any = errorCallback): XMLHttpRequest {
     let request = new XMLHttpRequest();
-    request.open("POST", CONFIG.auditServiceUrl);
-    request.setRequestHeader("Content-type", "application/json");
+    request.open('POST', CONFIG.auditServiceUrl);
+    request.setRequestHeader('Content-type', 'application/json');
 
-    request.responseType = "application/json";
+    request.responseType = 'json';
     request.onload = () => {
         handler(request);
     };
@@ -35,15 +38,12 @@ export function sendXMLHttpRequest(handler, data, error = XMLHttpError) {
     return request;
 }
 
-/**
- * XMLHttpError
- */
-function XMLHttpError() {
-    console.error("XMLHttpRequest failed");
+
+function errorCallback() {
+    console.error('XMLHttpRequest failed');
 }
 
-export function formatDate(date) {
-    new Date().getDate
+export function formatDate(date: Date) {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');

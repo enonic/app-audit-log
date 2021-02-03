@@ -1,7 +1,7 @@
-const auditData = require("/lib/auditlog-data");
+import { getSelection } from '/lib/auditlog-data';
 
 exports.post = function (req) {
-    if (req.body == "") {
+    if (req.body === '') {
         return {
             status: 404,
         };
