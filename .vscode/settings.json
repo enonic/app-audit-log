@@ -1,8 +1,14 @@
 {
     "prettier.singleQuote": true,
     "eslint.alwaysShowStatus": true,
-    "eslint.lintTask.options": "-c ./.eslintrc.js",
+    "eslint.lintTask.options": "",
     "eslint.codeAction.showDocumentation": {
         "enable": true
-    }
+    },
+    "eslint.probe": [
+        "typescript",
+        "typescriptreact",
+        "html",
+        "markdown"
+    ]
 }

@@ -18,8 +18,11 @@
     "./src/main/resources/assets/js/license.ts"
   ],
   "include": [
-    "src/main/resources/assets/*",
-    "../lib-admin-ui/src/main/resources/assets/admin/common/js/**/*.ts",
+    "src/main/resources/assets/**/*.ts",
+    //"../lib-admin-ui/src/main/resources/assets/admin/common/js/**/*.ts",
     ".xp/dev/lib-admin-ui/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

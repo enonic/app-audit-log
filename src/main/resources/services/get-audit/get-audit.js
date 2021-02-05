@@ -1,4 +1,4 @@
-import { getSelection } from '/lib/auditlog-data';
+const auditData = require('/lib/auditlog-data');
 
 exports.post = function (req) {
     if (req.body === '') {

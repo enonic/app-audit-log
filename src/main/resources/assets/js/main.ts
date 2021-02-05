@@ -1,5 +1,6 @@
 import { getEntry } from './preview';
 import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
+import { DatePicker, DatePickerBuilder } from 'lib-admin-ui/ui/time/DatePicker';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -15,7 +16,6 @@ interface GlobalConfig {
 
 declare global {
     const CONFIG: GlobalConfig;
-    const M: Object; //Materialcss
 }
 
 // Main function called on page load
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type.appendChild(option);
     });
     // M = materializecss
-    (M as any).FormSelect.init(type, {});
+    // FormSelect.init(type, {});
     type.addEventListener('change', clearAndUpdate);
 
     const textSearch = document.getElementById('search-text');
@@ -46,22 +46,29 @@ document.addEventListener('DOMContentLoaded', function () {
     textSearch.addEventListener('keyup', onEnter);
 
     const userSearch = document.getElementById('select-user');
-    (M as any).Autocomplete.init(userSearch, {
+    /* (M as any).Autocomplete.init(userSearch, {
         data: CONFIG.allUsers,
         limit: 20,
         minLength: 2,
-    });
+    }); */
     userSearch.addEventListener('change', clearAndUpdate);
     userSearch.addEventListener('keyup', onEnter);
 
-    const datepickers = document.querySelectorAll('.datepicker');
-    (M as any).Datepicker.init(datepickers, {
+    const datepickerDivs = document.querySelectorAll('.datepicker');
+
+    const datePickerTime = new Date();
+    const datePopupBuilder = new DatePickerBuilder();
+    datePopupBuilder.setDate(datePickerTime);
+    const datePicker = datePopupBuilder.build();
+    datepickerDivs[0].appendChild(datePicker.getHTMLElement());
+
+    /* (M as any).Datepicker.init(datepickers, {
         autoClose: true,
         format: 'yyyy-mm-dd',
         defaultDate: Date.now(),
         showClearBtn: true,
         onClose: clearAndUpdate,
-    });
+    }); */
 
     const searchbutton = document.getElementById('search-button');
     searchbutton.addEventListener('click', function () {
@@ -116,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             [key: string]: String;
         } = {};
 
-        const fromEl = document.getElementById('select-from') as HTMLInputElement;
+        /* const fromEl = document.getElementById('select-from') as HTMLInputElement;
         if (fromEl.value) {
             options.from = fromEl.value;
         }
@@ -124,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const toEl = document.getElementById('select-to') as HTMLInputElement;
         if (toEl.value) {
             options.to = toEl.value;
-        }
+        } */
 
         const typeEl = document.getElementById('select-type') as HTMLInputElement;
         if (typeEl.value) {

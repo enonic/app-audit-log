@@ -15,7 +15,7 @@ def hasFlushTask()
 
 if ( hasLibAdminUi() )
 {
-    def libAdminUi = gradle.includedBuild( 'lib-admin-ui' )
+    def libAdminUi = gradle.includedBuild( 'lib-admin-ui')
     def excludedTasks = gradle.startParameter.getExcludedTaskNames().findAll( { it == 'lint' || it == 'test' } )
     libAdminUi.getLoadedSettings().getStartParameter().setExcludedTaskNames( excludedTasks )
 

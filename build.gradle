@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'maven-publish'
     id "com.enonic.defaults" version "2.0.1"
     id "com.enonic.xp.app" version "2.0.0"
@@ -15,6 +16,8 @@ app {
     vendorName = "${vendorName}"
     vendorUrl = "${vendorUrl}"
     systemVersion = "${xpVersion}"
+
+    devSourcePaths += file("$rootDir/../lib-admin-ui/src/main/resources")
 }
 
 dependencies {
@@ -47,6 +50,9 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
 }
 
 task webpack( type: NpmTask, dependsOn: [npmInstall, lint] ) {
+    doLast {
+        println "Build mode: " + nodeEnvironment()
+    }
     environment = [ 'NODE_ENV': nodeEnvironment() ]
     description = 'Build UI resources (ts, css, etc).'
     args = [ 'run', 'build' ]
@@ -60,22 +66,27 @@ processResources.dependsOn += unpackDevResources
 npmInstall.mustRunAfter unpackDevResources
 
 jar {
-    exclude 'assets/**/*.ts'
-    exclude 'assets/**/*.less'
-
-    if (isProd()) {
-        exclude 'assets/**/*.map'
-    }
-
     outputs.dir "${buildDir}/resources/main"
 
     dependsOn += webpack
 }
 
+sourceSets {
+    main {
+        resources {
+            exclude '**/*.ts'
+            exclude '**/*.scss'
+            if (isProd()) {
+                exclude '**/*.map'
+            }
+        }
+    }
+}
+
 repositories {
     mavenLocal()
     jcenter()
-    xp.enonicRepo()
+    xp.enonicRepo('dev')
 }
 
 if ( hasEnvironment() )
@@ -97,13 +108,5 @@ def addBuildDependency() {
         build.dependsOn += libAdminBuildTask
         clean.dependsOn += libAdminCleanTask
         flush.dependsOn += libAdminFlushTask
-    }
-
-    if ( isLibContentStudioIncluded() )
-    {
-        unpackDevResources.dependsOn += libContentStudioBuildTask
-        build.dependsOn += libContentStudioBuildTask
-        clean.dependsOn += libContentStudioCleanTask
-        flush.dependsOn += libContentStudioFlushTask
     }
 }
