@@ -6,6 +6,8 @@
     font-size: 1rem;
     padding: 0;
     border-right: 5px solid #eee;
+    width: calc(50% - 5px);
+    display: inline-block;
 
     .total {
         display: block;

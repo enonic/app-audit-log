@@ -1,6 +1,9 @@
 import { getEntry } from './preview';
 import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
-import { DatePicker, DatePickerBuilder } from 'lib-admin-ui/ui/time/DatePicker';
+import { createDatePicker } from './components';
+import { Body } from 'lib-admin-ui/dom/Body';
+import { Application } from 'lib-admin-ui/app/Application';
+import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -18,57 +21,50 @@ declare global {
     const CONFIG: GlobalConfig;
 }
 
+const body = Body.get();
+
 // Main function called on page load
 document.addEventListener('DOMContentLoaded', function () {
+    /* const application = new Application('Audit Log Browser', 'Audit log', 'ALB');
+    application.setWindow(window); */
+
+    const appPanel = new AppPanel('main-panel'); //TODO
+
     const selectionElement: HTMLElement = document.querySelector(
         '#select-section .select-list'
     );
-    let total = 0;
-    let asyncLoading = false;
+    let total: number = 0;
+    let asyncLoading: boolean = false;
     // Initial selection list rendering
     newSelectionList();
     setupSelectionList();
     infiniteScrollSelectionList();
 
-    const type = document.getElementById('select-type');
+    const type: HTMLElement = document.getElementById('select-type');
     CONFIG.allTypes.forEach((element) => {
         const option = document.createElement('option');
         option.value = element.key.toString();
         option.textContent = element.key.toString();
         type.appendChild(option);
     });
-    // M = materializecss
-    // FormSelect.init(type, {});
+
     type.addEventListener('change', clearAndUpdate);
 
-    const textSearch = document.getElementById('search-text');
+    const textSearch: HTMLElement = document.getElementById('search-text');
     textSearch.addEventListener('change', clearAndUpdate);
     textSearch.addEventListener('keyup', onEnter);
 
     const userSearch = document.getElementById('select-user');
-    /* (M as any).Autocomplete.init(userSearch, {
-        data: CONFIG.allUsers,
-        limit: 20,
-        minLength: 2,
-    }); */
+
     userSearch.addEventListener('change', clearAndUpdate);
     userSearch.addEventListener('keyup', onEnter);
 
-    const datepickerDivs = document.querySelectorAll('.datepicker');
+    const datepickerDivs: NodeList = document.querySelectorAll('.datepicker');
+    const fromInput = createDatePicker('select-from');
+    const toInput = createDatePicker('select-to');
 
-    const datePickerTime = new Date();
-    const datePopupBuilder = new DatePickerBuilder();
-    datePopupBuilder.setDate(datePickerTime);
-    const datePicker = datePopupBuilder.build();
-    datepickerDivs[0].appendChild(datePicker.getHTMLElement());
-
-    /* (M as any).Datepicker.init(datepickers, {
-        autoClose: true,
-        format: 'yyyy-mm-dd',
-        defaultDate: Date.now(),
-        showClearBtn: true,
-        onClose: clearAndUpdate,
-    }); */
+    datepickerDivs[0].appendChild(fromInput);
+    datepickerDivs[1].appendChild(toInput);
 
     const searchbutton = document.getElementById('search-button');
     searchbutton.addEventListener('click', function () {
@@ -91,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         function handleSelect(event: Event) {
             if (event.type === 'click' || (event.type === 'keyDown' &&
                 (event as KeyboardEvent).code === 'Enter')) {
-                const clickEl = event.target;
+                const clickEl = event.currentTarget;
                 const target: HTMLElement = (clickEl as HTMLElement).querySelector('.entry');
                 const clickElements = selectionElement.querySelectorAll('.entry.active');
                 clickElements.forEach(function (item: HTMLElement) {
@@ -123,15 +119,15 @@ document.addEventListener('DOMContentLoaded', function () {
             [key: string]: String;
         } = {};
 
-        /* const fromEl = document.getElementById('select-from') as HTMLInputElement;
-        if (fromEl.value) {
+        const fromEl = document.getElementById('select-from') as HTMLInputElement;
+        if (fromEl && fromEl.value) {
             options.from = fromEl.value;
         }
 
         const toEl = document.getElementById('select-to') as HTMLInputElement;
-        if (toEl.value) {
+        if (toEl && toEl.value) {
             options.to = toEl.value;
-        } */
+        }
 
         const typeEl = document.getElementById('select-type') as HTMLInputElement;
         if (typeEl.value) {
@@ -162,12 +158,12 @@ document.addEventListener('DOMContentLoaded', function () {
         /**
          * Preview. Could refactor into preview.es6
          */
-        const previewPanel = document.querySelector('.show-wrapper');
+        const previewPanel: HTMLElement = document.querySelector('.show-wrapper');
         while (previewPanel.childNodes.length > 0) {
             previewPanel.firstChild.remove();
         }
 
-        const helpText = shortCreate(
+        const helpText: HTMLElement = shortCreate(
             'Free space, select something on the left',
             'placeholder',
             'div',
@@ -203,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
         function handleSelectionGroup() {
-            const responseData = JSON.parse(request.response);
+            const responseData = request.response;
 
             createSelectionList(responseData);
         }
@@ -246,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
         sendXMLHttpRequest(handleUpdateSelection, JSON.stringify(data));
 
         function handleUpdateSelection(request: XMLHttpRequest) {
-            const responseData = JSON.parse(request.response);
+            const responseData = request.response;
 
             replaceWithNewSelection(replaceElements, responseData.selections);
 

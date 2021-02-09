@@ -19,10 +19,10 @@ export function getEntry(id: string) {
     let request = sendXMLHttpRequest(handleResponse, data);
 
     //Service retrieving a audit log entry
-    function handleResponse() {
+    function handleResponse(): void {
         let response = request.response;
         if (request.status === 200 && response) {
-            let entry = JSON.parse(response);
+            let entry = response;
             let placeholder = document.querySelector('#preview .placeholder');
             if (placeholder) {
                 placeholder.remove();
@@ -39,7 +39,13 @@ export function getEntry(id: string) {
 }
 
 //Does all the dom manipulation to show a single log entry
-function createEntry(entry: Entry) {
+/**
+ * Creates a log entry in the preview panel
+ *
+ * @param entry The entry to preview
+ * @returns {HTMLElement} The finished preview tab element
+ */
+function createEntry(entry: Entry): HTMLElement {
     let showEntry = document.createElement('div');
     showEntry.id = 'entry-show';
     showEntry.classList.add('item-statistics-panel');
@@ -97,13 +103,14 @@ function createEntry(entry: Entry) {
 
 // Recusive function that handles all data structures
 function createObjectStructure(data: any, parent: HTMLElement) {
+    // eslint-disable-next-line guard-for-in
     for (const prop in data) {
+        let propList = shortCreate(null, 'data-list', 'ul');
+
         if (typeof data[prop] == 'object') {
 
             let header = shortCreate(`${prop}`, 'list-header', 'li');
-            let propList = shortCreate(null, 'data-list', 'ul')
-                .appendChild(header);
-            parent.appendChild(propList);
+            parent.appendChild(header);
 
             if (Array.isArray(data[prop])) {
                 createListStructure(data[prop], propList, 'li');
@@ -115,10 +122,10 @@ function createObjectStructure(data: any, parent: HTMLElement) {
                 createObjectStructure(data[prop], item);
             }
         } else {
-            let propList = shortCreate(null, 'data-list', 'ul');
             propList.appendChild(shortCreate(`${prop}`, 'list-header', 'li'));
             propList.appendChild(shortCreate(`${data[prop]}`, '', 'li'));
         }
+        parent.appendChild(propList);
     }
 }
 

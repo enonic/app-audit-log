@@ -1,6 +1,10 @@
 /* Util methods */
 // Create elements but with class and text content params
-export function shortCreate(text: string, className: string | string[] = null, tag: string = 'div') {
+export function shortCreate(
+    text: string,
+    className: string | string[] = null,
+    tag: string = 'div'
+): HTMLElement {
     let elem = document.createElement(tag);
 
     if (Array.isArray(className)) {
@@ -23,7 +27,11 @@ export function shortCreate(text: string, className: string | string[] = null, t
  * @param {*} data
  * @returns {request} The xml request object
  */
-export function sendXMLHttpRequest(handler: CallableFunction, data: any, error: any = errorCallback): XMLHttpRequest {
+export function sendXMLHttpRequest(
+    handler: CallableFunction,
+    data: any,
+    error: any = errorCallback
+): XMLHttpRequest {
     let request = new XMLHttpRequest();
     request.open('POST', CONFIG.auditServiceUrl);
     request.setRequestHeader('Content-type', 'application/json');
@@ -39,11 +47,11 @@ export function sendXMLHttpRequest(handler: CallableFunction, data: any, error: 
 }
 
 
-function errorCallback() {
+function errorCallback(): void {
     console.error('XMLHttpRequest failed');
 }
 
-export function formatDate(date: Date) {
+export function formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
