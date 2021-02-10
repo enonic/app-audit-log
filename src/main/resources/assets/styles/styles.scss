@@ -2,19 +2,7 @@
 @import "preview-panel";
 @import "license";
 @import "material_override";
-@import "shared";
-
-:root {
-    --entry-padding: 0.8em;
-    --gray: #ccc;
-    --dark-gray: #6d6d6d;
-    --light-gray: #eee;
-    --mat-blue: #2196f3;
-}
-
-* {
-    box-sizing: border-box;
-}
+@import "shared"; // Variables etc
 
 #audit-log {
     display: block;
@@ -24,23 +12,24 @@
     }
 }
 
-/* lib-admin-ui things i should not change */
-.appbar {
-    position: initial;
-    width: 100%;
-    justify-content: space-between;
-
-    .topbar-license {
-        height: 100%;
-        margin-right: 50px;
-        color: white;
-        font-size: 15px;
-        line-height: 44px;
-    }
+/* lib-admin-ui addition? */
+.appbar .topbar-license {
+    height: 100%;
+    margin-right: 50px;
+    color: white;
+    font-size: 15px;
+    line-height: 44px;
 }
 
-.app-name {
-    margin: 0;
+.tools {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    #select-from {
+        flex: 0 0 auto;
+        margin: 0 5px;
+    }
 }
 
 #top-toolbar {

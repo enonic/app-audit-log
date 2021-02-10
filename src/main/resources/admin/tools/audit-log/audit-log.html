@@ -17,13 +17,15 @@
             allTypes: JSON.parse(/*[[${allTypes}]]*/),
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
+            appIconUrl: /*[[|${assetsUrl}/application.svg|]]*/,
             icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
         };
     </script>
 </head>
 
 <body>
-    <main id="audit-log">
+    <!--/* Javascript init here */-->
+    <!--/*main id="audit-log">
         <div class="appbar">
             <div class="home-button system-info-button">
                 <img class="app-icon audit-icon" data-th-src="|${assetsUrl}/application.svg|" />
@@ -69,7 +71,7 @@
                 </div>
             </section>
         </div>
-    </main>
+    </main*/-->
 </body>
 
 </html>

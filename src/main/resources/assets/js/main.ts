@@ -1,9 +1,15 @@
 import { getEntry } from './preview';
 import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
 import { createDatePicker } from './components';
-import { Body } from 'lib-admin-ui/dom/Body';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
+import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
+import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder, SplitPanelUnit } from 'lib-admin-ui/ui/panel/SplitPanel';
+import { Panel } from 'lib-admin-ui/ui/panel/Panel';
+import { DeckPanel } from 'lib-admin-ui/ui/panel/DeckPanel';
+import { Element } from 'lib-admin-ui/dom/Element';
+import { Body } from 'lib-admin-ui/dom/Body';
+import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -14,6 +20,7 @@ interface GlobalConfig {
     }>;
     launcherUrl: string;
     services: object;
+    appIconUrl: string;
     icon: string;
 }
 
@@ -21,20 +28,94 @@ declare global {
     const CONFIG: GlobalConfig;
 }
 
-const body = Body.get();
+// const body = Body.get();
+class AuditLogView {
+    body: Body = null;
+
+    constructor() {
+        const app = this.createApplication();
+        this.body = Body.get();
+        this.createAppPanels(app);
+        console.log(this.body);
+    }
+
+    createApplication(): Application {
+        const iconUrl = CONFIG.appIconUrl;
+        const app = new Application('audit-log', 'Audit Log Browser', 'ALB', iconUrl);
+        app.setWindow(window);
+        return app;
+    }
+
+    createAppPanels(app: Application) {
+        const appBar = new AppBar(app);
+        const appPanel = new AppPanel('app-container');
+        const toolbar = this.createTopToolbar();
+
+        const previewPanel = this.createPreviewPanel();
+        const selectPanel = this.createSelectPanel();
+        const splitPanel = this.createSplitPanel(selectPanel, previewPanel);
+
+        const mainPanel = new DeckPanel('main-panel');
+        const editPanel = new Panel('edit-panel');
+        mainPanel.appendChildren(...[appBar, editPanel]);
+
+        editPanel.appendChildren(...[toolbar, splitPanel]);
+
+        appPanel.appendChild(mainPanel);
+
+        this.body.appendChild(appPanel);
+    }
+
+    createSplitPanel(left: Panel, right: Panel): SplitPanel {
+        const panel = new SplitPanelBuilder(left, right)
+            .setAlignment(SplitPanelAlignment.VERTICAL)
+            .setSecondPanelMinSize(30, SplitPanelUnit.PERCENT)
+            .setFirstPanelMinSize(30, SplitPanelUnit.PERCENT)
+            .setFirstPanelSize(38, SplitPanelUnit.PERCENT)
+            .build();
+        panel.getEl().setTopPx(44);
+        return panel;
+    }
+
+    //Preview panel
+    createSelectPanel() {
+        const selectPanel = new Panel('select-panel');
+
+        selectPanel.appendChild(new Toolbar('select-toolbar'));
+
+        return selectPanel;
+    }
+
+    createPreviewPanel() {
+        return new Panel('preview-panel');
+    }
+
+    createTopToolbar(): Toolbar {
+        const toolbar = new Toolbar('tools');
+
+        toolbar
+            .appendChild(createDatePicker('select-from'))
+            .appendChild(createDatePicker('select-to'));
+
+        return toolbar;
+    }
+}
+
 
 // Main function called on page load
 document.addEventListener('DOMContentLoaded', function () {
-    /* const application = new Application('Audit Log Browser', 'Audit log', 'ALB');
-    application.setWindow(window); */
 
-    const appPanel = new AppPanel('main-panel'); //TODO
+    let applicationView = new AuditLogView();
 
+});
+
+function oldRender() {
     const selectionElement: HTMLElement = document.querySelector(
         '#select-section .select-list'
     );
     let total: number = 0;
     let asyncLoading: boolean = false;
+
     // Initial selection list rendering
     newSelectionList();
     setupSelectionList();
@@ -63,8 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const fromInput = createDatePicker('select-from');
     const toInput = createDatePicker('select-to');
 
-    datepickerDivs[0].appendChild(fromInput);
-    datepickerDivs[1].appendChild(toInput);
+    // datepickerDivs[0].appendChild(fromInput);
+    // datepickerDivs[1].appendChild(toInput);
 
     const searchbutton = document.getElementById('search-button');
     searchbutton.addEventListener('click', function () {
@@ -358,4 +439,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return selectItem;
     }
-});
+}
