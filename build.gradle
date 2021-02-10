@@ -2,7 +2,7 @@ plugins {
     id 'maven-publish'
     id "com.enonic.defaults" version "2.0.1"
     id "com.enonic.xp.app" version "2.0.0"
-    id "com.github.node-gradle.node" version "2.2.4"
+    id "com.github.node-gradle.node" version "3.0.0"
 }
 
 app {
@@ -60,7 +60,7 @@ node {
     download = true
 }
 
-task buildJS(type: NpmTask) {
+task buildJS(type: NpmTask, dependsOn: npmInstall) {
     args = ["run", "build"]
     inputs.files("src/main/resources/assets/js")
     outputs.file("$buildDir/resources/main/assets/js/main.js")
