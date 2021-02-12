@@ -1,15 +1,20 @@
 import { getEntry } from './preview';
 import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
 import { createDatePicker } from './components';
+import { setDropDownTypes } from './data';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
 import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder, SplitPanelUnit } from 'lib-admin-ui/ui/panel/SplitPanel';
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { DeckPanel } from 'lib-admin-ui/ui/panel/DeckPanel';
-import { Element } from 'lib-admin-ui/dom/Element';
 import { Body } from 'lib-admin-ui/dom/Body';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
+import { LabelEl } from 'lib-admin-ui/dom/LabelEl';
+import { Element } from 'lib-admin-ui/dom/Element';
+import { Messages } from 'lib-admin-ui/util/Messages';
+import { DivEl } from 'lib-admin-ui/dom/DivEl';
+import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -33,10 +38,13 @@ class AuditLogView {
     body: Body = null;
 
     constructor() {
-        const app = this.createApplication();
+        const app: Application = this.createApplication();
         this.body = Body.get();
         this.createAppPanels(app);
-        console.log(this.body);
+
+        Messages.setMessages({
+            'action.ok': 'ok',
+        });
     }
 
     createApplication(): Application {
@@ -57,9 +65,9 @@ class AuditLogView {
 
         const mainPanel = new DeckPanel('main-panel');
         const editPanel = new Panel('edit-panel');
-        mainPanel.appendChildren(...[appBar, editPanel]);
+        mainPanel.appendChildren(appBar, <Element>editPanel);
 
-        editPanel.appendChildren(...[toolbar, splitPanel]);
+        editPanel.appendChildren(toolbar, <Element>splitPanel);
 
         appPanel.appendChild(mainPanel);
 
@@ -73,7 +81,7 @@ class AuditLogView {
             .setFirstPanelMinSize(30, SplitPanelUnit.PERCENT)
             .setFirstPanelSize(38, SplitPanelUnit.PERCENT)
             .build();
-        panel.getEl().setTopPx(44);
+        panel.getEl().setTopPx(84);
         return panel;
     }
 
@@ -93,9 +101,38 @@ class AuditLogView {
     createTopToolbar(): Toolbar {
         const toolbar = new Toolbar('tools');
 
+        const fromWrapper = new DivEl('wrapper');
+        const fromDatePicker = createDatePicker('select-from');
+        const fromLabel = new LabelEl('From', fromDatePicker.getTextInput());
+        fromWrapper.appendChildren(
+            <Element>fromLabel,
+            fromDatePicker,
+        );
+
+        const toWrapper = new DivEl('wrapper');
+        const toDatePicker = createDatePicker('select-to');
+        const toLabel = new LabelEl('To', toDatePicker.getTextInput());
+        toWrapper.appendChildren(
+            <Element>toLabel,
+            toDatePicker,
+        );
+
+        const userWrapepr = new DivEl('wrapper');
+        const dropdown = new Dropdown('User', {});
+        const userLabel = new LabelEl('User', <Element>dropdown);
+        userWrapepr.appendChildren(
+            userLabel,
+            <Element>dropdown,
+        );
+
+        setDropDownTypes(dropdown);
+
         toolbar
-            .appendChild(createDatePicker('select-from'))
-            .appendChild(createDatePicker('select-to'));
+            .appendChildren(
+                fromWrapper,
+                toWrapper,
+                userWrapepr,
+            );
 
         return toolbar;
     }
