@@ -32,7 +32,7 @@ dependencies {
     include "com.enonic.xp:lib-io:${xpVersion}"
 
     include "com.enonic.lib:lib-thymeleaf:2.0.0"
-    include "com.enonic.lib:lib-admin-ui:3.1.2"
+    include "com.enonic.lib:lib-admin-ui:3.2.0"
 
     include 'com.enonic.lib:lib-license:3.0.0'
 }

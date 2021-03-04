@@ -3,6 +3,7 @@
 @import "license";
 @import "material_override";
 @import "shared"; // Variables etc
+@import "mixin";
 
 #audit-log {
     display: block;
@@ -35,58 +36,16 @@
     .wrapper {
         margin-left: 15px;
     }
-}
 
-#top-toolbar {
-    display: grid;
-    grid-template-columns: 100px 100px 250px 275px 5fr auto;
-    column-gap: 2rem;
-    padding: 1rem;
-    height: auto;
-    margin-bottom: 0;
-
-    .icon-wrapper {
-        cursor: pointer;
-        display: inline-block;
-        padding: 25px 10px;
-        user-select: none;
-
-        div {
-            display: block;
-        }
+    .xp-admin-common-dropdown {
+        display:block;
+        width: 240px;
     }
 
-    .input-field {
-        margin: 0;
-
-        input {
-            border-bottom: 1px solid var(--mat-blue);
-            display: inline-block;
-            width: 100%;
-            height: 3rem;
-
-            &:focus {
-                border-bottom: 1px solid var(--mat-blue);
-                box-shadow: none;
-            }
-
-            &::placeholder {
-                color: black;
-            }
-        }
-
-        select {
-            border-bottom: 1px solid var(--mat-blue);
-        }
-
-        label {
-            //position: static;
-            font-size: 1rem;
-        }
-    }
-
-    @media screen and (max-width: 720px) {
-        grid-template-columns: 100%;
+    .xp-admin-common-text-input {
+        @include input-glow();
+        width: 240px;
+        height: 36px;
     }
 }
 

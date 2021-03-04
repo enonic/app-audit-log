@@ -1,7 +1,7 @@
 import { getEntry } from './preview';
 import { sendXMLHttpRequest, shortCreate, formatDate } from './util';
 import { createDatePicker } from './components';
-import { setDropDownTypes } from './data';
+import { setDropdownTypes, setDropDownUsers } from './data';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
@@ -15,6 +15,8 @@ import { Element } from 'lib-admin-ui/dom/Element';
 import { Messages } from 'lib-admin-ui/util/Messages';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
+import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
+import { LoadMask } from 'lib-admin-ui/ui/mask/LoadMask';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -87,11 +89,36 @@ class AuditLogView {
 
     //Preview panel
     createSelectPanel() {
+        const leftPanel = new Panel('left-panel');
         const selectPanel = new Panel('select-panel');
+        selectPanel.addClass('mask-wrapper');
+        // const mask = new LoadMask(selectPanel);
 
-        selectPanel.appendChild(new Toolbar('select-toolbar'));
+        const selectPanelEl = $(selectPanel.getHTMLElement());
 
-        return selectPanel;
+        // Could not find a good way position the mask
+        // Please change if there is a better way
+        const maskDimensions: { width: string; height: string } = {
+            width: selectPanelEl.outerWidth() + 'px',
+            height: selectPanelEl.outerHeight() + 'px',
+        };
+
+        let maskOffset: { top: number; left: number } = selectPanelEl.position();
+
+        mask.getEl()
+            .setTopPx(maskOffset.top)
+            .setLeftPx(maskOffset.left)
+            .setWidth(maskDimensions.width)
+            .setHeight(maskDimensions.height);
+
+        leftPanel.appendChildren(
+            <Element>new Toolbar('select-toolbar'),
+            selectPanel,
+        );
+
+        mask.show();
+
+        return leftPanel;
     }
 
     createPreviewPanel() {
@@ -103,35 +130,54 @@ class AuditLogView {
 
         const fromWrapper = new DivEl('wrapper');
         const fromDatePicker = createDatePicker('select-from');
-        const fromLabel = new LabelEl('From', fromDatePicker.getTextInput());
+        const fromLabel: Element = new LabelEl('From', fromDatePicker.getTextInput());
         fromWrapper.appendChildren(
-            <Element>fromLabel,
+            fromLabel,
             fromDatePicker,
         );
 
         const toWrapper = new DivEl('wrapper');
         const toDatePicker = createDatePicker('select-to');
-        const toLabel = new LabelEl('To', toDatePicker.getTextInput());
+        const toLabel: Element = new LabelEl('To', toDatePicker.getTextInput());
         toWrapper.appendChildren(
-            <Element>toLabel,
+            toLabel,
             toDatePicker,
         );
 
         const userWrapepr = new DivEl('wrapper');
-        const dropdown = new Dropdown('User', {});
-        const userLabel = new LabelEl('User', <Element>dropdown);
+        const userDropdown = new Dropdown('User', { inputPlaceholderText: 'Select' });
+        const userLabel: Element = new LabelEl('User', <Element>userDropdown);
+        setDropDownUsers(userDropdown);
         userWrapepr.appendChildren(
             userLabel,
-            <Element>dropdown,
+            userDropdown,
         );
 
-        setDropDownTypes(dropdown);
+        const typeWrapper = new DivEl('wrapper');
+        const typeDropdown = new Dropdown('type', { inputPlaceholderText: 'Select' });
+        const typeLabel: Element = new LabelEl('Type', <Element>typeDropdown);
+        setDropdownTypes(typeDropdown);
+
+        typeWrapper.appendChildren(
+            typeLabel,
+            typeDropdown,
+        );
+
+        const searchWrapper = new DivEl('wrapper');
+        const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
+        const searchLabel: Element = new LabelEl('Search', searchInput);
+        searchWrapper.appendChildren(
+            searchLabel,
+            searchInput,
+        );
 
         toolbar
             .appendChildren(
                 fromWrapper,
                 toWrapper,
                 userWrapepr,
+                typeWrapper,
+                searchWrapper,
             );
 
         return toolbar;

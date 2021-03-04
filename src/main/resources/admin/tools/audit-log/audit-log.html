@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script data-th-src="|${assetsUrl}/admin/common/js/lib.js|"></script>
-    <script data-th-src="|${assetsUrl}/js/main.js|"></script>
     <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
     <script data-th-inline="javascript">
         var CONFIG = {
@@ -22,6 +21,8 @@
             icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
         };
     </script>
+    <!--/* Needs to be after config init since the script uses it */-->
+    <script data-th-src="|${assetsUrl}/js/main.js|"></script>
 </head>
 
 <body>

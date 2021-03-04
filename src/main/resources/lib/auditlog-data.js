@@ -53,12 +53,12 @@ function getAllUsers() {
         query: "",
     });
 
-    let data = {};
+    let data = [];
     result.hits.forEach(function(user) {
-        data[user.key] = '';
+        data.push(user.key);
     });
 
-    return data; 
+    return data;
 }
 
 /**
