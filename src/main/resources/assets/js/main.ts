@@ -16,7 +16,7 @@ import { Messages } from 'lib-admin-ui/util/Messages';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { LoadMask } from 'lib-admin-ui/ui/mask/LoadMask';
+import { Mask } from 'lib-admin-ui/ui/mask/Mask';
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -38,6 +38,9 @@ declare global {
 // const body = Body.get();
 class AuditLogView {
     body: Body = null;
+
+    private leftPanel: Panel;
+    private rightPanel: Panel;
 
     constructor() {
         const app: Application = this.createApplication();
@@ -61,9 +64,9 @@ class AuditLogView {
         const appPanel = new AppPanel('app-container');
         const toolbar = this.createTopToolbar();
 
-        const previewPanel = this.createPreviewPanel();
-        const selectPanel = this.createSelectPanel();
-        const splitPanel = this.createSplitPanel(selectPanel, previewPanel);
+        this.createPreviewPanel();
+        this.createSelectPanel();
+        const splitPanel = this.createSplitPanel(this.leftPanel, this.rightPanel);
 
         const mainPanel = new DeckPanel('main-panel');
         const editPanel = new Panel('edit-panel');
@@ -89,10 +92,16 @@ class AuditLogView {
 
     //Preview panel
     createSelectPanel() {
-        const leftPanel = new Panel('left-panel');
+        this.leftPanel = new Panel('left-panel');
         const selectPanel = new Panel('select-panel');
-        selectPanel.addClass('mask-wrapper');
-        // const mask = new LoadMask(selectPanel);
+        const mask = new Mask(selectPanel);
+        // Fake load mask
+        mask.addClass('load-mask');
+        const splash = new DivEl('mask-splash');
+        const spinner = new DivEl('spinner');
+
+        splash.appendChild(spinner);
+        mask.appendChild(splash);
 
         const selectPanelEl = $(selectPanel.getHTMLElement());
 
@@ -111,18 +120,21 @@ class AuditLogView {
             .setWidth(maskDimensions.width)
             .setHeight(maskDimensions.height);
 
-        leftPanel.appendChildren(
+        this.leftPanel.appendChildren(
             <Element>new Toolbar('select-toolbar'),
             selectPanel,
         );
 
-        mask.show();
+        $(this.body.getHTMLElement()).prepend(mask.getHTMLElement());
+        mask.getHTMLElement().style.display = 'block';
+        splash.getHTMLElement().style.display = 'block';
 
-        return leftPanel;
+        return this.leftPanel;
     }
 
     createPreviewPanel() {
-        return new Panel('preview-panel');
+        this.rightPanel = new Panel('preview-panel');
+        return this.rightPanel;
     }
 
     createTopToolbar(): Toolbar {
