@@ -9,7 +9,7 @@ import { AuditlogNode } from './SelectionEl';
 
 interface SelectionListData {
     total: number;
-    selectionList: Array<AuditlogNode>;
+    selections: Array<AuditlogNode>;
 }
 
 export class SelectionPanel extends Panel {
@@ -103,13 +103,11 @@ export class SelectionPanel extends Panel {
     }
 
     private createSelectionList(data: SelectionListData, clear: boolean = false) {
-        console.log(data);
-        // Nodes might be json string
         if (clear) {
             this.selectionList.clearAll();
             this.toolbar.getEl().setText(`Total: ${data.total}`);
         }
-        this.selectionList.createList(data.selectionList);
+        this.selectionList.createList(data.selections);
     }
 
     //TODO map options to the correct structure
@@ -126,10 +124,12 @@ export class SelectionPanel extends Panel {
             headers: new Headers({ 'content-type': 'application/json' }),
             body: JSON.stringify(data),
         })
-            .then(function(res: Response) {
-                context.createSelectionList(<any>res.json(), true);
+            .then(function (res: Response) {
+                return res.json();
+            })
+            .then(jsonData => {
+                context.createSelectionList(jsonData, true);
                 context.hideMask();
-                return;
             })
             .catch(error => {
                 console.log(error);

@@ -21,7 +21,7 @@ export interface AuditlogNode {
  */
 export class SelectionEl extends DivEl {
     constructor(node?: AuditlogNode) {
-        super('entry');
+        super('selectionEl');
 
         const icon = new ImgEl(CONFIG.icon);
         const leftSide = new DivEl('left');
