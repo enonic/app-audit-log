@@ -16,7 +16,8 @@ import { Messages } from 'lib-admin-ui/util/Messages';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { Mask } from 'lib-admin-ui/ui/mask/Mask';
+import { SelectionPanel } from './SelectionPanel';
+
 
 interface GlobalConfig {
     auditServiceUrl: string;
@@ -39,7 +40,7 @@ declare global {
 class AuditLogView {
     body: Body = null;
 
-    private leftPanel: Panel;
+    private selectionPanel: Panel;
     private rightPanel: Panel;
 
     constructor() {
@@ -65,15 +66,14 @@ class AuditLogView {
         const toolbar = this.createTopToolbar();
 
         this.createPreviewPanel();
-        this.createSelectPanel();
-        const splitPanel = this.createSplitPanel(this.leftPanel, this.rightPanel);
+        this.selectionPanel = new SelectionPanel(); //TODO add class
+        const splitPanel = this.createSplitPanel(this.selectionPanel, this.rightPanel);
 
         const mainPanel = new DeckPanel('main-panel');
         const editPanel = new Panel('edit-panel');
+
         mainPanel.appendChildren(appBar, <Element>editPanel);
-
         editPanel.appendChildren(toolbar, <Element>splitPanel);
-
         appPanel.appendChild(mainPanel);
 
         this.body.appendChild(appPanel);
@@ -88,48 +88,6 @@ class AuditLogView {
             .build();
         panel.getEl().setTopPx(84);
         return panel;
-    }
-
-    //Preview panel
-    createSelectPanel() {
-        this.leftPanel = new Panel('left-panel');
-        const selectPanel = new Panel('select-panel');
-        const mask = new Mask(selectPanel);
-        // Fake load mask
-        mask.addClass('load-mask');
-        const splash = new DivEl('mask-splash');
-        const spinner = new DivEl('spinner');
-
-        splash.appendChild(spinner);
-        mask.appendChild(splash);
-
-        const selectPanelEl = $(selectPanel.getHTMLElement());
-
-        // Could not find a good way position the mask
-        // Please change if there is a better way
-        const maskDimensions: { width: string; height: string } = {
-            width: selectPanelEl.outerWidth() + 'px',
-            height: selectPanelEl.outerHeight() + 'px',
-        };
-
-        let maskOffset: { top: number; left: number } = selectPanelEl.position();
-
-        mask.getEl()
-            .setTopPx(maskOffset.top)
-            .setLeftPx(maskOffset.left)
-            .setWidth(maskDimensions.width)
-            .setHeight(maskDimensions.height);
-
-        this.leftPanel.appendChildren(
-            <Element>new Toolbar('select-toolbar'),
-            selectPanel,
-        );
-
-        $(this.body.getHTMLElement()).prepend(mask.getHTMLElement());
-        mask.getHTMLElement().style.display = 'block';
-        splash.getHTMLElement().style.display = 'block';
-
-        return this.leftPanel;
     }
 
     createPreviewPanel() {

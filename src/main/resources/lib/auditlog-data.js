@@ -151,7 +151,7 @@ function doQuery(queryLine, settings, aggregations) {
     queryParam.aggregations = aggregations ? aggregations : undefined;
 
     let repoConnection = node.connect({
-        repoId: "system.auditlog", // Please never connect to a system repo. Ever.
+        repoId: "system.auditlog", // Please never connect to a system repo manually. Ever.
         branch: "master",
     });
 
