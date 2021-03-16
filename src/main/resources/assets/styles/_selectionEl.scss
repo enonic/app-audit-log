@@ -1,56 +1,55 @@
 .selectionEl {
-    .entry {
-        background-color: white;
-        border: none;
-        cursor: pointer;
-        display: grid;
-        grid-template-columns: 40px 1fr 1fr;
-        outline: none;
-        padding: 0.5rem;
-        text-align: left;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr;
+    outline: none;
+    padding: 0.5rem;
+    text-align: left;
+    width: 100%;
+
+    & > * {
+        padding: 0 1rem;
+        margin: auto 0;
+    }
+
+    img {
         width: 100%;
+        padding: 0;
+    }
 
-        & > * {
-            padding: 0 1rem;
-            margin: auto 0;
+    time {
+        display: inline-block;
+        color: #777;
+        font-size: 12px;
+    }
+
+    /* Did not think i would ever user this */
+    div .user {
+        padding: 0.5rem 0;
+    }
+
+    &:hover {
+        background-color: var(--light-gray);
+    }
+
+    &:focus,
+    &.active {
+        background-color: #2196f3;
+        * {
+            color: white;
         }
+    }
 
-        img {
-            width: 100%;
-            padding: 0;
-        }
-
-        time {
-            display: inline-block;
-            color: #777;
-            font-size: 12px;
-        }
-
-        /* Did not think i would ever user this */
-        div .user {
-            padding: 0.5rem 0;
-        }
-
-        &:hover {
-            background-color: var(--light-gray);
-        }
-
-        &:focus, &.active {
-            background-color: #2196f3;
-            * {
-                color: white;
-            }
-        }
-
-        &.tombstone {
-            * *:after {
-                content: "";
-                background-color: var(--gray);
-                border-radius: 5px;
-                display: block;
-                height: 1rem;
-                width: 50%;
-            }
+    &.tombstone {
+        * *:after {
+            content: "";
+            background-color: var(--gray);
+            border-radius: 5px;
+            display: block;
+            height: 1rem;
+            width: 50%;
         }
     }
 }

@@ -13,6 +13,14 @@ export class SelectionListEl extends DivEl {
         this.removeChildren();
     }
 
+    public clearActive() {
+        this.getChildren().forEach(element => {
+            if (element.hasClass('active')) {
+                element.removeClass('active');
+            }
+        });
+    }
+
     /**
      * Also appends to the child list
      *

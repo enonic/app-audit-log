@@ -10,6 +10,8 @@
 }
 
 .selection {
+    overflow: auto;
+
     .selectionListEl {
         .select-list {
             overflow-y: auto;

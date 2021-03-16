@@ -2,7 +2,9 @@ import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
 import { H6El } from 'lib-admin-ui/dom/H6El';
 import { ImgEl } from 'lib-admin-ui/dom/ImgEl';
-import { sendXMLHttpRequest, formatDate } from './util';
+import { KeyHelper } from 'lib-admin-ui/ui/KeyHelper';
+import { SelectionListEl } from './SelectionListEl';
+import { formatDate } from './util';
 
 // Might need to move this to a datafile if more data structures are created.
 // Full audit-log data node
@@ -45,21 +47,20 @@ export class SelectionEl extends DivEl {
             leftSide.appendChildren(type, time, user);
         }
 
-        this.addEvents();
-    }
-
-    private addEvents() {
         this.onKeyDown(event => {
-            if (event.key === 'Enter' || event.key === 'Space') {
-                this.handleSelect(event);
+            if (KeyHelper.isEnterKey(event) || KeyHelper.isSpace(event)) {
+                this.toggle();
             }
         });
-
-        this.onClicked(this.handleSelect);
+        this.onClicked(event => {
+            this.toggle();
+        });
     }
 
-    private handleSelect(event: Event) {
-        //TODO
+    private toggle() {
+        // Is there a way we force this on build time? constructor?
+        (<SelectionListEl>this.getParentElement()).clearActive();
+        this.toggleClass('active');
     }
 }
 
