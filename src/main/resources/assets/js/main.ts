@@ -66,7 +66,7 @@ class AuditLogView {
         const toolbar = this.createTopToolbar();
 
         this.createPreviewPanel();
-        this.selectionPanel = new SelectionPanel(); //TODO add class
+        this.selectionPanel = new SelectionPanel('selection-panel'); //TODO add class
         const splitPanel = this.createSplitPanel(this.selectionPanel, this.rightPanel);
 
         const mainPanel = new DeckPanel('main-panel');

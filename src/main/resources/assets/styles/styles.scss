@@ -1,8 +1,7 @@
 @import "select-panel";
-@import "selectionEl";
+@import "selection";
 @import "preview-panel";
 @import "license";
-@import "material_override";
 @import "shared"; // Variables etc
 @import "mixin";
 
@@ -44,7 +43,7 @@
     }
 
     .xp-admin-common-text-input {
-        @include input-glow();
+        @include input-glow(var(--admin-input-blue));
         width: 240px;
         height: 36px;
     }

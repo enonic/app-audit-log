@@ -138,7 +138,7 @@ function doQuery(queryLine, settings, aggregations) {
     }
 
     if (options.count > 100) {
-        log.console.error("Wrong params in query. Audit log");
+        log.error("Wrong params in query. Audit log");
     }
 
     let queryParam = {
@@ -151,7 +151,7 @@ function doQuery(queryLine, settings, aggregations) {
     queryParam.aggregations = aggregations ? aggregations : undefined;
 
     let repoConnection = node.connect({
-        repoId: "system.auditlog", // Please never connect to a system repo manually. Ever.
+        repoId: "system.auditlog", // Please never connect to a system repo manuallya. Ever.
         branch: "master",
     });
 

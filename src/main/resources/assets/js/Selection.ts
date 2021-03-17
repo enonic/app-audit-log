@@ -3,7 +3,7 @@ import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
 import { H6El } from 'lib-admin-ui/dom/H6El';
 import { ImgEl } from 'lib-admin-ui/dom/ImgEl';
 import { KeyHelper } from 'lib-admin-ui/ui/KeyHelper';
-import { SelectionListEl } from './SelectionListEl';
+import { SelectionList } from './SelectionList';
 import { formatDate } from './util';
 
 // Might need to move this to a datafile if more data structures are created.
@@ -23,15 +23,17 @@ export interface AuditlogNode {
  */
 export class SelectionEl extends DivEl {
     constructor(node?: AuditlogNode) {
-        super('selectionEl');
+        super('selection');
+
+        this.getEl().setTabIndex(0);
 
         const icon = new ImgEl(CONFIG.icon);
-        const leftSide = new DivEl('left');
-        const rightSide = new DivEl('right');
+        const info = new DivEl('info');
+        const info2 = new DivEl('info');
         this.appendChildren(
             icon,
-            leftSide,
-            rightSide,
+            info,
+            info2,
         );
 
         if (node == null || node === undefined) {
@@ -44,7 +46,8 @@ export class SelectionEl extends DivEl {
             const user = new DivEl();
             user.getEl().setText(`${node.user}`);
 
-            leftSide.appendChildren(type, time, user);
+            info.appendChildren(type, time);
+            info2.appendChild(user);
         }
 
         this.onKeyDown(event => {
@@ -52,14 +55,14 @@ export class SelectionEl extends DivEl {
                 this.toggle();
             }
         });
-        this.onClicked(event => {
+        this.onClicked(() => {
             this.toggle();
         });
     }
 
     private toggle() {
         // Is there a way we force this on build time? constructor?
-        (<SelectionListEl>this.getParentElement()).clearActive();
+        (<SelectionList>this.getParentElement()).clearActive();
         this.toggleClass('active');
     }
 }

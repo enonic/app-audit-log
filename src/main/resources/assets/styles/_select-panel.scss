@@ -9,27 +9,7 @@
     transform: scale(0.8);
 }
 
-.selection {
+.selection-panel {
     overflow: auto;
-
-    .selectionListEl {
-        .select-list {
-            overflow-y: auto;
-            height: calc(100vh - 190px);
-        }
-    }
 }
 
-#select-section {
-    font-size: 1rem;
-    padding: 0;
-    border-right: 5px solid #eee;
-    width: calc(50% - 5px);
-    display: inline-block;
-
-    .total {
-        display: block;
-        margin: 0;
-        padding-left: 1.5rem;
-    }
-}

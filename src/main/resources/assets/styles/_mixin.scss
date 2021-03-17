@@ -1,6 +1,6 @@
 @import "shared";
 
-@mixin input-glow($color: $admin-input-blue) {
+@mixin input-glow($color) {
     &:hover {
       &:not([disabled]) {
         border: 1px solid $color;

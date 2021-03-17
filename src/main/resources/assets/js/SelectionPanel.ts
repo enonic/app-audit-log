@@ -1,21 +1,15 @@
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { Mask } from 'lib-admin-ui/ui/mask/Mask';
-import { SelectionListEl } from './SelectionListEl';
+import { SelectionList } from './SelectionList';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Body } from 'lib-admin-ui/dom/Body';
-import { AuditlogNode } from './SelectionEl';
-
-interface SelectionListData {
-    total: number;
-    selections: Array<AuditlogNode>;
-}
 
 export class SelectionPanel extends Panel {
 
     private mask: Mask;
-    private selectionList: SelectionListEl;
+    private selectionList: SelectionList;
     private toolbar: Toolbar;
 
     constructor(className?: string) {
@@ -34,18 +28,22 @@ export class SelectionPanel extends Panel {
         splash.appendChild(spinner);
         this.mask.appendChild(splash);
 
-        const selectionPanel = new Panel('selection');
         this.toolbar = new Toolbar('select-toolbar');
 
+        let listPanel = this.createListPanel();
         this.appendChildren(
             <Element>this.toolbar,
-            selectionPanel,
+            listPanel,
         );
 
-        this.selectionList = new SelectionListEl();
-        this.createSelectionListFromData();
+        let list = new SelectionList(this.toolbar);
+        this.selectionList = list;
 
-        selectionPanel.appendChild(this.selectionList);
+        listPanel.appendChild(list);
+        let loadPromise = list.loadMoreSelections(true, 100);
+        loadPromise.then(() => {
+            this.hideMask();
+        });
 
         const selectPanelEl = $(this.getHTMLElement());
 
@@ -92,6 +90,24 @@ export class SelectionPanel extends Panel {
 
     }
 
+    private createListPanel() {
+        const panel = new Panel('selection-panel');
+
+        let panelHtml = panel.getHTMLElement();
+
+        // Add scroll listner event and fetch more items for the selection list
+        panel.onScroll(() => {
+            let maxScroll = panelHtml.scrollHeight - panelHtml.clientHeight;
+            let scroll = panelHtml.scrollTop;
+            let tenner = (maxScroll/100) * 10;
+            if (scroll >= tenner) {
+                this.selectionList.loadMoreSelections(false, 50);
+            }
+        });
+
+        return panel;
+    }
+
     showMask() {
         // this.mask.show();
         this.mask.getHTMLElement().style.display = 'block';
@@ -101,39 +117,4 @@ export class SelectionPanel extends Panel {
         // this.mask.hide();
         this.mask.getHTMLElement().style.display = 'none';
     }
-
-    private createSelectionList(data: SelectionListData, clear: boolean = false) {
-        if (clear) {
-            this.selectionList.clearAll();
-            this.toolbar.getEl().setText(`Total: ${data.total}`);
-        }
-        this.selectionList.createList(data.selections);
-    }
-
-    //TODO map options to the correct structure
-    // Move this to selectionListEl?
-    private createSelectionListFromData(options?: [any | null]) {
-        const data = {
-            selection: true,
-            options,
-        };
-
-        const context = this;
-        fetch(CONFIG.auditServiceUrl, {
-            method: 'POST',
-            headers: new Headers({ 'content-type': 'application/json' }),
-            body: JSON.stringify(data),
-        })
-            .then(function (res: Response) {
-                return res.json();
-            })
-            .then(jsonData => {
-                context.createSelectionList(jsonData, true);
-                context.hideMask();
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-
 }
