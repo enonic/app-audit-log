@@ -1,21 +1,28 @@
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { Mask } from 'lib-admin-ui/ui/mask/Mask';
-import { SelectionList } from './SelectionList';
+import { SelectionList, FetchOptions } from './SelectionList';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Body } from 'lib-admin-ui/dom/Body';
+import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
+import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
+import { ElementHelper } from 'lib-admin-ui/dom/ElementHelper';
+import { DatePicker } from 'lib-admin-ui/ui/time/DatePicker';
 
 export class SelectionPanel extends Panel {
 
     private mask: Mask;
     private selectionList: SelectionList;
+    private optionsToolbar: Toolbar;
     private toolbar: Toolbar;
+    private loading: boolean = false;
 
-    constructor(className?: string) {
+    constructor(optionsToolbar: Toolbar, className?: string) {
         super(className);
         this.createPanel();
         this.showMask();
+        this.optionsToolbar = optionsToolbar;
     }
 
     private createPanel() {
@@ -36,14 +43,14 @@ export class SelectionPanel extends Panel {
             listPanel,
         );
 
-        let list = new SelectionList(this.toolbar);
-        this.selectionList = list;
+        this.selectionList = new SelectionList(this.toolbar);
 
-        listPanel.appendChild(list);
-        let loadPromise = list.loadMoreSelections(true, 100);
-        loadPromise.then(() => {
-            this.hideMask();
-        });
+        listPanel.appendChild(this.selectionList);
+        // Can return null, should never return null
+        this.selectionList.loadMoreSelections(true, 100)
+            .then(() => {
+                this.hideMask();
+            });
 
         const selectPanelEl = $(this.getHTMLElement());
 
@@ -97,15 +104,64 @@ export class SelectionPanel extends Panel {
 
         // Add scroll listner event and fetch more items for the selection list
         panel.onScroll(() => {
-            let maxScroll = panelHtml.scrollHeight - panelHtml.clientHeight;
-            let scroll = panelHtml.scrollTop;
-            let tenner = (maxScroll/100) * 10;
-            if (scroll >= tenner) {
-                this.selectionList.loadMoreSelections(false, 50);
+            if (this.loading === false) {
+                let maxScroll = panelHtml.scrollHeight - panelHtml.clientHeight;
+                let scroll = panelHtml.scrollTop;
+                let tenner = (maxScroll / 100) * 10;
+                if (scroll >= maxScroll - tenner) {
+                    this.loading = true;
+                    this.mask.show();
+                    this.selectionList
+                        .loadMoreSelections(false, 50, this.getOptions())
+                        .then(() => {
+                            this.loading = false;
+                            this.mask.hide();
+                        });
+                }
             }
         });
 
         return panel;
+    }
+
+    /**
+     * Get all the FetchOptions form the toolbar for create a new seletion list
+     */
+    getOptions(): FetchOptions {
+        let optTool = this.optionsToolbar;
+        console.log(optTool.findChildById('select-from', true).getEl());
+        const from = (<DatePicker>optTool.findChildById('select-from', true))
+            .getTextInput().getValue();
+        const to = (<DatePicker>optTool.findChildById('select-to', true))
+            .getTextInput().getValue();
+        const user = (<Dropdown<string>>optTool.findChildById('select-user', true)).getValue();
+        const type = (<Dropdown<String>>optTool.findChildById('select-type', true)).getValue();
+        const fullText = (<FormInputEl>optTool.findChildById('fulltext', true)).getValue();
+
+        return {
+            from,
+            to,
+            user,
+            type,
+            fullText,
+        };
+    }
+
+    public onSelectionClick(handle: (event: CustomEvent) => void) {
+        this.getEl().addEventListener('SelectionClick', handle);
+    }
+
+    public createNewSelectionList() {
+        if (this.loading === false) {
+            this.showMask();
+            this.loading = true;
+
+            let promise = this.selectionList.loadMoreSelections(true, 50, this.getOptions());
+            promise.then(() => {
+                this.hideMask();
+                this.loading = false;
+            });
+        }
     }
 
     showMask() {

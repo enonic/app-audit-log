@@ -11,7 +11,7 @@ exports.post = function (req) {
     let options = body.options || {};
 
     if (body.entryId) {
-        let entry = auditData.getEntry(body.entryId);
+        let entry = auditData.getEntry(body.id);
 
         return jsonResponse(entry);
     } else if (body.selection) {

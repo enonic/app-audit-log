@@ -1,18 +1,18 @@
-import { shortCreate, sendXMLHttpRequest, formatDate } from './util';
+/* import { shortCreate, sendXMLHttpRequest, formatDate } from './util';
 
 interface Entry {
     type: string;
     time: Date;
     props: any;
     data: any;
-}
+} */
 
 /**
  * Request and show an log entry in the preview panel
  *
  * @param {String} id
  */
-export function getEntry(id: string) {
+/* export function getEntry(id: string) {
     let data = JSON.stringify({
         entryId: id,
     });
@@ -36,7 +36,7 @@ export function getEntry(id: string) {
             console.error(request);
         }
     }
-}
+} */
 
 //Does all the dom manipulation to show a single log entry
 /**
@@ -45,7 +45,7 @@ export function getEntry(id: string) {
  * @param entry The entry to preview
  * @returns {HTMLElement} The finished preview tab element
  */
-function createEntry(entry: Entry): HTMLElement {
+/* function createEntry(entry: Entry): HTMLElement {
     let showEntry = document.createElement('div');
     showEntry.id = 'entry-show';
     showEntry.classList.add('item-statistics-panel');
@@ -99,39 +99,39 @@ function createEntry(entry: Entry): HTMLElement {
     createObjectStructure(data, dataBlock);
 
     return showEntry;
-}
+} */
 
 // Recusive function that handles all data structures
-function createObjectStructure(data: any, parent: HTMLElement) {
-    // eslint-disable-next-line guard-for-in
-    for (const prop in data) {
-        let propList = shortCreate(null, 'data-list', 'ul');
+// function createObjectStructure(data: any, parent: HTMLElement) {
+//     // eslint-disable-next-line guard-for-in
+//     for (const prop in data) {
+//         let propList = shortCreate(null, 'data-list', 'ul');
 
-        if (typeof data[prop] == 'object') {
+//         if (typeof data[prop] == 'object') {
 
-            let header = shortCreate(`${prop}`, 'list-header', 'li');
-            parent.appendChild(header);
+//             let header = shortCreate(`${prop}`, 'list-header', 'li');
+//             parent.appendChild(header);
 
-            if (Array.isArray(data[prop])) {
-                createListStructure(data[prop], propList, 'li');
-            } else {
-                propList.classList.add('align-top');
-                propList.classList.add('nested');
-                let item = shortCreate(null, null, 'li');
-                propList.appendChild(item);
-                createObjectStructure(data[prop], item);
-            }
-        } else {
-            propList.appendChild(shortCreate(`${prop}`, 'list-header', 'li'));
-            propList.appendChild(shortCreate(`${data[prop]}`, '', 'li'));
-        }
-        parent.appendChild(propList);
-    }
-}
+//             if (Array.isArray(data[prop])) {
+//                 createListStructure(data[prop], propList, 'li');
+//             } else {
+//                 propList.classList.add('align-top');
+//                 propList.classList.add('nested');
+//                 let item = shortCreate(null, null, 'li');
+//                 propList.appendChild(item);
+//                 createObjectStructure(data[prop], item);
+//             }
+//         } else {
+//             propList.appendChild(shortCreate(`${prop}`, 'list-header', 'li'));
+//             propList.appendChild(shortCreate(`${data[prop]}`, '', 'li'));
+//         }
+//         parent.appendChild(propList);
+//     }
+// }
 
 // Creates a list out of an array value
-function createListStructure(list: string[], parent: HTMLElement, tag: string) {
-    list.forEach(function (item: string) {
-        parent.appendChild(shortCreate(`${item}`, null, tag));
-    });
-}
+// function createListStructure(list: string[], parent: HTMLElement, tag: string) {
+//     list.forEach(function (item: string) {
+//         parent.appendChild(shortCreate(`${item}`, null, tag));
+//     });
+// }

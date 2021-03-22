@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
 import { H6El } from 'lib-admin-ui/dom/H6El';
@@ -22,9 +23,11 @@ export interface AuditlogNode {
  * @param {string} [prefix]
  */
 export class SelectionEl extends DivEl {
+    id: string;
+
     constructor(node?: AuditlogNode) {
         super('selection');
-
+        this.id = node._id;
         this.getEl().setTabIndex(0);
 
         const icon = new ImgEl(CONFIG.icon);
@@ -56,6 +59,9 @@ export class SelectionEl extends DivEl {
             }
         });
         this.onClicked(() => {
+            this.getHTMLElement().dispatchEvent(
+                new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
+            );
             this.toggle();
         });
     }
@@ -66,38 +72,3 @@ export class SelectionEl extends DivEl {
         this.toggleClass('active');
     }
 }
-
-/* function createSelectionElement(data: any = null) {
-    let selectItem = document.createElement('li');
-
-    let entryClasses = ['entry'];
-    if (data == null || data === undefined) {
-        entryClasses.push('tombstone');
-    }
-    const button = shortCreate('', entryClasses, 'div');
-    selectItem.appendChild(button);
-
-    let icon = document.createElement('img');
-    icon.src = CONFIG.icon;
-    let leftD = document.createElement('div');
-    let rightD = document.createElement('div');
-
-    button.appendChild(icon);
-    button.appendChild(leftD);
-    button.appendChild(rightD);
-
-    if (data) {
-        const time = formatDate(new Date(data.time));
-        leftD.appendChild(shortCreate(`${data.type}`, 'h6'));
-        leftD.appendChild(shortCreate(`${time}`, '', 'time'));
-        rightD.appendChild(shortCreate(`${data.user}`, 'user', 'div'));
-        // eslint-disable-next-line no-underscore-dangle
-        button.dataset.a = data._id;
-    } else {
-        leftD.appendChild(document.createElement('h6'));
-        leftD.appendChild(document.createElement('time'));
-        rightD.appendChild(shortCreate(null, 'user', 'div'));
-    }
-
-    return selectItem;
-} */
