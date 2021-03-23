@@ -2,10 +2,12 @@ import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { ImgEl } from 'lib-admin-ui/dom/ImgEl';
 import { H1El } from 'lib-admin-ui/dom/H1El';
 import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
-import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { formatDate } from './util';
 import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
 import { Exception } from 'lib-admin-ui/Exception';
+import { Panel } from 'lib-admin-ui/ui/panel/Panel';
+import { ImageLoader } from 'lib-admin-ui/util/loader/ImageLoader';
+import { ItemDataGroup } from 'lib-admin-ui/app/view/ItemDataGroup';
 
 
 export interface AuditlogData {
@@ -16,48 +18,94 @@ export interface AuditlogData {
 }
 
 export class PreviewPanel extends Panel {
+
+    header: Element;
+    logDataContainer: Element;
+
     constructor() {
-        super('Preview');
-        this.createHelpText();
+        super('PreviewPanel');
+        this.setHelpText();
     }
 
-    createHelpText() {
+    setHelpText() {
         this.appendChild(SpanEl.fromText(
             'Free space, select something on the left',
             'placeholder',
         ));
     }
 
-    public createPreview(id: string) {
-        this.fetchAuditLog(id).then(data => {
-            this.removeChildren();
+    public setPreview(id?: string) {
+        this.removeChildren();
 
-            const previewLog = new DivEl('preview-log');
-            const top = new DivEl('heading');
-            const icon = new ImgEl();
-            icon.getEl().setAttribute('src', CONFIG.icon);
+        if (id === '' || id === undefined) {
+            this.setHelpText();
+        } else {
+            this.fetchAuditLog(id)
+                .then(data => {
+                    this.setPreviewHeader(data);
+                    this.setPreviewBody(data);
+                });
+        }
+    }
 
-            const title: Element = new H1El();
-            title.getEl().setText(`${data.type}`);
+    private setPreviewHeader(data: AuditlogData) {
+        this.header = new DivEl('preview-header');
 
-            const time = formatDate(new Date(`${data.time}`));
+        //Future img update
+        // let icon = ImageLoader.get(data.iconUrl);
+        let icon = ImageLoader.get(CONFIG.icon, 64, 64);
+        const iconEl = ImgEl.fromHtmlElement(icon);
+        iconEl.getEl()
+            .setAttribute('src', CONFIG.icon)
+            .setClass('icon');
 
-            const timeBuilder = new NewElementBuilder();
-            timeBuilder.setTagName('Time');
+        const titleEl: Element = new H1El('title');
+        titleEl.getEl().setText(`${data.type}`);
 
-            const timeEl = new Element(timeBuilder);
-            timeEl.getEl().setText(time);
+        const time = formatDate(new Date(`${data.time}`));
+        const timeEl = new Element(new NewElementBuilder()
+            .setTagName('Time')
+            .setClassName('timestamp')
+        );
 
-            top.appendChildren(
-                icon,
-                title,
-                timeEl,
-            );
+        timeEl.getEl().setText(time);
 
-            previewLog.appendChild(top);
+        this.header.appendChildren(
+            iconEl,
+            titleEl,
+            timeEl,
+        );
 
-            this.appendChild(previewLog);
-        });
+        this.appendChild(this.header);
+    }
+
+    private setPreviewBody(data: AuditlogData) {
+        this.logDataContainer = new DivEl('log-data-container');
+
+        const detailGroup = new ItemDataGroup('Log', 'detail');
+        this.addToDataGroup(data, detailGroup, 'data');
+
+        const dataGroup = new ItemDataGroup('Data', 'property-data');
+        this.addToDataGroup(data.data, dataGroup);
+
+
+        this.logDataContainer.appendChildren(detailGroup, dataGroup);
+
+        this.appendChild(this.logDataContainer);
+    }
+
+    private addToDataGroup(data: Object, dataGroup: ItemDataGroup, ignore?: string) {
+        for (const [key, value] of Object.entries(data)) {
+            if (key !== ignore) {
+                if (Array.isArray(value)) {
+                    dataGroup.addDataArray(`${key}`, value);
+                } else if (typeof value === 'object') {
+                    this.addToDataGroup(value, dataGroup);
+                } else {
+                    dataGroup.addDataList(`${key}`, `${value}`);
+                }
+            }
+        }
     }
 
     private fetchAuditLog(key: string) {

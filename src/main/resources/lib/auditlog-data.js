@@ -139,6 +139,7 @@ function doQuery(queryLine, settings, aggregations) {
 
     if (options.count > 100) {
         log.error("Wrong params in query. Audit log");
+        log.info(JSON.stringify(options, null, 4));
     }
 
     let queryParam = {

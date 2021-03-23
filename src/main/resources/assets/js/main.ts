@@ -1,5 +1,4 @@
 import { createDatePicker } from './components';
-import { setDropdownTypes, setDropDownUsers } from './data';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
@@ -13,6 +12,7 @@ import { Element } from 'lib-admin-ui/dom/Element';
 import { Messages } from 'lib-admin-ui/util/Messages';
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
+import { Option } from 'lib-admin-ui/ui/selector/Option';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { SelectionPanel } from './SelectionPanel';
 import { PreviewPanel } from './PreviewPanel';
@@ -70,7 +70,7 @@ class AuditLogView {
         // Attach the selection click to setup a new preview panel
         this.selectionPanel.onSelectionClick((event) => {
             const id = event.detail.id;
-            this.previewPanel.createPreview(id);
+            this.previewPanel.setPreview(id);
         });
         const splitPanel = this.createSplitPanel(this.selectionPanel, this.previewPanel);
 
@@ -123,7 +123,10 @@ class AuditLogView {
         const userWrapepr = new DivEl('wrapper');
         const userDropdown = new Dropdown('User', { inputPlaceholderText: 'Select' });
         userDropdown.setId('select-user');
-        userDropdown.onOptionSelected(() => {
+        userDropdown.onOptionSelected(event => {
+            if (event.getOption().getValue() === 'empty') {
+                userDropdown.reset();
+            }
             this.selectionPanel.createNewSelectionList();
         });
         const userLabel: Element = new LabelEl('User', <Element>userDropdown);
@@ -136,7 +139,10 @@ class AuditLogView {
         const typeWrapper = new DivEl('wrapper');
         const typeDropdown = new Dropdown('type', { inputPlaceholderText: 'Select' });
         typeDropdown.setId('select-type');
-        typeDropdown.onOptionSelected(() => {
+        typeDropdown.onOptionSelected(event => {
+            if (event.getOption().getValue() === 'empty') {
+                typeDropdown.reset();
+            }
             this.selectionPanel.createNewSelectionList();
         });
         const typeLabel: Element = new LabelEl('Type', <Element>typeDropdown);
@@ -172,6 +178,44 @@ class AuditLogView {
     }
 }
 
+/**
+ * Dropdown functions
+ */
+function setDropdownTypes(dropdown: Dropdown<any>): void {
+    dropdown.addOption(
+        Option.create()
+            .setValue('empty')
+            .setDisplayValue('empty')
+            .build()
+    );
+    CONFIG.allTypes.forEach((value) => {
+        // Option interface is missing methods? and the optionBuilder?
+        dropdown.addOption(
+            Option.create()
+                .setValue(value.key.toString())
+                .setDisplayValue(value.key.toString())
+                .build()
+        );
+    });
+}
+
+function setDropDownUsers(dropdown: Dropdown<any>): void {
+    dropdown.addOption(
+        Option.create()
+            .setValue('empty')
+            .setDisplayValue('empty')
+            .build()
+    );
+    CONFIG.allUsers.forEach((value) => {
+        // Option interface is missing methods? and the optionBuilder?
+        dropdown.addOption(
+            Option.create()
+                .setValue(value)
+                .setDisplayValue(value)
+                .build()
+        );
+    });
+}
 
 // Main function called on page load
 document.addEventListener('DOMContentLoaded', function () {

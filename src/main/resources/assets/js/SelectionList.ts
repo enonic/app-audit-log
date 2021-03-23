@@ -1,7 +1,7 @@
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Exception } from 'lib-admin-ui/Exception';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
-import { AuditlogNode, SelectionEl } from './Selection';
+import { AuditlogNode, SelectionEl } from './SelectionEl';
 // import { SelectionPanel } from './SelectionPanel';
 
 interface SelectionListData {
@@ -36,6 +36,9 @@ export class SelectionList extends DivEl {
      */
     clearAll() {
         this.removeChildren();
+        this.elementsCount = 0;
+        this.elementsStart = 0;
+        this.total = 0;
     }
 
     public clearActive() {
@@ -83,14 +86,14 @@ export class SelectionList extends DivEl {
         this.elementsCount += amount;
         const passDown: FetchOptions = {
             start: this.elementsStart,
-            count: this.elementsCount,
+            count: amount,
             ...options,
         };
         if (this.total === 0 || this.elementsCount <= this.total) {
-            await this.fetchSelectionData(function (data: SelectionListData) {
+            return await this.fetchSelectionData(function (data: SelectionListData) {
                 context.createSelectionList(data, clear);
             }, passDown);
         }
-        return null;
+        return await new Promise(() => null);
     }
 }

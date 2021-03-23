@@ -113,9 +113,11 @@ export class SelectionPanel extends Panel {
                     this.mask.show();
                     this.selectionList
                         .loadMoreSelections(false, 50, this.getOptions())
-                        .then(() => {
-                            this.loading = false;
-                            this.mask.hide();
+                        .then(result => {
+                            if (result != null) {
+                                this.loading = false;
+                                this.mask.hide();
+                            }
                         });
                 }
             }
@@ -129,7 +131,6 @@ export class SelectionPanel extends Panel {
      */
     getOptions(): FetchOptions {
         let optTool = this.optionsToolbar;
-        console.log(optTool.findChildById('select-from', true).getEl());
         const from = (<DatePicker>optTool.findChildById('select-from', true))
             .getTextInput().getValue();
         const to = (<DatePicker>optTool.findChildById('select-to', true))
@@ -138,13 +139,31 @@ export class SelectionPanel extends Panel {
         const type = (<Dropdown<String>>optTool.findChildById('select-type', true)).getValue();
         const fullText = (<FormInputEl>optTool.findChildById('fulltext', true)).getValue();
 
-        return {
-            from,
-            to,
-            user,
-            type,
-            fullText,
-        };
+        const options: FetchOptions = {};
+        if (notEmtpy(from)) {
+            options.from = from;
+        }
+        if (notEmtpy(to)) {
+            options.to = to;
+        }
+        if (notEmtpy(user)) {
+            options.user = user;
+        }
+        if (notEmtpy(type)) {
+            options.type = type;
+        }
+        if (notEmtpy(fullText)) {
+            options.fullText = fullText;
+        }
+
+        return options;
+
+        function notEmtpy(opt: string) {
+            if (opt && opt !== '') {
+                return true;
+            }
+            return false;
+        }
     }
 
     public onSelectionClick(handle: (event: CustomEvent) => void) {
@@ -152,16 +171,17 @@ export class SelectionPanel extends Panel {
     }
 
     public createNewSelectionList() {
-        if (this.loading === false) {
-            this.showMask();
-            this.loading = true;
+        console.log('New selection list');
+        this.showMask();
+        this.loading = true;
 
-            let promise = this.selectionList.loadMoreSelections(true, 50, this.getOptions());
-            promise.then(() => {
+        this.selectionList
+            .loadMoreSelections(true, 50, this.getOptions())
+            .then(() => {
                 this.hideMask();
                 this.loading = false;
+                console.log('Fetch selection list');
             });
-        }
     }
 
     showMask() {

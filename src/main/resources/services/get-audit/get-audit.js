@@ -10,7 +10,7 @@ exports.post = function (req) {
     let body = JSON.parse(req.body);
     let options = body.options || {};
 
-    if (body.entryId) {
+    if (body.id) {
         let entry = auditData.getEntry(body.id);
 
         return jsonResponse(entry);
