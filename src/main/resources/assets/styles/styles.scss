@@ -22,13 +22,34 @@
     line-height: 44px;
 }
 
+.date-picker .xp-admin-common-wrapper .date-picker-dialog {
+    .clear-button {
+        position: static;
+        border: 1px solid black;
+        padding: 4px 19px;
+        margin: 1rem 0px 0px 0px;
+
+        span {
+            color: black;
+        }
+    }
+
+    .ok-button {
+        position: static;
+        margin: 1rem 0px 0px 0px;
+        padding: 4px 19px;
+        float: right;
+    }
+}
+
 .tools {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: 80px;
 
-    #select-from, #select-to {
+    #select-from,
+    #select-to {
         flex: 0 0 auto;
         width: 240px;
     }
@@ -38,7 +59,7 @@
     }
 
     .xp-admin-common-dropdown {
-        display:block;
+        display: block;
         width: 240px;
     }
 

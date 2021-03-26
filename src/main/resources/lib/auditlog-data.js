@@ -38,7 +38,7 @@ function getAllTypes() {
         by_type: {
             terms: {
                 field: "type",
-                order: "_count desc",
+                order: "_term ASC",
                 size: 100,
             },
         },
@@ -185,7 +185,7 @@ function getEntriesForUser(options) {
         from: options.from,
         to: options.to,
         count: -1,
-        sort: "  DESC",
+        sort: "DESC",
         fullText: options.fullText || null,
     });
 

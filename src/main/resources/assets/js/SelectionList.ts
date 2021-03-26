@@ -70,19 +70,28 @@ export class SelectionList extends DivEl {
             });
     }
 
-    createSelectionList(data: SelectionListData, clear: boolean = false) {
-        if (clear) {
-            this.clearAll();
-            this.total = data.total;
-            this.toolbar.getEl().setText(`Total: ${data.total}`);
-        }
+    createSelectionList(data: SelectionListData) {
+        this.toolbar.getEl().setText(`Total: ${data.total}`);
+
+        this.total = data.total;
         data.selections.forEach(element => {
             this.appendChild(new SelectionEl(element));
         });
     }
 
+    /**
+     * Tries to fetch new selections from the service url
+     *
+     * @param {Boolean} clear Clean the selection list
+     * @param {Number} amount The amount of selections
+     * @param {FetchOptions} options options to add to the fetch body
+     * @returns {Promise | null} returns the promise if sucess or null on failure
+     */
     async loadMoreSelections(clear?: boolean, amount: number = 50, options: FetchOptions = {}) {
-        let context = this;
+        if (clear) {
+            this.clearAll();
+        }
+        const context = this;
         this.elementsCount += amount;
         const passDown: FetchOptions = {
             start: this.elementsStart,
@@ -91,9 +100,9 @@ export class SelectionList extends DivEl {
         };
         if (this.total === 0 || this.elementsCount <= this.total) {
             return await this.fetchSelectionData(function (data: SelectionListData) {
-                context.createSelectionList(data, clear);
+                context.createSelectionList(data);
             }, passDown);
         }
-        return await new Promise(() => null);
+        return null;
     }
 }

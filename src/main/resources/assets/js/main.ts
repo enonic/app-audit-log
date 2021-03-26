@@ -1,4 +1,4 @@
-import { createDatePicker } from './components';
+import { DatePickerClear } from './DatePickerClear';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
@@ -16,6 +16,7 @@ import { Option } from 'lib-admin-ui/ui/selector/Option';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { SelectionPanel } from './SelectionPanel';
 import { PreviewPanel } from './PreviewPanel';
+import { Action } from 'lib-admin-ui/ui/Action';
 
 
 interface GlobalConfig {
@@ -64,7 +65,7 @@ class AuditLogView {
         const appPanel = new AppPanel('app-container');
         const toolbar = this.createTopToolbar();
 
-        this.previewPanel = new PreviewPanel();
+        this.previewPanel = new PreviewPanel('preview-panel');
         this.selectionPanel = new SelectionPanel(toolbar, 'selection-panel');
 
         // Attach the selection click to setup a new preview panel
@@ -97,9 +98,20 @@ class AuditLogView {
 
     createTopToolbar(): Toolbar {
         const toolbar = new Toolbar('tools');
+        const searchButton = new Action();
+        searchButton.setIconClass('icon-search');
+        searchButton.onExecuted(() => {
+            this.selectionPanel.createNewSelectionList();
+        });
+        toolbar.addAction(searchButton);
 
         const fromWrapper = new DivEl('wrapper');
-        const fromDatePicker = createDatePicker('select-from');
+        const fromDatePicker = new DatePickerClear('select-from');
+        fromDatePicker.setSelectedDate(new Date());
+        fromDatePicker.getPopupClearButton().onClicked(() => {
+            fromDatePicker.resetInput();
+            this.selectionPanel.createNewSelectionList();
+        });
         fromDatePicker.onSelectedDateTimeChanged(() => {
             this.selectionPanel.createNewSelectionList();
         });
@@ -110,7 +122,11 @@ class AuditLogView {
         );
 
         const toWrapper = new DivEl('wrapper');
-        const toDatePicker = createDatePicker('select-to');
+        const toDatePicker = new DatePickerClear('select-to');
+        toDatePicker.getPopupClearButton().onClicked(() => {
+            toDatePicker.resetInput();
+            this.selectionPanel.createNewSelectionList();
+        });
         toDatePicker.onSelectedDateTimeChanged(() => {
             this.selectionPanel.createNewSelectionList();
         });
@@ -129,6 +145,7 @@ class AuditLogView {
             }
             this.selectionPanel.createNewSelectionList();
         });
+
         const userLabel: Element = new LabelEl('User', <Element>userDropdown);
         setDropDownUsers(userDropdown);
         userWrapepr.appendChildren(

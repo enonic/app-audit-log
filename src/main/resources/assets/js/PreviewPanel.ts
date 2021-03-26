@@ -22,8 +22,8 @@ export class PreviewPanel extends Panel {
     header: Element;
     logDataContainer: Element;
 
-    constructor() {
-        super('PreviewPanel');
+    constructor(className?: string) {
+        super(className);
         this.setHelpText();
     }
 

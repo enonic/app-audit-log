@@ -7,7 +7,6 @@ import { Element } from 'lib-admin-ui/dom/Element';
 import { Body } from 'lib-admin-ui/dom/Body';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { ElementHelper } from 'lib-admin-ui/dom/ElementHelper';
 import { DatePicker } from 'lib-admin-ui/ui/time/DatePicker';
 
 export class SelectionPanel extends Panel {
@@ -20,9 +19,9 @@ export class SelectionPanel extends Panel {
 
     constructor(optionsToolbar: Toolbar, className?: string) {
         super(className);
+        this.optionsToolbar = optionsToolbar;
         this.createPanel();
         this.showMask();
-        this.optionsToolbar = optionsToolbar;
     }
 
     private createPanel() {
@@ -47,7 +46,7 @@ export class SelectionPanel extends Panel {
 
         listPanel.appendChild(this.selectionList);
         // Can return null, should never return null
-        this.selectionList.loadMoreSelections(true, 100)
+        this.selectionList.loadMoreSelections(true, 100, this.getOptions())
             .then(() => {
                 this.hideMask();
             });
@@ -113,11 +112,9 @@ export class SelectionPanel extends Panel {
                     this.mask.show();
                     this.selectionList
                         .loadMoreSelections(false, 50, this.getOptions())
-                        .then(result => {
-                            if (result != null) {
-                                this.loading = false;
-                                this.mask.hide();
-                            }
+                        .then(() => {
+                            this.mask.hide();
+                            this.loading = false;
                         });
                 }
             }
@@ -127,7 +124,7 @@ export class SelectionPanel extends Panel {
     }
 
     /**
-     * Get all the FetchOptions form the toolbar for create a new seletion list
+     * Get all the FetchOptions form the toolbar to create a new seletion list
      */
     getOptions(): FetchOptions {
         let optTool = this.optionsToolbar;
@@ -171,7 +168,6 @@ export class SelectionPanel extends Panel {
     }
 
     public createNewSelectionList() {
-        console.log('New selection list');
         this.showMask();
         this.loading = true;
 
@@ -180,7 +176,6 @@ export class SelectionPanel extends Panel {
             .then(() => {
                 this.hideMask();
                 this.loading = false;
-                console.log('Fetch selection list');
             });
     }
 
