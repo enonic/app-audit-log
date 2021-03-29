@@ -2,8 +2,8 @@ const thymeleaf = require("/lib/thymeleaf");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
 const adminLib = require("/lib/xp/admin");
-const license = require("/lib/license");
 const project = require("/lib/xp/project");
+const licenseManager = require("/lib/license-manager");
 
 const view = resolve("audit-log.html");
 const licenseView = resolve("license.html");
@@ -12,9 +12,7 @@ exports.get = function () {
     const types = auditData.getAllTypes();
     const users = auditData.getAllUsers();
     const projects = getAllProjects();
-    const licenseDetail = license.validateLicense({
-        appKey: app.name,
-    });
+    const licenseValid = licenseManager.isCurrentLicenseValid();
 
     const serviceUrl = portal.serviceUrl({
         service: "get-audit",
@@ -39,10 +37,10 @@ exports.get = function () {
         projects,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
-        licenseText: licenseDetail ? `Licensed to ${licenseDetail.issuedTo}` : "Error",
+        licenseText: licenseManager.getIssuedTo(),
     };
 
-    if (licenseDetail == null || licenseDetail.expired) {
+    if (!licenseValid) {
         return {
             body: thymeleaf.render(licenseView, model),
         };
