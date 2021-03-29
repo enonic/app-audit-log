@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     uploadInput.addEventListener("change", () => {
         const formData = new FormData();
         formData.append("license", uploadInput.files[0]);
+        const errorSpan = document.getElementById('invalid-license-message');
+        if (errorSpan) {
+            delete errorSpan.style.display;
+        }
 
         fetch(CONFIG.licenseUrl, {
             body: formData,
@@ -12,10 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-
             if (data.licenseValid) {
                 location.reload();
+            } else if (errorSpan) {
+                errorSpan.style.display = 'block';
             }
         });
     });

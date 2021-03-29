@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.min.css|" />
     <script data-th-src="|${assetsUrl}/js/license.js|"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <title>Document</title>
+    <title>Upload a license</title>
     <script data-th-inline="javascript">
         let CONFIG = {
             licenseUrl: /*[[${licenseUrl}]]*/,
@@ -29,6 +29,9 @@
                     </div>
                 </form>
             </div>
+        </div>
+        <div>
+            <span id="invalid-license-message">The uploaded license is invalid or expired</span>
         </div>
     </div>
 </body>
