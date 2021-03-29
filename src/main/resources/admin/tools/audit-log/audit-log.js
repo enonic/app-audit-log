@@ -57,5 +57,13 @@ function getAllProjects() {
             id: element.id,
             name: element.displayName,
         }
+    }).sort(function (a, b) {
+        if (a.name.toUpperCase() > b.name.toUpperCase()) {
+            return 1;
+        }
+        else if (a.name.toUpperCase() < b.name.toUpperCase()) {
+            return -1;
+        }
+        return 0;
     });
 }

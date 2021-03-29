@@ -15,7 +15,6 @@
   },
   "files": [
     "./src/main/resources/assets/js/main.ts",
-    "./src/main/resources/assets/js/license.ts"
   ],
   "include": [
     "src/main/resources/assets/**/*.ts",

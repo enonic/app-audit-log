@@ -10,8 +10,11 @@
         font-size: 14px;
     }
 
-    label {
+    .btn {
         position: static;
+        padding: 4px 19px;
+        border-radius: 7px;
+        border: none;
         color: white;
         background-color: var(--mat-blue);
         cursor: pointer;

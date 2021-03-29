@@ -107,8 +107,7 @@ function doQuery(queryLine, settings, aggregations) {
             from = moment(options.from, "YYYY-MM-DD").utc(true);
             from.startOf("day");
         }
-
-        if (query != "") query += " AND ";
+        query = emptyOrAdd(query)
         query += `time > dateTime('${from.toISOString()}') `;
     }
     if (options.to) {
@@ -119,22 +118,24 @@ function doQuery(queryLine, settings, aggregations) {
             to = moment(options.to, "YYYY-MM-DD").utc(true);
             to.endOf("day");
         }
-
-        if (query != "") query += " AND ";
+        query = emptyOrAdd(query);
         query += `time < dateTime('${to.toISOString()}')`;
     }
     if (options.type) {
-        if (query != "") query += " AND ";
+        query = emptyOrAdd(query);
         query += `type = '${options.type}'`;
     }
     if (options.user) {
-        if (query != "") query += " AND ";
+        query = emptyOrAdd(query);
         query += `user = '${options.user}'`;
     }
     if (options.fullText) {
-        if (query != "") query += " AND ";
-        // full text
+        query = emptyOrAdd(query);
         query += `fulltext("*", "'${options.fullText}'", "AND")`;
+    }
+    if (options.project) {
+        query = emptyOrAdd(query);
+        query += `objects LIKE 'com.enonic.cms.${options.project}:*'`;
     }
 
     if (options.count > 100) {
@@ -159,6 +160,11 @@ function doQuery(queryLine, settings, aggregations) {
     let result = repoConnection.query(queryParam);
 
     return result;
+}
+
+function emptyOrAdd(query) {
+    if (query != "") query += " AND ";
+    return query;
 }
 
 /**

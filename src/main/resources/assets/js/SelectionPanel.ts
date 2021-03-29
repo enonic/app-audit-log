@@ -8,6 +8,7 @@ import { Body } from 'lib-admin-ui/dom/Body';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { DatePicker } from 'lib-admin-ui/ui/time/DatePicker';
+import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
 
 export class SelectionPanel extends Panel {
 
@@ -49,6 +50,7 @@ export class SelectionPanel extends Panel {
         this.selectionList.loadMoreSelections(true, 100, this.getOptions())
             .then(() => {
                 this.hideMask();
+                this.setupEmptySelectionList();
             });
 
         const selectPanelEl = $(this.getHTMLElement());
@@ -76,6 +78,14 @@ export class SelectionPanel extends Panel {
         Body.get().getHTMLElement().appendChild(this.mask.getHTMLElement());
     }
 
+    private setupEmptySelectionList() {
+        const placeholder = new DivEl('selection-placeholder');
+        placeholder.appendChild(SpanEl.fromText('No logs fround with current filters'));
+        if (this.selectionList.getLastChild() === undefined) {
+            this.selectionList.appendChild(placeholder);
+        }
+    }
+
     private positionMask() {
         const selectPanelEl = $(this.getHTMLElement());
 
@@ -97,7 +107,7 @@ export class SelectionPanel extends Panel {
     }
 
     private createListPanel() {
-        const panel = new Panel('selection-panel');
+        const panel = new Panel('inner-selection-panel');
 
         let panelHtml = panel.getHTMLElement();
 
@@ -132,6 +142,7 @@ export class SelectionPanel extends Panel {
             .getTextInput().getValue();
         const to = (<DatePicker>optTool.findChildById('select-to', true))
             .getTextInput().getValue();
+        const project = (<Dropdown<string>>optTool.findChildById('select-project', true)).getValue();
         const user = (<Dropdown<string>>optTool.findChildById('select-user', true)).getValue();
         const type = (<Dropdown<String>>optTool.findChildById('select-type', true)).getValue();
         const fullText = (<FormInputEl>optTool.findChildById('fulltext', true)).getValue();
@@ -142,6 +153,9 @@ export class SelectionPanel extends Panel {
         }
         if (notEmtpy(to)) {
             options.to = to;
+        }
+        if (notEmtpy(project)) {
+            options.project = project;
         }
         if (notEmtpy(user)) {
             options.user = user;
@@ -176,6 +190,7 @@ export class SelectionPanel extends Panel {
             .then(() => {
                 this.hideMask();
                 this.loading = false;
+                this.setupEmptySelectionList();
             });
     }
 

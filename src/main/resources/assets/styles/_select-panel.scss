@@ -1,15 +1,12 @@
-.select-panel {
+.selection-panel {
     .select-toolbar {
         background-color: #fafafa;
     }
-}
 
-/* Old unused below */
-#select-type-label {
-    transform: scale(0.8);
+    .selection-placeholder {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%);
+        padding: 0.5rem;
+    }
 }
-
-.selection-panel {
-    overflow: auto;
-}
-

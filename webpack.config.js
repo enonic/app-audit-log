@@ -16,7 +16,6 @@ module.exports = {
     context: path.join(__dirname, "/src/main/resources/assets"),
     entry: {
         "js/main": "./js/main.ts",
-        "js/license": "./js/license.ts",
         "styles/styles": "./styles/styles.scss",
     },
     output: {

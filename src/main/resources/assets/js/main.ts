@@ -147,11 +147,17 @@ class AuditLogView {
             if (event.getOption().getValue() === 'empty') {
                 projectDropdown.reset();
             }
-            this.selectionPanel.createNewSelectionList();
+            if (this.selectionPanel) {
+                this.selectionPanel.createNewSelectionList();
+            }
         });
 
         const projectLabel: Element = new LabelEl('Project', <Element>projectDropdown);
         setDropdownProject(projectDropdown);
+        const defaultOption = projectDropdown.getOptionByValue('default');
+        if (defaultOption) {
+            projectDropdown.selectOption(defaultOption);
+        }
 
         projectWrapper.appendChildren(
             projectLabel,

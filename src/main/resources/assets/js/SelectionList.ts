@@ -14,6 +14,7 @@ export interface FetchOptions {
     count?: number;
     from?: string;
     to?: string;
+    project?: string;
     type?: string;
     user?: string;
     fullText?: string;
