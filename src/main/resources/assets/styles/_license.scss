@@ -14,5 +14,12 @@
         position: static;
         color: white;
         background-color: var(--mat-blue);
+        cursor: pointer;
+    }
+
+    #invalid-license-message {
+        color: red;
+        font-size: 14px;
+        display: none;
     }
 }

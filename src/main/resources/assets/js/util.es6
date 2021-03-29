@@ -25,7 +25,6 @@ export function sendXMLHttpRequest(handler, data, error = XMLHttpError) {
     request.open("POST", CONFIG.auditServiceUrl);
     request.setRequestHeader("Content-type", "application/json");
 
-    request.responseType = "application/json";
     request.onload = () => {
         handler(request);
     };
