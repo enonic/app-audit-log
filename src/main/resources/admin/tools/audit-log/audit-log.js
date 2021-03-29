@@ -3,13 +3,15 @@ const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
 const adminLib = require("/lib/xp/admin");
 const license = require("/lib/license");
+const project = require("/lib/xp/project");
 
 const view = resolve("audit-log.html");
 const licenseView = resolve("license.html");
 
 exports.get = function () {
-    const types = JSON.stringify(auditData.getAllTypes());
-    const users = JSON.stringify(auditData.getAllUsers());
+    const types = auditData.getAllTypes();
+    const users = auditData.getAllUsers();
+    const projects = getAllProjects();
     const licenseDetail = license.validateLicense({
         appKey: app.name,
     });
@@ -34,6 +36,7 @@ exports.get = function () {
         licenseUrl,
         allUsers: users,
         allTypes: types,
+        projects,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
         licenseText: licenseDetail ? `Licensed to ${licenseDetail.issuedTo}` : "Error",
@@ -49,3 +52,12 @@ exports.get = function () {
         };
     }
 };
+
+function getAllProjects() {
+    return project.list().map(function(element) {
+        return { 
+            id: element.id,
+            name: element.displayName,
+        }
+    });
+}

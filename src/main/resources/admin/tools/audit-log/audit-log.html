@@ -13,8 +13,9 @@
     <script data-th-inline="javascript">
         var CONFIG = {
             auditServiceUrl: /*[[${serviceUrl}]]*/,
-            allUsers: JSON.parse(/*[[${allUsers}]]*/),
-            allTypes: JSON.parse(/*[[${allTypes}]]*/),
+            allUsers: /*[[${allUsers}]]*/,
+            allTypes: /*[[${allTypes}]]*/,
+            projects: /*[[${projects}]]*/,
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
             appIconUrl: /*[[|${assetsUrl}/application.svg|]]*/,

@@ -26,6 +26,10 @@ interface GlobalConfig {
         key: number;
         docCount: string;
     }>;
+    projects: Array<{
+        id: string;
+        name: string;
+    }>;
     launcherUrl: string;
     services: object;
     appIconUrl: string;
@@ -136,6 +140,24 @@ class AuditLogView {
             toDatePicker,
         );
 
+        const projectWrapper = new DivEl('wrapper');
+        const projectDropdown = new Dropdown('project', { inputPlaceholderText: 'project' });
+        projectDropdown.setId('select-project');
+        projectDropdown.onOptionSelected(event => {
+            if (event.getOption().getValue() === 'empty') {
+                projectDropdown.reset();
+            }
+            this.selectionPanel.createNewSelectionList();
+        });
+
+        const projectLabel: Element = new LabelEl('Project', <Element>projectDropdown);
+        setDropdownProject(projectDropdown);
+
+        projectWrapper.appendChildren(
+            projectLabel,
+            projectDropdown,
+        );
+
         const userWrapepr = new DivEl('wrapper');
         const userDropdown = new Dropdown('User', { inputPlaceholderText: 'Select' });
         userDropdown.setId('select-user');
@@ -186,6 +208,7 @@ class AuditLogView {
             .appendChildren(
                 fromWrapper,
                 toWrapper,
+                projectWrapper,
                 userWrapepr,
                 typeWrapper,
                 searchWrapper,
@@ -232,6 +255,25 @@ function setDropDownUsers(dropdown: Dropdown<any>): void {
                 .build()
         );
     });
+}
+
+function setDropdownProject(dropdown: Dropdown<any>): void {
+    dropdown.addOption(
+        Option.create()
+            .setValue('empty')
+            .setDisplayValue('empty')
+            .build()
+    );
+
+    CONFIG.projects.forEach((project) => {
+        dropdown.addOption(
+            Option.create()
+                .setValue(project.id)
+                .setDisplayValue(project.name)
+                .build()
+        );
+    });
+
 }
 
 // Main function called on page load
