@@ -1,4 +1,3 @@
-import { DatePickerClear } from './DatePickerClear';
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
@@ -6,17 +5,12 @@ import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder, SplitPanelUnit } fr
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { DeckPanel } from 'lib-admin-ui/ui/panel/DeckPanel';
 import { Body } from 'lib-admin-ui/dom/Body';
-import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
-import { LabelEl } from 'lib-admin-ui/dom/LabelEl';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Messages } from 'lib-admin-ui/util/Messages';
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
-import { Option } from 'lib-admin-ui/ui/selector/Option';
-import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { SelectionPanel } from './SelectionPanel';
 import { PreviewPanel } from './PreviewPanel';
-import { Action } from 'lib-admin-ui/ui/Action';
+import { getUrlParams } from './Urlparam';
+import { SelectionToolbar } from './SelectionToolbar';
 
 
 interface GlobalConfig {
@@ -34,6 +28,7 @@ interface GlobalConfig {
     services: object;
     appIconUrl: string;
     icon: string;
+    licenseText: string;
 }
 
 declare global {
@@ -67,10 +62,13 @@ class AuditLogView {
     createAppPanels(app: Application) {
         const appBar = new AppBar(app);
         const appPanel = new AppPanel('app-container');
-        const toolbar = this.createTopToolbar();
+        const loadParams = getUrlParams();
+        this.selectionPanel = new SelectionPanel('selection-panel');
+        const toolbar = new SelectionToolbar(this.selectionPanel, loadParams);
+
+        this.selectionPanel.setup(toolbar);
 
         this.previewPanel = new PreviewPanel('preview-panel');
-        this.selectionPanel = new SelectionPanel(toolbar, 'selection-panel');
 
         // Attach the selection click to setup a new preview panel
         this.selectionPanel.onSelectionClick((event) => {
@@ -99,187 +97,6 @@ class AuditLogView {
         panel.getEl().setTopPx(84);
         return panel;
     }
-
-    createTopToolbar(): Toolbar {
-        const toolbar = new Toolbar('tools');
-        const searchButton = new Action();
-        searchButton.setIconClass('icon-search');
-        searchButton.onExecuted(() => {
-            this.selectionPanel.createNewSelectionList();
-        });
-        toolbar.addAction(searchButton);
-
-        const fromWrapper = new DivEl('wrapper');
-        const fromDatePicker = new DatePickerClear('select-from');
-        fromDatePicker.setSelectedDate(new Date());
-        fromDatePicker.getPopupClearButton().onClicked(() => {
-            fromDatePicker.resetInput();
-            this.selectionPanel.createNewSelectionList();
-        });
-        fromDatePicker.onSelectedDateTimeChanged(() => {
-            this.selectionPanel.createNewSelectionList();
-        });
-        const fromLabel: Element = new LabelEl('From', fromDatePicker.getTextInput());
-        fromWrapper.appendChildren(
-            fromLabel,
-            fromDatePicker,
-        );
-
-        const toWrapper = new DivEl('wrapper');
-        const toDatePicker = new DatePickerClear('select-to');
-        toDatePicker.getPopupClearButton().onClicked(() => {
-            toDatePicker.resetInput();
-            this.selectionPanel.createNewSelectionList();
-        });
-        toDatePicker.onSelectedDateTimeChanged(() => {
-            this.selectionPanel.createNewSelectionList();
-        });
-        const toLabel: Element = new LabelEl('To', toDatePicker.getTextInput());
-        toWrapper.appendChildren(
-            toLabel,
-            toDatePicker,
-        );
-
-        const projectWrapper = new DivEl('wrapper');
-        const projectDropdown = new Dropdown('project', { inputPlaceholderText: 'project' });
-        projectDropdown.setId('select-project');
-        projectDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                projectDropdown.reset();
-            }
-            if (this.selectionPanel) {
-                this.selectionPanel.createNewSelectionList();
-            }
-        });
-
-        const projectLabel: Element = new LabelEl('Project', <Element>projectDropdown);
-        setDropdownProject(projectDropdown);
-        const defaultOption = projectDropdown.getOptionByValue('default');
-        if (defaultOption) {
-            projectDropdown.selectOption(defaultOption);
-        }
-
-        projectWrapper.appendChildren(
-            projectLabel,
-            projectDropdown,
-        );
-
-        const userWrapepr = new DivEl('wrapper');
-        const userDropdown = new Dropdown('User', { inputPlaceholderText: 'Select' });
-        userDropdown.setId('select-user');
-        userDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                userDropdown.reset();
-            }
-            this.selectionPanel.createNewSelectionList();
-        });
-
-        const userLabel: Element = new LabelEl('User', <Element>userDropdown);
-        setDropDownUsers(userDropdown);
-        userWrapepr.appendChildren(
-            userLabel,
-            userDropdown,
-        );
-
-        const typeWrapper = new DivEl('wrapper');
-        const typeDropdown = new Dropdown('type', { inputPlaceholderText: 'Select' });
-        typeDropdown.setId('select-type');
-        typeDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                typeDropdown.reset();
-            }
-            this.selectionPanel.createNewSelectionList();
-        });
-        const typeLabel: Element = new LabelEl('Type', <Element>typeDropdown);
-        setDropdownTypes(typeDropdown);
-
-        typeWrapper.appendChildren(
-            typeLabel,
-            typeDropdown,
-        );
-
-        const searchWrapper = new DivEl('wrapper');
-        const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
-        searchInput.setId('fulltext');
-        searchInput.onValueChanged(() => {
-            this.selectionPanel.createNewSelectionList();
-        });
-        const searchLabel: Element = new LabelEl('Search', searchInput);
-        searchWrapper.appendChildren(
-            searchLabel,
-            searchInput,
-        );
-
-        toolbar
-            .appendChildren(
-                fromWrapper,
-                toWrapper,
-                projectWrapper,
-                userWrapepr,
-                typeWrapper,
-                searchWrapper,
-            );
-
-        return toolbar;
-    }
-}
-
-/**
- * Dropdown functions
- */
-function setDropdownTypes(dropdown: Dropdown<any>): void {
-    dropdown.addOption(
-        Option.create()
-            .setValue('empty')
-            .setDisplayValue('empty')
-            .build()
-    );
-    CONFIG.allTypes.forEach((value) => {
-        // Option interface is missing methods? and the optionBuilder?
-        dropdown.addOption(
-            Option.create()
-                .setValue(value.key.toString())
-                .setDisplayValue(value.key.toString())
-                .build()
-        );
-    });
-}
-
-function setDropDownUsers(dropdown: Dropdown<any>): void {
-    dropdown.addOption(
-        Option.create()
-            .setValue('empty')
-            .setDisplayValue('empty')
-            .build()
-    );
-    CONFIG.allUsers.forEach((value) => {
-        // Option interface is missing methods? and the optionBuilder?
-        dropdown.addOption(
-            Option.create()
-                .setValue(value)
-                .setDisplayValue(value)
-                .build()
-        );
-    });
-}
-
-function setDropdownProject(dropdown: Dropdown<any>): void {
-    dropdown.addOption(
-        Option.create()
-            .setValue('empty')
-            .setDisplayValue('empty')
-            .build()
-    );
-
-    CONFIG.projects.forEach((project) => {
-        dropdown.addOption(
-            Option.create()
-                .setValue(project.id)
-                .setDisplayValue(project.name)
-                .build()
-        );
-    });
-
 }
 
 // Main function called on page load

@@ -18,9 +18,12 @@ export class SelectionPanel extends Panel {
     private toolbar: Toolbar;
     private loading: boolean = false;
 
-    constructor(optionsToolbar: Toolbar, className?: string) {
+    constructor(className?: string) {
         super(className);
-        this.optionsToolbar = optionsToolbar;
+    }
+
+    public setup(toolbar: Toolbar) {
+        this.optionsToolbar = toolbar;
         this.createPanel();
         this.showMask();
     }
@@ -80,7 +83,7 @@ export class SelectionPanel extends Panel {
 
     private setupEmptySelectionList() {
         const placeholder = new DivEl('selection-placeholder');
-        placeholder.appendChild(SpanEl.fromText('No logs fround with current filters'));
+        placeholder.appendChild(SpanEl.fromText('No logs found. Try changing the filters'));
         if (this.selectionList.getLastChild() === undefined) {
             this.selectionList.appendChild(placeholder);
         }
@@ -195,12 +198,10 @@ export class SelectionPanel extends Panel {
     }
 
     showMask() {
-        // this.mask.show();
         this.mask.getHTMLElement().style.display = 'block';
     }
 
     hideMask() {
-        // this.mask.hide();
         this.mask.getHTMLElement().style.display = 'none';
     }
 }
