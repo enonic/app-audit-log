@@ -46,7 +46,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    height: 80px;
+    height: 77px;
 
     #select-from,
     #select-to {
@@ -56,6 +56,7 @@
 
     .wrapper {
         margin-left: 15px;
+        line-height: 1.7rem;
     }
 
     .xp-admin-common-dropdown {
@@ -67,6 +68,12 @@
         @include input-glow(var(--admin-input-blue));
         width: 240px;
         height: 36px;
+    }
+
+    .icon-search {
+        align-self: start;
+        height: 36px;
+        margin-top: 1.7rem;
     }
 }
 

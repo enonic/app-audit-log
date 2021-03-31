@@ -24,14 +24,11 @@ export function getUrlParams() {
 export function removeUrlParam(name: string) {
     const location = window.location;
     const params = new URLSearchParams(location.search);
-    console.log(params.toString());
     if (params.get(name)) {
         params.delete(name);
         const paramString = params.toString();
         const cleanUrl = location.href.substring(0, location.href.length - location.search.length);
-        console.log(cleanUrl);
         const addition = paramString.length > 1 ? '?' + paramString : '';
-        console.log(addition);
         window.history.pushState('remove param', 'Audit log', cleanUrl.concat(addition));
     }
 }

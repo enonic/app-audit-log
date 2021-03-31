@@ -62,10 +62,9 @@ class AuditLogView {
     createAppPanels(app: Application) {
         const appBar = new AppBar(app);
         const appPanel = new AppPanel('app-container');
-        const loadParams = getUrlParams();
         this.selectionPanel = new SelectionPanel('selection-panel');
-        const toolbar = new SelectionToolbar(this.selectionPanel, loadParams);
-
+        const toolbar = new SelectionToolbar(this.selectionPanel);
+        toolbar.setup();
         this.selectionPanel.setup(toolbar);
 
         this.previewPanel = new PreviewPanel('preview-panel');
@@ -75,19 +74,19 @@ class AuditLogView {
             const id = event.detail.id;
             this.previewPanel.setPreview(id);
         });
-        const splitPanel = this.createSplitPanel(this.selectionPanel, this.previewPanel);
+        const layoutPanel = this.createLayoutPanel(this.selectionPanel, this.previewPanel);
 
         const mainPanel = new DeckPanel('main-panel');
         const editPanel = new Panel('edit-panel');
 
         mainPanel.appendChildren(appBar, <Element>editPanel);
-        editPanel.appendChildren(toolbar, <Element>splitPanel);
+        editPanel.appendChildren(toolbar, <Element>layoutPanel);
         appPanel.appendChild(mainPanel);
 
         this.body.appendChild(appPanel);
     }
 
-    createSplitPanel(left: Panel, right: Panel): SplitPanel {
+    createLayoutPanel(left: Panel, right: Panel): SplitPanel {
         const panel = new SplitPanelBuilder(left, right)
             .setAlignment(SplitPanelAlignment.VERTICAL)
             .setSecondPanelMinSize(30, SplitPanelUnit.PERCENT)

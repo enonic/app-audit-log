@@ -28,6 +28,18 @@ export class DatePickerClear extends DatePicker {
         this.initClearButton();
     }
 
+    // Hides the popup (hidePopup would overrides subclass method)
+    public popupHide() {
+        this.hidePopup();
+    }
+
+    protected showPopup() {
+        super.showPopup();
+        if (this.popup.hasChild(this.popupOkButton)) {
+            this.popup.removeChild(this.popupOkButton);
+        }
+    }
+
     private initClearButton() {
         this.popup.appendChild(this.popupClearButton);
     }

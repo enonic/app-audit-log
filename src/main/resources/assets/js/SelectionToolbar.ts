@@ -4,59 +4,72 @@ import { Action } from 'lib-admin-ui/ui/Action';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
 import { SelectionPanel } from './SelectionPanel';
-import { addUrlParam, removeUrlParam } from './Urlparam';
+import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
 import { Option } from 'lib-admin-ui/ui/selector/Option';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { dateFromFormatDate, formatDate } from './util';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
+import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
 
 export class SelectionToolbar extends Toolbar {
 
-    /**
-     * Creates the top toolbar and all the filters
-     *
-     * @param selectionPanel - Note is not initialized when passed in
-     * eg. only works in runtime not init.
-     */
-    constructor(selectionPanel: SelectionPanel, loadParams: any) {
-        super('tools');
-        const searchButton = new Action();
-        searchButton.setIconClass('icon-search');
-        searchButton.onExecuted(() => {
-            selectionPanel.createNewSelectionList();
-        });
-        this.addAction(searchButton);
+    selectionPanel: SelectionPanel;
 
-        const fromWrapper = new DivEl('wrapper');
+    filters: {
+        from: DatePickerClear;
+        to: DatePickerClear;
+        project: Dropdown<string>;
+        user: Dropdown<string>;
+        type: Dropdown<string>;
+        fulltext: FormInputEl;
+    };
+
+    constructor(selectionPanel: SelectionPanel) {
+        super('tools');
+        this.selectionPanel = selectionPanel;
+    }
+
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+            this.appendChildren();
+            return rendered;
+        });
+    }
+
+    setup() {
+        const loadParams = getUrlParams();
         const fromDatePicker = new DatePickerClear('select-from');
         let inDate = new Date();
         if (loadParams.from) {
             inDate = dateFromFormatDate(loadParams.from);
+            fromDatePicker.setSelectedDate(inDate);
         }
-        fromDatePicker.setSelectedDate(inDate);
-        if (loadParams.from === undefined) {
+        if (loadParams.from === undefined &&
+            loadParams.to === undefined &&
+            loadParams.user === undefined &&
+            loadParams.type === undefined &&
+            loadParams.q === undefined) {
             addUrlParam('from', formatDate(inDate, true));
+            fromDatePicker.setSelectedDate(inDate);
         }
         fromDatePicker.getPopupClearButton().onClicked(() => {
             fromDatePicker.resetInput();
             removeUrlParam('from');
-            selectionPanel.createNewSelectionList();
+            this.selectionPanel.createNewSelectionList();
+            fromDatePicker.popupHide();
         });
         fromDatePicker.onSelectedDateTimeChanged(event => {
-            selectionPanel.createNewSelectionList();
+            this.selectionPanel.createNewSelectionList();
             const date = event.getDate();
             if (date) {
                 addUrlParam('from', formatDate(date, true));
             } else {
                 removeUrlParam('from');
             }
+            fromDatePicker.popupHide();
         });
-        const fromLabel: Element = new LabelEl('From', fromDatePicker.getTextInput());
-        fromWrapper.appendChildren(
-            fromLabel,
-            fromDatePicker,
-        );
+
         const toWrapper = new DivEl('wrapper');
         const toDatePicker = new DatePickerClear('select-to');
         if (loadParams.to) {
@@ -67,16 +80,18 @@ export class SelectionToolbar extends Toolbar {
         toDatePicker.getPopupClearButton().onClicked(() => {
             toDatePicker.resetInput();
             removeUrlParam('to');
-            selectionPanel.createNewSelectionList();
+            this.selectionPanel.createNewSelectionList();
+            toDatePicker.popupHide();
         });
         toDatePicker.onSelectedDateTimeChanged(event => {
-            selectionPanel.createNewSelectionList();
+            this.selectionPanel.createNewSelectionList();
             const date = event.getDate();
             if (date) {
                 addUrlParam('to', formatDate(date, true));
             } else {
                 removeUrlParam('to');
             }
+            toDatePicker.popupHide();
         });
         const toLabel: Element = new LabelEl('To', toDatePicker.getTextInput());
         toWrapper.appendChildren(
@@ -84,91 +99,19 @@ export class SelectionToolbar extends Toolbar {
             toDatePicker,
         );
 
-        const projectWrapper = new DivEl('wrapper');
-        const projectDropdown = new Dropdown('project', { inputPlaceholderText: 'project' });
-        projectDropdown.setId('select-project');
-        projectDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                projectDropdown.reset();
-                removeUrlParam('project');
-            } else {
-                addUrlParam('project', event.getOption().getValue());
-            }
-            if (selectionPanel.isRendered) {
-                selectionPanel.createNewSelectionList();
-            }
-        });
-
-        const projectLabel: Element = new LabelEl('Project', <Element>projectDropdown);
-        this.setDropdownProject(projectDropdown);
-        if (loadParams.project) {
-            projectDropdown.setValue(loadParams.project, true);
-        } else {
-            const defaultOption = projectDropdown.getOptionByValue('default');
-            if (defaultOption) {
-                projectDropdown.setValue('default', true);
+        const project = this.createDropdown('project', 'Project', this.setProjectOptions);
+        if (loadParams.project === undefined) {
+            if (project.getOptionByValue('default')) {
+                project.setValue('default', true);
             }
         }
+        const user = this.createDropdown('user', 'User', this.setUserOptions);
+        const type = this.createDropdown('type', 'Type', this.setTypeOptions);
 
-        projectWrapper.appendChildren(
-            projectLabel,
-            projectDropdown,
-        );
-
-        const userWrapepr = new DivEl('wrapper');
-        const userDropdown = new Dropdown('User', { inputPlaceholderText: 'Select' });
-        userDropdown.setId('select-user');
-        if (loadParams.user) {
-            userDropdown.setValue(loadParams.user, true);
-        }
-        userDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                userDropdown.reset();
-                removeUrlParam('user');
-            } else {
-                addUrlParam('user', event.getOption().getValue());
-            }
-            selectionPanel.createNewSelectionList();
-        });
-
-        const userLabel: Element = new LabelEl('User', <Element>userDropdown);
-        this.setDropDownUsers(userDropdown);
-        userWrapepr.appendChildren(
-            userLabel,
-            userDropdown,
-        );
-
-        const typeWrapper = new DivEl('wrapper');
-        const typeDropdown = new Dropdown('type', { inputPlaceholderText: 'Select' });
-        typeDropdown.setId('select-type');
-        if (loadParams.type) {
-            typeDropdown.setValue(loadParams.type, true);
-        }
-        typeDropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
-                typeDropdown.reset();
-                removeUrlParam('type');
-            } else {
-                addUrlParam('type', event.getOption().getValue());
-            }
-            selectionPanel.createNewSelectionList();
-        });
-        const typeLabel: Element = new LabelEl('Type', <Element>typeDropdown);
-        this.setDropdownTypes(typeDropdown);
-
-        typeWrapper.appendChildren(
-            typeLabel,
-            typeDropdown,
-        );
-
-        const searchWrapper = new DivEl('wrapper');
         const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
         searchInput.setId('fulltext');
-        if (loadParams.q) {
-            searchInput.setValue(loadParams.q, true);
-        }
         searchInput.onValueChanged(event => {
-            selectionPanel.createNewSelectionList();
+            this.selectionPanel.createNewSelectionList();
             const query = event.getNewValue();
             if (query !== '') {
                 addUrlParam('q', event.getNewValue());
@@ -176,27 +119,86 @@ export class SelectionToolbar extends Toolbar {
                 removeUrlParam('q');
             }
         });
-        const searchLabel: Element = new LabelEl('Search', searchInput);
-        searchWrapper.appendChildren(
-            searchLabel,
-            searchInput,
-        );
+
+        if (loadParams.q) {
+            searchInput.setValue(loadParams.q, true);
+        }
+
+        const searchAction = new Action();
+        searchAction.setIconClass('icon-search');
+        searchAction.onExecuted(() => {
+            this.selectionPanel.createNewSelectionList();
+        });
+
+        const searchButton = new ActionButton(searchAction);
+
+        this.filters = {
+            to: toDatePicker,
+            from : fromDatePicker,
+            project,
+            user,
+            type,
+            fulltext: searchInput,
+        };
 
         this.appendChildren(
-            fromWrapper,
-            toWrapper,
-            projectWrapper,
-            userWrapepr,
-            typeWrapper,
-            searchWrapper,
+            this.labelAndWrapElement(fromDatePicker, 'From'),
+            this.labelAndWrapElement(toDatePicker, 'To'),
+            this.labelAndWrapElement(project, 'Project'),
+            this.labelAndWrapElement(user, 'user'),
+            this.labelAndWrapElement(type, 'type'),
+            this.labelAndWrapElement(searchInput, 'Fulltext'),
+            searchButton,
         );
     }
 
-    setDropdownTypes(dropdown: Dropdown<any>): void {
+    // createDatePicker() {
+
+    // }
+
+    createDropdown(name: string, placeholder: string, setOptions: CallableFunction): Dropdown<string> {
+        const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), { inputPlaceholderText: placeholder });
+        dropdown.setId(`select-${name}`);
+        dropdown.onOptionSelected(event => {
+            if (event.getOption().getValue() === 'empty') {
+                dropdown.reset();
+                removeUrlParam(name);
+            } else {
+                addUrlParam(name, event.getOption().getValue());
+            }
+            if (this.selectionPanel.isRendered) {
+                this.selectionPanel.createNewSelectionList();
+            }
+        });
+
+        const loadParams = getUrlParams();
+
+        setOptions(dropdown);
+
+        if (loadParams[name]) {
+            dropdown.setValue(loadParams[name], true);
+        }
+
+        return dropdown;
+    }
+
+    labelAndWrapElement(element: Element, labelText: string) {
+        const wrapper = new DivEl('wrapper');
+        const labelEl: Element = new LabelEl(labelText, element);
+
+        wrapper.appendChildren(
+            labelEl,
+            element
+        );
+
+        return wrapper;
+    }
+
+    setTypeOptions(dropdown: Dropdown<any>): void {
         dropdown.addOption(
             Option.create()
                 .setValue('empty')
-                .setDisplayValue('empty')
+                .setDisplayValue('<Clear selection>')
                 .build()
         );
         CONFIG.allTypes.forEach((value) => {
@@ -210,11 +212,11 @@ export class SelectionToolbar extends Toolbar {
         });
     }
 
-    setDropDownUsers(dropdown: Dropdown<any>): void {
+    setUserOptions(dropdown: Dropdown<any>): void {
         dropdown.addOption(
             Option.create()
                 .setValue('empty')
-                .setDisplayValue('empty')
+                .setDisplayValue('<Clear selection>')
                 .build()
         );
         CONFIG.allUsers.forEach((value) => {
@@ -228,11 +230,11 @@ export class SelectionToolbar extends Toolbar {
         });
     }
 
-    setDropdownProject(dropdown: Dropdown<any>): void {
+    setProjectOptions(dropdown: Dropdown<any>): void {
         dropdown.addOption(
             Option.create()
                 .setValue('empty')
-                .setDisplayValue('empty')
+                .setDisplayValue('<Clear selection>')
                 .build()
         );
 

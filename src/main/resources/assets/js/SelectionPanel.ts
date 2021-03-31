@@ -9,12 +9,13 @@ import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { DatePicker } from 'lib-admin-ui/ui/time/DatePicker';
 import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
+import { SelectionToolbar } from './SelectionToolbar';
 
 export class SelectionPanel extends Panel {
 
     private mask: Mask;
     private selectionList: SelectionList;
-    private optionsToolbar: Toolbar;
+    private optionsToolbar: SelectionToolbar;
     private toolbar: Toolbar;
     private loading: boolean = false;
 
@@ -22,8 +23,8 @@ export class SelectionPanel extends Panel {
         super(className);
     }
 
-    public setup(toolbar: Toolbar) {
-        this.optionsToolbar = toolbar;
+    public setup(topToolbar: SelectionToolbar) {
+        this.optionsToolbar = topToolbar;
         this.createPanel();
         this.showMask();
     }
@@ -137,18 +138,16 @@ export class SelectionPanel extends Panel {
     }
 
     /**
-     * Get all the FetchOptions form the toolbar to create a new seletion list
+     * Get all the FetchOptions form the toolbar to create a new selection list
      */
     getOptions(): FetchOptions {
         let optTool = this.optionsToolbar;
-        const from = (<DatePicker>optTool.findChildById('select-from', true))
-            .getTextInput().getValue();
-        const to = (<DatePicker>optTool.findChildById('select-to', true))
-            .getTextInput().getValue();
-        const project = (<Dropdown<string>>optTool.findChildById('select-project', true)).getValue();
-        const user = (<Dropdown<string>>optTool.findChildById('select-user', true)).getValue();
-        const type = (<Dropdown<String>>optTool.findChildById('select-type', true)).getValue();
-        const fullText = (<FormInputEl>optTool.findChildById('fulltext', true)).getValue();
+        const from = optTool.filters.from.getTextInput().getValue();
+        const to = optTool.filters.to.getTextInput().getValue();
+        const project = optTool.filters.project.getValue();
+        const user = optTool.filters.user.getValue();
+        const type = optTool.filters.type.getValue();
+        const fullText = optTool.filters.fulltext.getValue();
 
         const options: FetchOptions = {};
         if (notEmtpy(from)) {
