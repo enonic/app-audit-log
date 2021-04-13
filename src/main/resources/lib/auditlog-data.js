@@ -1,8 +1,8 @@
-const auth = require("/lib/xp/auth");
-const auditlog = require("/lib/xp/auditlog");
-const moment = require("/assets/lib/moment.min.js");
+const auth = require('/lib/xp/auth');
+const auditlog = require('/lib/xp/auditlog');
+const moment = require('/assets/lib/moment.min.js');
 //const content = require("/lib/xp/content");
-const node = require("/lib/xp/node");
+const node = require('/lib/xp/node');
 
 //exports.getDisplayData = displayData;
 exports.getEntry = getEntry;
@@ -34,11 +34,11 @@ function getEntry(id) {
  * Aggregates all unique values sorted by the most used.
  */
 function getAllTypes() {
-    let result = doQuery("", null, {
+    let result = doQuery('', null, {
         by_type: {
             terms: {
-                field: "type",
-                order: "_term ASC",
+                field: 'type',
+                order: '_term ASC',
                 size: 100,
             },
         },
@@ -50,11 +50,11 @@ function getAllTypes() {
 function getAllUsers() {
     let result = auth.findUsers({
         count: -1,
-        query: "",
+        query: '',
     });
 
     let data = [];
-    result.hits.forEach(function(user) {
+    result.hits.forEach(function (user) {
         data.push(user.key);
     });
 
@@ -69,7 +69,7 @@ function getAllUsers() {
 function getSelection(options) {
     if (!options) options = {}; //default param
 
-    let result = doQuery("", options);
+    let result = doQuery('', options);
 
     let selections = [];
     result.hits.forEach(function (el) {
@@ -96,30 +96,36 @@ function getSelection(options) {
  * @param {Object} [aggregations]
  */
 function doQuery(queryLine, settings, aggregations) {
-    let query = queryLine || "";
+    let query = queryLine || '';
     let options = settings ? settings : {};
+
+    const dateFormat = /[0-9]{4}-[0-9]{2}-[0-9]{2}/g;
 
     if (options.from) {
         let from;
         if (moment.isMoment(options.from)) {
             from = options.from;
-        } else {
-            from = moment(options.from, "YYYY-MM-DD").utc(true);
-            from.startOf("day");
+        } else if (dateFormat.test(options.from)) {
+            from = moment(options.from, 'YYYY-MM-DD').utc(true);
+            from.startOf('day');
         }
-        query = emptyOrAdd(query)
-        query += `time > dateTime('${from.toISOString()}') `;
+        if (from != undefined) {
+            query = emptyOrAdd(query);
+            query += `time > dateTime('${from.toISOString()}') `;
+        }
     }
     if (options.to) {
         let to;
         if (moment.isMoment(options.to)) {
             to = options.to;
-        } else {
-            to = moment(options.to, "YYYY-MM-DD").utc(true);
-            to.endOf("day");
+        } else if (dateFormat.test(options.to)) {
+            to = moment(options.to, 'YYYY-MM-DD').utc(true);
+            to.endOf('day');
         }
-        query = emptyOrAdd(query);
-        query += `time < dateTime('${to.toISOString()}')`;
+        if (to != undefined) {
+            query = emptyOrAdd(query);
+            query += `time < dateTime('${to.toISOString()}')`;
+        }
     }
     if (options.type) {
         query = emptyOrAdd(query);
@@ -139,22 +145,22 @@ function doQuery(queryLine, settings, aggregations) {
     }
 
     if (options.count > 100) {
-        log.error("Wrong params in query. Audit log");
+        log.error('Wrong params in query. Audit log');
         log.info(JSON.stringify(options, null, 4));
     }
 
     let queryParam = {
         start: options.start || 0,
         count: options.count || 100,
-        query: query,
-        sort: options.sort ? options.sort : "_ts DESC",
+        query,
+        sort: options.sort ? options.sort : '_ts DESC',
     };
 
     queryParam.aggregations = aggregations ? aggregations : undefined;
 
     let repoConnection = node.connect({
-        repoId: "system.auditlog", // Please never connect to a system repo manuallya. Ever.
-        branch: "master",
+        repoId: 'system.auditlog', // Please never connect to a system repo manuallya. Ever.
+        branch: 'master',
     });
 
     let result = repoConnection.query(queryParam);
@@ -163,7 +169,7 @@ function doQuery(queryLine, settings, aggregations) {
 }
 
 function emptyOrAdd(query) {
-    if (query != "") query += " AND ";
+    if (query != '') query += ' AND ';
     return query;
 }
 
@@ -191,7 +197,7 @@ function getEntriesForUser(options) {
         from: options.from,
         to: options.to,
         count: -1,
-        sort: "DESC",
+        sort: 'DESC',
         fullText: options.fullText || null,
     });
 
@@ -219,7 +225,7 @@ function displayData(id) {
     let datetime = new moment(entry.time).utc(true);
 
     //let simpleDate = datetime.format("YYYY-MM-DD");
-    let simpleTime = datetime.format("HH:mm:ss");
+    let simpleTime = datetime.format('HH:mm:ss');
 
     return {
         id: entry._id,
@@ -238,26 +244,26 @@ function getUsername(key) {
 }
 
 function formatUser(userKey) {
-    return userKey.replace("user:system:", "");
+    return userKey.replace('user:system:', '');
 }
 
 /*  */
 function getAuditType(type) {
     switch (type) {
-        case "system.content.update":
-            return "Update";
-        case "system.content.unpublishContent":
-            return "Unpublish";
-        case "system.content.publish":
-            return "Publish";
-        case "system.content.rename":
-            return "Rename";
-        case "system.content.moved":
-            return "Move";
-        case "system.content.create":
-            return "Create";
-        case "system.content.delete":
-            return "Delete";
+        case 'system.content.update':
+            return 'Update';
+        case 'system.content.unpublishContent':
+            return 'Unpublish';
+        case 'system.content.publish':
+            return 'Publish';
+        case 'system.content.rename':
+            return 'Rename';
+        case 'system.content.moved':
+            return 'Move';
+        case 'system.content.create':
+            return 'Create';
+        case 'system.content.delete':
+            return 'Delete';
         default:
             return type;
     }

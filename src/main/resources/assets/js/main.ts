@@ -49,6 +49,7 @@ class AuditLogView {
 
         Messages.setMessages({
             'action.ok': 'ok',
+            'dialog.notification.title': 'Filters',
         });
     }
 

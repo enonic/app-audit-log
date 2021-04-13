@@ -11,10 +11,16 @@ import { dateFromFormatDate, formatDate } from './util';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
+import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
+import { ModalDialog } from 'lib-admin-ui/ui/dialog/ModalDialog';
+import { ConfirmationDialog } from 'lib-admin-ui/ui/dialog/ConfirmationDialog';
+import { NotificationDialog } from 'lib-admin-ui/ui/dialog/NotificationDialog';
 
 export class SelectionToolbar extends Toolbar {
 
     selectionPanel: SelectionPanel;
+    responsiveRender: Boolean = false;
+    filterEls: Element[] = [];
 
     filters: {
         from: DatePickerClear;
@@ -28,13 +34,6 @@ export class SelectionToolbar extends Toolbar {
     constructor(selectionPanel: SelectionPanel) {
         super('tools');
         this.selectionPanel = selectionPanel;
-    }
-
-    doRender(): Q.Promise<boolean> {
-        return super.doRender().then((rendered) => {
-            this.appendChildren();
-            return rendered;
-        });
     }
 
     setup() {
@@ -62,7 +61,7 @@ export class SelectionToolbar extends Toolbar {
         fromDatePicker.onSelectedDateTimeChanged(event => {
             this.selectionPanel.createNewSelectionList();
             const date = event.getDate();
-            if (date) {
+            if (date != null) {
                 addUrlParam('from', formatDate(date, true));
             } else {
                 removeUrlParam('from');
@@ -70,7 +69,6 @@ export class SelectionToolbar extends Toolbar {
             fromDatePicker.popupHide();
         });
 
-        const toWrapper = new DivEl('wrapper');
         const toDatePicker = new DatePickerClear('select-to');
         if (loadParams.to) {
             const toDate = dateFromFormatDate(loadParams.to);
@@ -93,11 +91,6 @@ export class SelectionToolbar extends Toolbar {
             }
             toDatePicker.popupHide();
         });
-        const toLabel: Element = new LabelEl('To', toDatePicker.getTextInput());
-        toWrapper.appendChildren(
-            toLabel,
-            toDatePicker,
-        );
 
         const project = this.createDropdown('project', 'Project', this.setProjectOptions);
         if (loadParams.project === undefined) {
@@ -124,37 +117,70 @@ export class SelectionToolbar extends Toolbar {
             searchInput.setValue(loadParams.q, true);
         }
 
-        const searchAction = new Action();
-        searchAction.setIconClass('icon-search');
-        searchAction.onExecuted(() => {
-            this.selectionPanel.createNewSelectionList();
-        });
+        // const searchAction = new Action();
+        // searchAction.setIconClass('icon-search');
+        // searchAction.onExecuted(() => {
+        //     this.selectionPanel.createNewSelectionList();
+        // });
 
-        const searchButton = new ActionButton(searchAction);
+        // const searchButton = new ActionButton(searchAction);
 
         this.filters = {
             to: toDatePicker,
-            from : fromDatePicker,
+            from: fromDatePicker,
             project,
             user,
             type,
             fulltext: searchInput,
         };
 
-        this.appendChildren(
+        this.filterEls.push(
             this.labelAndWrapElement(fromDatePicker, 'From'),
             this.labelAndWrapElement(toDatePicker, 'To'),
             this.labelAndWrapElement(project, 'Project'),
             this.labelAndWrapElement(user, 'user'),
             this.labelAndWrapElement(type, 'type'),
             this.labelAndWrapElement(searchInput, 'Fulltext'),
-            searchButton,
         );
+
+        this.appendChildren(...this.filterEls);
+
+        ResponsiveManager.onAvailableSizeChanged(this, () => setTimeout(this.checkResponsiveSize.bind(this)));
+
+        this.onShown(() => this.checkResponsiveSize());
     }
 
-    // createDatePicker() {
+    checkResponsiveSize() {
+        const toolBarWidth = this.getEl().getWidth();
+        let filterWidth = 0;
+        this.filterEls.forEach(element => {
+            if (element.isVisible()) {
+                filterWidth += element.getEl().getWidth();
+            }
+        });
 
-    // }
+        if (toolBarWidth < filterWidth) {
+            this.modalFilters();
+        }
+    }
+
+    modalFilters() {
+        if (this.responsiveRender === false) {
+            const modal = new NotificationDialog('');
+            const modalAction = new Action('Filters');
+            const button = new ActionButton(modalAction);
+            this.filterEls.forEach(filter => {
+                this.removeChild(filter);
+                modal.appendChildToContentPanel(filter);
+            });
+            modalAction.onExecuted(action => {
+                modal.open();
+            });
+
+            this.appendChildren(button);
+            this.responsiveRender = true;
+        }
+    }
 
     createDropdown(name: string, placeholder: string, setOptions: CallableFunction): Dropdown<string> {
         const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), { inputPlaceholderText: placeholder });
