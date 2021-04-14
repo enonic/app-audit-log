@@ -16,11 +16,12 @@ import { ModalDialog } from 'lib-admin-ui/ui/dialog/ModalDialog';
 import { ConfirmationDialog } from 'lib-admin-ui/ui/dialog/ConfirmationDialog';
 import { NotificationDialog } from 'lib-admin-ui/ui/dialog/NotificationDialog';
 
-export class SelectionToolbar extends Toolbar {
+export class EditToolbar extends Toolbar {
 
     selectionPanel: SelectionPanel;
     responsiveRender: Boolean = false;
     filterEls: Element[] = [];
+    private toggleBtn: ActionButton;
 
     filters: {
         from: DatePickerClear;
@@ -31,12 +32,11 @@ export class SelectionToolbar extends Toolbar {
         fulltext: FormInputEl;
     };
 
+    // Possible to refacor each event into a setable state.
+    // So the selectionpanel could just set the different events.
     constructor(selectionPanel: SelectionPanel) {
         super('tools');
         this.selectionPanel = selectionPanel;
-    }
-
-    setup() {
         const loadParams = getUrlParams();
         const fromDatePicker = new DatePickerClear('select-from');
         let inDate = new Date();
@@ -162,6 +162,22 @@ export class SelectionToolbar extends Toolbar {
         if (toolBarWidth < filterWidth) {
             this.modalFilters();
         }
+    }
+
+    public addToggleButton(handler: CallableFunction) {
+        const toggle = new Action('toggle screen')
+            // .setIconClass('icon-close')
+            .onExecuted(() => {
+                handler();
+            });
+        this.toggleBtn = new ActionButton(toggle);
+        this.toggleBtn.addClass('preview-toggle');
+
+        this.appendChild(this.toggleBtn);
+    }
+
+    public removeToggleButton() {
+        this.removeChild(this.toggleBtn);
     }
 
     modalFilters() {

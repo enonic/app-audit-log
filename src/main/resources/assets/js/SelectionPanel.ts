@@ -5,17 +5,14 @@ import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Body } from 'lib-admin-ui/dom/Body';
-import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
-import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { DatePicker } from 'lib-admin-ui/ui/time/DatePicker';
 import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
-import { SelectionToolbar } from './SelectionToolbar';
+import { EditToolbar } from './EditToolbar';
 
 export class SelectionPanel extends Panel {
 
     private mask: Mask;
     private selectionList: SelectionList;
-    private optionsToolbar: SelectionToolbar;
+    private optionsToolbar: EditToolbar;
     private toolbar: Toolbar;
     private loading: boolean = false;
 
@@ -23,7 +20,7 @@ export class SelectionPanel extends Panel {
         super(className);
     }
 
-    public setup(topToolbar: SelectionToolbar) {
+    public setup(topToolbar: EditToolbar) {
         this.optionsToolbar = topToolbar;
         this.createPanel();
         this.showMask();
@@ -181,6 +178,10 @@ export class SelectionPanel extends Panel {
 
     public onSelectionClick(handle: (event: CustomEvent) => void) {
         this.getEl().addEventListener('SelectionClick', handle);
+    }
+
+    public unSelectionClick(listener: (event: CustomEvent) => void) {
+        this.getEl().removeEventListener('click', listener);
     }
 
     public createNewSelectionList() {

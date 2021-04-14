@@ -9,8 +9,8 @@ import { Element } from 'lib-admin-ui/dom/Element';
 import { Messages } from 'lib-admin-ui/util/Messages';
 import { SelectionPanel } from './SelectionPanel';
 import { PreviewPanel } from './PreviewPanel';
-import { getUrlParams } from './Urlparam';
-import { SelectionToolbar } from './SelectionToolbar';
+import { EditToolbar } from './EditToolbar';
+import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
 
 
 interface GlobalConfig {
@@ -41,6 +41,9 @@ class AuditLogView {
 
     private selectionPanel: SelectionPanel;
     private previewPanel: PreviewPanel;
+    private splitPanel: SplitPanel;
+    private editToolbar: EditToolbar;
+    private mobileView: boolean = false;
 
     constructor() {
         const app: Application = this.createApplication();
@@ -64,24 +67,20 @@ class AuditLogView {
         const appBar = new AppBar(app);
         const appPanel = new AppPanel('app-container');
         this.selectionPanel = new SelectionPanel('selection-panel');
-        const toolbar = new SelectionToolbar(this.selectionPanel);
-        toolbar.setup();
-        this.selectionPanel.setup(toolbar);
+        this.editToolbar = new EditToolbar(this.selectionPanel);
+        this.selectionPanel.setup(this.editToolbar);
 
         this.previewPanel = new PreviewPanel('preview-panel');
 
         // Attach the selection click to setup a new preview panel
-        this.selectionPanel.onSelectionClick((event) => {
-            const id = event.detail.id;
-            this.previewPanel.setPreview(id);
-        });
-        const layoutPanel = this.createLayoutPanel(this.selectionPanel, this.previewPanel);
+        this.selectionPanel.onSelectionClick(this.onSelectedEvent.bind(this));
+        this.splitPanel = this.createLayoutPanel(this.selectionPanel, this.previewPanel);
 
         const mainPanel = new DeckPanel('main-panel');
         const editPanel = new Panel('edit-panel');
 
         mainPanel.appendChildren(appBar, <Element>editPanel);
-        editPanel.appendChildren(toolbar, <Element>layoutPanel);
+        editPanel.appendChildren(this.editToolbar, <Element>this.splitPanel);
         appPanel.appendChild(mainPanel);
 
         this.body.appendChild(appPanel);
@@ -94,9 +93,64 @@ class AuditLogView {
             .setFirstPanelMinSize(30, SplitPanelUnit.PERCENT)
             .setFirstPanelSize(38, SplitPanelUnit.PERCENT)
             .build();
-        panel.getEl().setTopPx(84);
+
+        panel.getEl()
+            .setTopPx(84);
+
+        ResponsiveManager.onAvailableSizeChanged(panel, () => setTimeout(this.checkResponsiveSize.bind(this)));
+
+        panel.onShown(() => this.checkResponsiveSize());
+
         return panel;
     }
+
+    onSelectedEvent(event: CustomEvent) {
+        const id = event.detail.id;
+        this.previewPanel.setPreview(id);
+    }
+
+    onSelectedEventMobile(event: CustomEvent) {
+        this.splitPanel.showSecondPanel();
+        this.splitPanel.hideFirstPanel();
+        const id = event.detail.id;
+        this.previewPanel.setPreview(id);
+    }
+
+    checkResponsiveSize() {
+        const panel = this.splitPanel;
+        const secondSize = panel.getActiveWidthPxOfSecondPanel();
+        // This is a backwards way of getting the size...
+        const firstSize = panel.getEl().getWidthWithBorder() - secondSize;
+
+        if (secondSize + firstSize <= 700 && this.mobileView === false) {
+            panel.hideSecondPanel();
+
+            this.selectionPanel.unSelectionClick(this.onSelectedEvent.bind(this));
+            this.selectionPanel.onSelectionClick(this.onSelectedEventMobile.bind(this));
+            this.editToolbar.addToggleButton(() => {
+                if (panel.isFirstPanelHidden()) {
+                    panel.showFirstPanel();
+                    panel.hideSecondPanel();
+                } else {
+                    panel.showSecondPanel();
+                    panel.hideFirstPanel();
+                }
+            });
+            this.mobileView = true;
+        } else if (firstSize > 700 && panel.isSecondPanelHidden() && this.mobileView === true) {
+            panel.showSecondPanel();
+            this.editToolbar.removeToggleButton();
+
+            this.selectionPanel.unSelectionClick(this.onSelectedEventMobile);
+            this.selectionPanel.onSelectionClick(this.onSelectedEvent);
+
+            if (panel.isFirstPanelHidden()) {
+                panel.showFirstPanel();
+            }
+            this.mobileView = false;
+        }
+    }
+
 }
 
 // Main function called on page load

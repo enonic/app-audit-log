@@ -8,6 +8,8 @@ import { Exception } from 'lib-admin-ui/Exception';
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { ImageLoader } from 'lib-admin-ui/util/loader/ImageLoader';
 import { ItemDataGroup } from 'lib-admin-ui/app/view/ItemDataGroup';
+import { Action } from 'lib-admin-ui/ui/Action';
+import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
 
 
 export interface AuditlogData {
@@ -19,15 +21,15 @@ export interface AuditlogData {
 
 export class PreviewPanel extends Panel {
 
-    header: Element;
-    logDataContainer: Element;
+    private header: Element;
+    private logDataContainer: Element;
 
     constructor(className?: string) {
         super(className);
         this.setHelpText();
     }
 
-    setHelpText() {
+    public setHelpText() {
         this.appendChild(SpanEl.fromText(
             'Free space, select something on the left',
             'placeholder',
@@ -48,7 +50,7 @@ export class PreviewPanel extends Panel {
         }
     }
 
-    private setPreviewHeader(data: AuditlogData) {
+    public setPreviewHeader(data: AuditlogData) {
         this.header = new DivEl('preview-header');
 
         //Future img update
