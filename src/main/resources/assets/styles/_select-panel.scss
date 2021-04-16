@@ -1,10 +1,11 @@
 .selection-panel {
     .select-toolbar {
         background-color: #fafafa;
+        padding-left: 10px;
     }
 
     .selection-placeholder {
-        position: absolute;
+        position: relative;
         left: 50%;
         transform: translate(-50%);
         padding: 0.5rem;

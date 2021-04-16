@@ -21,7 +21,6 @@ export class EditToolbar extends Toolbar {
     selectionPanel: SelectionPanel;
     responsiveRender: Boolean = false;
     filterEls: Element[] = [];
-    private toggleBtn: ActionButton;
 
     filters: {
         from: DatePickerClear;
@@ -66,6 +65,7 @@ export class EditToolbar extends Toolbar {
             } else {
                 removeUrlParam('from');
             }
+            fromDatePicker.setSelectedDate(inDate);
             fromDatePicker.popupHide();
         });
 
@@ -102,7 +102,7 @@ export class EditToolbar extends Toolbar {
         const type = this.createDropdown('type', 'Type', this.setTypeOptions);
 
         const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
-        searchInput.setId('fulltext');
+        searchInput.setId('free-text');
         searchInput.onValueChanged(event => {
             this.selectionPanel.createNewSelectionList();
             const query = event.getNewValue();
@@ -138,9 +138,9 @@ export class EditToolbar extends Toolbar {
             this.labelAndWrapElement(fromDatePicker, 'From'),
             this.labelAndWrapElement(toDatePicker, 'To'),
             this.labelAndWrapElement(project, 'Project'),
-            this.labelAndWrapElement(user, 'user'),
-            this.labelAndWrapElement(type, 'type'),
-            this.labelAndWrapElement(searchInput, 'Fulltext'),
+            this.labelAndWrapElement(user, 'User'),
+            this.labelAndWrapElement(type, 'Type'),
+            this.labelAndWrapElement(searchInput, 'Free text'),
         );
 
         this.appendChildren(...this.filterEls);
@@ -155,7 +155,7 @@ export class EditToolbar extends Toolbar {
         let filterWidth = 0;
         this.filterEls.forEach(element => {
             if (element.isVisible()) {
-                filterWidth += element.getEl().getWidth();
+                filterWidth += element.getEl().getWidthWithMargin();
             }
         });
 
@@ -164,27 +164,14 @@ export class EditToolbar extends Toolbar {
         }
     }
 
-    public addToggleButton(handler: CallableFunction) {
-        const toggle = new Action('toggle screen')
-            // .setIconClass('icon-close')
-            .onExecuted(() => {
-                handler();
-            });
-        this.toggleBtn = new ActionButton(toggle);
-        this.toggleBtn.addClass('preview-toggle');
-
-        this.appendChild(this.toggleBtn);
-    }
-
-    public removeToggleButton() {
-        this.removeChild(this.toggleBtn);
-    }
-
     modalFilters() {
         if (this.responsiveRender === false) {
-            const modal = new NotificationDialog('');
+            const modal = new FilterDiag();
             const modalAction = new Action('Filters');
             const button = new ActionButton(modalAction);
+            const iconFilter = new ActionButton(new Action().setIconClass('icon-cog2'));
+            button.addClass('filter-button');
+            button.appendChild(iconFilter);
             this.filterEls.forEach(filter => {
                 this.removeChild(filter);
                 modal.appendChildToContentPanel(filter);
@@ -289,5 +276,13 @@ export class EditToolbar extends Toolbar {
             );
         });
 
+    }
+}
+
+
+class FilterDiag extends ModalDialog {
+    constructor() {
+        super();
+        this.addCancelButtonToBottom('Apply');
     }
 }

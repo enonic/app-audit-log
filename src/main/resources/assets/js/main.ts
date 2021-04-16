@@ -89,13 +89,12 @@ class AuditLogView {
     createLayoutPanel(left: Panel, right: Panel): SplitPanel {
         const panel = new SplitPanelBuilder(left, right)
             .setAlignment(SplitPanelAlignment.VERTICAL)
+            .setAlignmentTreshold(700)
+            .setSecondPanelShouldSlideRight(true)
             .setSecondPanelMinSize(30, SplitPanelUnit.PERCENT)
             .setFirstPanelMinSize(30, SplitPanelUnit.PERCENT)
             .setFirstPanelSize(38, SplitPanelUnit.PERCENT)
             .build();
-
-        panel.getEl()
-            .setTopPx(84);
 
         ResponsiveManager.onAvailableSizeChanged(panel, () => setTimeout(this.checkResponsiveSize.bind(this)));
 
@@ -111,9 +110,6 @@ class AuditLogView {
 
     onSelectedEventMobile(event: CustomEvent) {
         this.splitPanel.showSecondPanel();
-        this.splitPanel.hideFirstPanel();
-        const id = event.detail.id;
-        this.previewPanel.setPreview(id);
     }
 
     checkResponsiveSize() {
@@ -123,26 +119,27 @@ class AuditLogView {
         const firstSize = panel.getEl().getWidthWithBorder() - secondSize;
 
         if (secondSize + firstSize <= 700 && this.mobileView === false) {
-            panel.hideSecondPanel();
-
-            this.selectionPanel.unSelectionClick(this.onSelectedEvent.bind(this));
+            panel.foldSecondPanel();
+            panel.hideSplitter();
+            // this.selectionPanel.unSelectionClick(this.onSelectedEvent.bind(this));
             this.selectionPanel.onSelectionClick(this.onSelectedEventMobile.bind(this));
-            this.editToolbar.addToggleButton(() => {
-                if (panel.isFirstPanelHidden()) {
-                    panel.showFirstPanel();
-                    panel.hideSecondPanel();
+
+            this.previewPanel.showBackButton = true;
+            this.previewPanel.setBackButton(() => {
+                if (panel.isSecondPanelHidden() === false) {
+                    panel.foldSecondPanel();
                 } else {
                     panel.showSecondPanel();
-                    panel.hideFirstPanel();
+                    // panel.hideFirstPanel();
                 }
             });
             this.mobileView = true;
         } else if (firstSize > 700 && panel.isSecondPanelHidden() && this.mobileView === true) {
             panel.showSecondPanel();
-            this.editToolbar.removeToggleButton();
+            this.previewPanel.showBackButton = false;
 
-            this.selectionPanel.unSelectionClick(this.onSelectedEventMobile);
-            this.selectionPanel.onSelectionClick(this.onSelectedEvent);
+            this.selectionPanel.unSelectionClick(this.onSelectedEventMobile.bind(this));
+            // this.selectionPanel.onSelectionClick(this.onSelectedEvent.bind(this));
 
             if (panel.isFirstPanelHidden()) {
                 panel.showFirstPanel();

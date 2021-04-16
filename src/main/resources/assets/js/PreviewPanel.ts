@@ -23,6 +23,8 @@ export class PreviewPanel extends Panel {
 
     private header: Element;
     private logDataContainer: Element;
+    private backBtn: ActionButton;
+    public showBackButton: boolean;
 
     constructor(className?: string) {
         super(className);
@@ -36,6 +38,17 @@ export class PreviewPanel extends Panel {
         ));
     }
 
+    public setBackButton(handler: CallableFunction) {
+        const action = new Action()
+            .setIconClass('icon-close')
+            .onExecuted(() => {
+                handler();
+            });
+        const button = new ActionButton(action);
+        button.addClass('close-button');
+        this.backBtn = button;
+    }
+
     public setPreview(id?: string) {
         this.removeChildren();
 
@@ -44,6 +57,9 @@ export class PreviewPanel extends Panel {
         } else {
             this.fetchAuditLog(id)
                 .then(data => {
+                    if (this.showBackButton) {
+                        this.appendChild(this.backBtn);
+                    }
                     this.setPreviewHeader(data);
                     this.setPreviewBody(data);
                 });

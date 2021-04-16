@@ -41,63 +41,97 @@
         float: right;
     }
 }
+.xp-admin-common-modal-dialog {
+    .wrapper {
+        margin-top: 20px;
+        width: 100%;
+    }
+    // Modal filters
+    #free-text,
+    #select-to,
+    #select-from,
+    #select-user,
+    #select-type,
+    #select-project {
+        box-shadow: none;
+        display: block;
+        padding: 0;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+    }
 
-// Modal filters
-#select-user,
-#select-type,
-#select-project {
-    box-shadow: none;
-    display: block;
-    margin-top: 10px;
-    padding: 0;
-    position: relative;
+    #free-text {
+        height: 36px;
+    }
 }
 
-.tools {
+.toolbar.tools {
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    height: 77px;
+    line-height: normal;
+    height: auto;
+    min-height: 40px;
+    justify-content: flex-start;
+    padding: 0 2.5px;
 
-    #select-from,
-    #select-to {
-        flex: 0 0 auto;
-        width: 240px;
+
+    @media screen and (min-width: 700px) {
+        padding: 0;
+        align-items: stretch;        
     }
 
-    .wrapper {
-        margin-left: 27px;
-        line-height: 1.7rem;
-        width: 240px;
-    }
+    .form-input {
+        &:not(.xp-admin-common-dropdown) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    #fulltext,
-    #select-type,
-    #select-user,
-    #select-project,
-    #select-from,
-    #select-to {
-        width: 240px;
-        margin-top: 0px;
-
-        .xp-admin-common-text-input {
-            @include input-glow(var(--admin-input-blue));
-            width: 240px;
-            height: 36px;
+        .viewer {
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 
-    .icon-search {
-        align-self: start;
-        height: 36px;
-        margin-top: 1.7rem;
+    .wrapper {
+        margin: 0 2.5px;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 150px;
+        max-width: 200px;
+        min-width: 100px;
+
+        label {
+            display: block;
+            margin: 4px 0;
+        }
+    }
+
+    #free-text {
+        @include input-glow(var(--admin-input-blue));
+        height: 35px;
+        padding: 4px 10px;
+    }
+
+    .filter-button {
+        flex-grow: 1;
+        display: flex;
+        height: auto;
+
+        * {
+            flex-grow: 1;
+            height: auto;
+        }
+
+        .icon-filter {
+            align-self: flex-end;
+        }
+        
     }
 }
 
 .align-top {
     vertical-align: top;
-}
-
-.select-toolbar {
-    margin-left: 1.5rem;
 }
