@@ -55,7 +55,6 @@ export class SelectionEl extends DivEl {
 
             this.onKeyPressed(event => {
                 if (KeyHelper.isEnterKey(event) || KeyHelper.isSpace(event)) {
-                    console.log('Key board pressed');
                     this.getHTMLElement().dispatchEvent(
                         new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
                     );
@@ -64,7 +63,6 @@ export class SelectionEl extends DivEl {
             });
 
             this.onMouseUp(event => {
-                console.log('mouse up');
                 this.getHTMLElement().dispatchEvent(
                     new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
                 );

@@ -27,6 +27,8 @@ export class SelectionList extends DivEl {
     private elementsStart: number = 0;
     private total: number = 0;
 
+    public scrollIntoView: Boolean = false;
+
     constructor(toolbar: Toolbar, classes?: string, prefix?: string) {
         super(classes, prefix);
         this.toolbar = toolbar;
@@ -84,8 +86,9 @@ export class SelectionList extends DivEl {
 
     private onSelectionClick() {
         this.getHTMLElement().addEventListener('SelectionClick', event => {
-            console.log('Selection click catched in list');
-            (<HTMLElement>event.target).scrollIntoView(true);
+            if (this.scrollIntoView) {
+                (<HTMLElement>event.target).scrollIntoView(true);
+            }
         });
     }
 

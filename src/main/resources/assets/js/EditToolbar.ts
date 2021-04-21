@@ -15,7 +15,6 @@ import { FilterActionButton } from './FilterActionButton';
 
 export class EditToolbar extends Toolbar {
 
-    selectionPanel: SelectionPanel;
     responsiveRender: Boolean = false;
     filterEls: Element[] = [];
     filterModalButton: FilterActionButton;
@@ -32,9 +31,8 @@ export class EditToolbar extends Toolbar {
 
     // Possible to refacor each event into a setable state.
     // So the selectionpanel could just set the different events.
-    constructor(selectionPanel: SelectionPanel) {
+    constructor() {
         super('tools');
-        this.selectionPanel = selectionPanel;
         this.filterModalButton = new FilterActionButton();
         this.filterModal = new FilterDiag();
         this.filterModal.onHidden(() => {
@@ -45,13 +43,13 @@ export class EditToolbar extends Toolbar {
         const loadParams = getUrlParams();
         const fromDatePicker = new DatePickerClear('select-from');
         let inDate = new Date();
+
         if (loadParams.from) {
             if (loadParams.from !== 'empty') {
                 inDate = dateFromFormatDate(loadParams.from);
                 fromDatePicker.setSelectedDate(inDate);
                 this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
             }
-
         } else if (loadParams.from === undefined &&
             loadParams.to === undefined &&
             loadParams.user === undefined &&
@@ -61,15 +59,17 @@ export class EditToolbar extends Toolbar {
             fromDatePicker.setSelectedDate(inDate);
             this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
         }
+
         fromDatePicker.getPopupClearButton().onClicked(() => {
             fromDatePicker.resetBase();
             fromDatePicker.getTextInput().reset();
             addUrlParam('from', 'empty');
 
-            this.selectionPanel.createNewSelectionList();
+            this.optionsChanged();
             fromDatePicker.popupHide();
             this.filterModalButton.removeInfo('from');
         });
+
         fromDatePicker.onSelectedDateTimeChanged(event => {
             const date = formatDate(event.getDate(), true);
             if (date != null) {
@@ -78,14 +78,13 @@ export class EditToolbar extends Toolbar {
                 // why is this needed?
                 fromDatePicker.resetBase();
                 fromDatePicker.setSelectedDate(event.getDate());
-                console.log(fromDatePicker.getTextInput().getValue());
             } else {
                 fromDatePicker.resetBase();
                 addUrlParam('from', 'empty');
                 this.filterModalButton.removeInfo('from');
             }
             fromDatePicker.popupHide();
-            this.selectionPanel.createNewSelectionList();
+            this.optionsChanged();
         });
 
         const toDatePicker = new DatePickerClear('select-to');
@@ -100,10 +99,12 @@ export class EditToolbar extends Toolbar {
             toDatePicker.resetBase();
             toDatePicker.getTextInput().reset();
             removeUrlParam('to');
-            this.selectionPanel.createNewSelectionList();
+            this.optionsChanged();
+
             toDatePicker.popupHide();
             this.filterModalButton.removeInfo('to');
         });
+
         toDatePicker.onSelectedDateTimeChanged(event => {
             const date = formatDate(event.getDate(), true);
             if (date != null) {
@@ -118,7 +119,7 @@ export class EditToolbar extends Toolbar {
                 this.filterModalButton.removeInfo('to');
             }
             toDatePicker.popupHide();
-            this.selectionPanel.createNewSelectionList();
+            this.optionsChanged();
         });
 
         const project = this.createDropdown('project', 'Project', this.setProjectOptions);
@@ -135,17 +136,24 @@ export class EditToolbar extends Toolbar {
 
         const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
         searchInput.setId('free-text');
-        searchInput.onValueChanged(event => {
-            this.selectionPanel.createNewSelectionList();
-            const query = event.getNewValue();
-            console.log(query);
-            if (query !== '') {
-                addUrlParam('q', query);
-                this.filterModalButton.addInfo('free-text', query);
-            } else {
-                removeUrlParam('q');
-                this.filterModalButton.removeInfo('free-text');
+        let searchTimeout = null;
+
+        searchInput.onInput(event => {
+            if (searchTimeout !== null) {
+                clearTimeout(searchTimeout);
             }
+            searchTimeout = setTimeout(() => {
+                const query = (<HTMLInputElement>event.target).value;
+                if (query !== '') {
+                    addUrlParam('q', query);
+                    this.filterModalButton.addInfo('free-text', query);
+                } else {
+                    removeUrlParam('q');
+                    this.filterModalButton.removeInfo('free-text');
+                }
+                this.optionsChanged();
+
+            }, 500);
         });
 
         if (loadParams.q) {
@@ -237,9 +245,7 @@ export class EditToolbar extends Toolbar {
                 addUrlParam(name, event.getOption().getValue());
                 this.filterModalButton.addInfo(name, value);
             }
-            if (this.selectionPanel.isRendered) {
-                this.selectionPanel.createNewSelectionList();
-            }
+            this.optionsChanged();
         });
 
         const loadParam = getUrlParams()[name];
@@ -252,6 +258,10 @@ export class EditToolbar extends Toolbar {
         }
 
         return dropdown;
+    }
+
+    optionsChanged() {
+        this.getHTMLElement().dispatchEvent(new CustomEvent('optionsChanged', { bubbles: true }));
     }
 
     labelAndWrapElement(element: Element, labelText: string) {

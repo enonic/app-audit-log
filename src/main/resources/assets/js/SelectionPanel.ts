@@ -197,6 +197,10 @@ export class SelectionPanel extends Panel {
             });
     }
 
+    setSelectionListScroll(scroll: boolean) {
+        this.selectionList.scrollIntoView = scroll;
+    }
+
     showMask() {
         this.mask.getHTMLElement().style.display = 'block';
     }

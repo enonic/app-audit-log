@@ -14,6 +14,7 @@
 
     .close-button {
         position: absolute;
+        position: fixed;
         right: 0;
         padding: 4px;
 
@@ -27,7 +28,7 @@
         display: grid;
         grid-template-columns: 64px auto;
         grid-template-rows: repeat(2, auto);
-        padding: 3.5rem;
+        padding: 0.5rem 3.5rem;
 
         .icon {
             grid-column: 1/1;
@@ -46,19 +47,19 @@
     }
 
     .log-data-container {
-        padding: 3.5rem 3.5rem 0 3.5rem;
+        padding: 0.5rem 3.5rem;
     }
 
     @media screen and (max-width: 700px) {
         .preview-header {
-            padding: 1rem;
+            padding: 0.5rem;
 
             .title {
                 font-size: 20px;
             }
         }
         .log-data-container {
-            padding: 1rem 1rem 0 1rem;
+            padding: 0.5rem 1rem;
         }
     }
 }

@@ -31,11 +31,9 @@ export class PreviewPanel extends Panel {
         this.setHelpText();
     }
 
-    public setHelpText() {
-        this.appendChild(SpanEl.fromText(
-            'Free space, select something on the left',
-            'placeholder',
-        ));
+    public clear() {
+        this.removeChildren();
+        this.setHelpText();
     }
 
     public setBackButton(handler: CallableFunction) {
@@ -95,6 +93,13 @@ export class PreviewPanel extends Panel {
         );
 
         this.appendChild(this.header);
+    }
+
+    private setHelpText() {
+        this.appendChild(SpanEl.fromText(
+            'Free space, select something on the left',
+            'placeholder',
+        ));
     }
 
     private setPreviewBody(data: AuditlogData) {

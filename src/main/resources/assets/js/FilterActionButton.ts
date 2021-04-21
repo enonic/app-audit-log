@@ -41,7 +41,6 @@ export class FilterActionButton extends ActionButton {
                 next = iter.next();
             }
         } else {
-            console.log('0 size');
             const span = new DivEl();
             this.appendChild(span);
             span.getEl().setText(FilterActionButton.filterDefaultText);
