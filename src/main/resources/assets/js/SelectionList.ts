@@ -30,6 +30,8 @@ export class SelectionList extends DivEl {
     constructor(toolbar: Toolbar, classes?: string, prefix?: string) {
         super(classes, prefix);
         this.toolbar = toolbar;
+
+        this.onSelectionClick();
     }
 
     /**
@@ -77,6 +79,13 @@ export class SelectionList extends DivEl {
         this.total = data.total;
         data.selections.forEach(element => {
             this.appendChild(new SelectionEl(element));
+        });
+    }
+
+    private onSelectionClick() {
+        this.getHTMLElement().addEventListener('SelectionClick', event => {
+            console.log('Selection click catched in list');
+            (<HTMLElement>event.target).scrollIntoView(true);
         });
     }
 

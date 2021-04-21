@@ -37,8 +37,8 @@ declare global {
 
 // const body = Body.get();
 class AuditLogView {
-    body: Body = null;
-
+    private app: Application;
+    private appPanel: AppPanel<any>;
     private selectionPanel: SelectionPanel;
     private previewPanel: PreviewPanel;
     private splitPanel: SplitPanel;
@@ -46,9 +46,8 @@ class AuditLogView {
     private mobileView: boolean = false;
 
     constructor() {
-        const app: Application = this.createApplication();
-        this.body = Body.get();
-        this.createAppPanels(app);
+        this.app = this.createApplication();
+        this.createAppPanels(this.app);
 
         Messages.setMessages({
             'action.ok': 'ok',
@@ -65,7 +64,7 @@ class AuditLogView {
 
     createAppPanels(app: Application) {
         const appBar = new AppBar(app);
-        const appPanel = new AppPanel('app-container');
+        this.appPanel = new AppPanel('app-container');
         this.selectionPanel = new SelectionPanel('selection-panel');
         this.editToolbar = new EditToolbar(this.selectionPanel);
         this.selectionPanel.setup(this.editToolbar);
@@ -81,9 +80,9 @@ class AuditLogView {
 
         mainPanel.appendChildren(appBar, <Element>editPanel);
         editPanel.appendChildren(this.editToolbar, <Element>this.splitPanel);
-        appPanel.appendChild(mainPanel);
+        this.appPanel.appendChild(mainPanel);
 
-        this.body.appendChild(appPanel);
+        Body.get().appendChild(this.appPanel);
     }
 
     createLayoutPanel(left: Panel, right: Panel): SplitPanel {
@@ -99,6 +98,11 @@ class AuditLogView {
         ResponsiveManager.onAvailableSizeChanged(panel, () => setTimeout(this.checkResponsiveSize.bind(this)));
 
         panel.onShown(() => this.checkResponsiveSize());
+
+        // Force mobil to re-render
+        this.editToolbar.onRendered(() => {
+            panel.render(true);
+        });
 
         return panel;
     }
@@ -118,9 +122,12 @@ class AuditLogView {
         // This is a backwards way of getting the size...
         const firstSize = panel.getEl().getWidthWithBorder() - secondSize;
 
-        if (secondSize + firstSize <= 700 && this.mobileView === false) {
+        if (secondSize + firstSize < 700 && this.mobileView === false) {
             panel.foldSecondPanel();
             panel.hideSplitter();
+
+            this.appPanel.render(true);
+
             // this.selectionPanel.unSelectionClick(this.onSelectedEvent.bind(this));
             this.selectionPanel.onSelectionClick(this.onSelectedEventMobile.bind(this));
 
@@ -130,13 +137,14 @@ class AuditLogView {
                     panel.foldSecondPanel();
                 } else {
                     panel.showSecondPanel();
-                    // panel.hideFirstPanel();
                 }
             });
             this.mobileView = true;
-        } else if (firstSize > 700 && panel.isSecondPanelHidden() && this.mobileView === true) {
+        } else if (firstSize >= 700 && panel.isSecondPanelHidden() && this.mobileView === true) {
             panel.showSecondPanel();
             this.previewPanel.showBackButton = false;
+
+            this.appPanel.render(true);
 
             this.selectionPanel.unSelectionClick(this.onSelectedEventMobile.bind(this));
             // this.selectionPanel.onSelectionClick(this.onSelectedEvent.bind(this));

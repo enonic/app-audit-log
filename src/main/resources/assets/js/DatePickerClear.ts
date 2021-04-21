@@ -25,7 +25,7 @@ export class DatePickerClear extends DatePicker {
             new DatePickerShownEvent(this).fire();
         });
 
-        this.initClearButton();
+        this.popup.appendChild(this.popupClearButton);
     }
 
     // Hides the popup (hidePopup would overrides subclass method)
@@ -40,13 +40,9 @@ export class DatePickerClear extends DatePicker {
         }
     }
 
-    private initClearButton() {
-        this.popup.appendChild(this.popupClearButton);
-    }
-
-    public resetInput() {
+    /* public resetInput() {
         this.getTextInput().reset();
-    }
+    } */
 
     public getPopupClearButton() {
         return this.popupClearButton;

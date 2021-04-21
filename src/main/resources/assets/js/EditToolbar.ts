@@ -1,6 +1,5 @@
 import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { LabelEl } from 'lib-admin-ui/dom/LabelEl';
-import { Action } from 'lib-admin-ui/ui/Action';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
 import { SelectionPanel } from './SelectionPanel';
@@ -10,17 +9,17 @@ import { Element } from 'lib-admin-ui/dom/Element';
 import { dateFromFormatDate, formatDate } from './util';
 import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
 import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
 import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
 import { ModalDialog } from 'lib-admin-ui/ui/dialog/ModalDialog';
-import { ConfirmationDialog } from 'lib-admin-ui/ui/dialog/ConfirmationDialog';
-import { NotificationDialog } from 'lib-admin-ui/ui/dialog/NotificationDialog';
+import { FilterActionButton } from './FilterActionButton';
 
 export class EditToolbar extends Toolbar {
 
     selectionPanel: SelectionPanel;
     responsiveRender: Boolean = false;
     filterEls: Element[] = [];
+    filterModalButton: FilterActionButton;
+    filterModal: FilterDiag;
 
     filters: {
         from: DatePickerClear;
@@ -36,66 +35,99 @@ export class EditToolbar extends Toolbar {
     constructor(selectionPanel: SelectionPanel) {
         super('tools');
         this.selectionPanel = selectionPanel;
+        this.filterModalButton = new FilterActionButton();
+        this.filterModal = new FilterDiag();
+        this.filterModal.onHidden(() => {
+            this.render();
+        });
+
+
         const loadParams = getUrlParams();
         const fromDatePicker = new DatePickerClear('select-from');
         let inDate = new Date();
         if (loadParams.from) {
-            inDate = dateFromFormatDate(loadParams.from);
-            fromDatePicker.setSelectedDate(inDate);
-        }
-        if (loadParams.from === undefined &&
+            if (loadParams.from !== 'empty') {
+                inDate = dateFromFormatDate(loadParams.from);
+                fromDatePicker.setSelectedDate(inDate);
+                this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
+            }
+
+        } else if (loadParams.from === undefined &&
             loadParams.to === undefined &&
             loadParams.user === undefined &&
             loadParams.type === undefined &&
             loadParams.q === undefined) {
             addUrlParam('from', formatDate(inDate, true));
             fromDatePicker.setSelectedDate(inDate);
+            this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
         }
         fromDatePicker.getPopupClearButton().onClicked(() => {
-            fromDatePicker.resetInput();
-            removeUrlParam('from');
+            fromDatePicker.resetBase();
+            fromDatePicker.getTextInput().reset();
+            addUrlParam('from', 'empty');
+
             this.selectionPanel.createNewSelectionList();
             fromDatePicker.popupHide();
+            this.filterModalButton.removeInfo('from');
         });
         fromDatePicker.onSelectedDateTimeChanged(event => {
-            this.selectionPanel.createNewSelectionList();
-            const date = event.getDate();
+            const date = formatDate(event.getDate(), true);
             if (date != null) {
-                addUrlParam('from', formatDate(date, true));
+                addUrlParam('from', date);
+                this.filterModalButton.addInfo('from', date);
+                // why is this needed?
+                fromDatePicker.resetBase();
+                fromDatePicker.setSelectedDate(event.getDate());
+                console.log(fromDatePicker.getTextInput().getValue());
             } else {
-                removeUrlParam('from');
+                fromDatePicker.resetBase();
+                addUrlParam('from', 'empty');
+                this.filterModalButton.removeInfo('from');
             }
-            fromDatePicker.setSelectedDate(inDate);
             fromDatePicker.popupHide();
+            this.selectionPanel.createNewSelectionList();
         });
 
         const toDatePicker = new DatePickerClear('select-to');
         if (loadParams.to) {
             const toDate = dateFromFormatDate(loadParams.to);
+            toDatePicker.resetBase();
             toDatePicker.setSelectedDate(toDate);
+            this.filterModalButton.addInfo('to', formatDate(toDate, true), false);
         }
 
         toDatePicker.getPopupClearButton().onClicked(() => {
-            toDatePicker.resetInput();
+            toDatePicker.resetBase();
+            toDatePicker.getTextInput().reset();
             removeUrlParam('to');
             this.selectionPanel.createNewSelectionList();
             toDatePicker.popupHide();
+            this.filterModalButton.removeInfo('to');
         });
         toDatePicker.onSelectedDateTimeChanged(event => {
-            this.selectionPanel.createNewSelectionList();
-            const date = event.getDate();
-            if (date) {
-                addUrlParam('to', formatDate(date, true));
+            const date = formatDate(event.getDate(), true);
+            if (date != null) {
+                addUrlParam('to', date);
+                this.filterModalButton.addInfo('to', date);
+                // why is this needed?
+                toDatePicker.resetBase();
+                toDatePicker.setSelectedDate(event.getDate());
             } else {
+                toDatePicker.resetBase();
                 removeUrlParam('to');
+                this.filterModalButton.removeInfo('to');
             }
             toDatePicker.popupHide();
+            this.selectionPanel.createNewSelectionList();
         });
 
         const project = this.createDropdown('project', 'Project', this.setProjectOptions);
         if (loadParams.project === undefined) {
-            if (project.getOptionByValue('default')) {
+            const projectDefaultOption = project.getOptionByValue('default');
+            if (projectDefaultOption) {
                 project.setValue('default', true);
+
+                this.filterModalButton.addInfo('project', projectDefaultOption.getDisplayValue(), false);
             }
         }
         const user = this.createDropdown('user', 'User', this.setUserOptions);
@@ -106,24 +138,20 @@ export class EditToolbar extends Toolbar {
         searchInput.onValueChanged(event => {
             this.selectionPanel.createNewSelectionList();
             const query = event.getNewValue();
+            console.log(query);
             if (query !== '') {
-                addUrlParam('q', event.getNewValue());
+                addUrlParam('q', query);
+                this.filterModalButton.addInfo('free-text', query);
             } else {
                 removeUrlParam('q');
+                this.filterModalButton.removeInfo('free-text');
             }
         });
 
         if (loadParams.q) {
             searchInput.setValue(loadParams.q, true);
+            this.filterModalButton.addInfo('free-text', loadParams.q, false);
         }
-
-        // const searchAction = new Action();
-        // searchAction.setIconClass('icon-search');
-        // searchAction.onExecuted(() => {
-        //     this.selectionPanel.createNewSelectionList();
-        // });
-
-        // const searchButton = new ActionButton(searchAction);
 
         this.filters = {
             to: toDatePicker,
@@ -145,43 +173,49 @@ export class EditToolbar extends Toolbar {
 
         this.appendChildren(...this.filterEls);
 
-        ResponsiveManager.onAvailableSizeChanged(this, () => setTimeout(this.checkResponsiveSize.bind(this)));
+        ResponsiveManager.onAvailableSizeChanged(this, () => setTimeout(this.responsiveResize.bind(this)));
 
-        this.onShown(() => this.checkResponsiveSize());
+        this.onShown(() => this.responsiveResize());
     }
 
-    checkResponsiveSize() {
-        const toolBarWidth = this.getEl().getWidth();
-        let filterWidth = 0;
-        this.filterEls.forEach(element => {
-            if (element.isVisible()) {
-                filterWidth += element.getEl().getWidthWithMargin();
-            }
-        });
+    responsiveResize() {
+        this.render(true);
 
-        if (toolBarWidth < filterWidth) {
-            this.modalFilters();
+        const toolBarWidth = this.getEl().getWidth();
+        if (toolBarWidth < 700) {
+            this.showModalFilters(false);
+        } else {
+            this.showModalFilters(true);
         }
     }
 
-    modalFilters() {
-        if (this.responsiveRender === false) {
-            const modal = new FilterDiag();
-            const modalAction = new Action('Filters');
-            const button = new ActionButton(modalAction);
-            const iconFilter = new ActionButton(new Action().setIconClass('icon-cog2'));
-            button.addClass('filter-button');
-            button.appendChild(iconFilter);
-            this.filterEls.forEach(filter => {
-                this.removeChild(filter);
-                modal.appendChildToContentPanel(filter);
-            });
-            modalAction.onExecuted(action => {
-                modal.open();
-            });
+    showModalFilters(largeRender: Boolean) {
+        if (largeRender === false) {
+            if (this.responsiveRender === false) {
+                const button = this.filterModalButton;
+                const action = button.getAction();
 
-            this.appendChildren(button);
-            this.responsiveRender = true;
+                button.addClass('filter-button');
+                this.filterEls.forEach(filter => {
+                    this.filterModal.appendChildToContentPanel(filter);
+                });
+                action.onExecuted(() => {
+                    this.filterModal.open();
+                });
+                button.renderInfoText();
+                this.appendChildren(button);
+
+                this.forceRender();
+                this.responsiveRender = true;
+            }
+        } else {
+            if (this.responsiveRender === true) {
+                this.removeChild(this.filterModalButton);
+                this.appendChildren(...this.filterEls);
+
+                this.forceRender();
+                this.responsiveRender = false;
+            }
         }
     }
 
@@ -189,23 +223,32 @@ export class EditToolbar extends Toolbar {
         const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), { inputPlaceholderText: placeholder });
         dropdown.setId(`select-${name}`);
         dropdown.onOptionSelected(event => {
-            if (event.getOption().getValue() === 'empty') {
+            const value = event.getOption().getValue();
+            if (value === 'empty') {
                 dropdown.reset();
-                removeUrlParam(name);
+                if (name === 'project') {
+                    addUrlParam(name, 'empty');
+                } else {
+                    removeUrlParam(name);
+                }
+                this.filterModalButton.removeInfo(name);
+
             } else {
                 addUrlParam(name, event.getOption().getValue());
+                this.filterModalButton.addInfo(name, value);
             }
             if (this.selectionPanel.isRendered) {
                 this.selectionPanel.createNewSelectionList();
             }
         });
 
-        const loadParams = getUrlParams();
+        const loadParam = getUrlParams()[name];
 
         setOptions(dropdown);
 
-        if (loadParams[name]) {
-            dropdown.setValue(loadParams[name], true);
+        if (loadParam !== 'empty' && loadParam !== undefined) {
+            dropdown.setValue(loadParam, true);
+            this.filterModalButton.addInfo(name, loadParam, false);
         }
 
         return dropdown;
@@ -278,7 +321,6 @@ export class EditToolbar extends Toolbar {
 
     }
 }
-
 
 class FilterDiag extends ModalDialog {
     constructor() {

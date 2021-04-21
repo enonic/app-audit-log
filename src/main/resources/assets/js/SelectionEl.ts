@@ -52,24 +52,29 @@ export class SelectionEl extends DivEl {
 
             info.appendChildren(type, time);
             info2.appendChild(user);
-        }
 
-        this.onKeyDown(event => {
-            if (KeyHelper.isEnterKey(event) || KeyHelper.isSpace(event)) {
+            this.onKeyPressed(event => {
+                if (KeyHelper.isEnterKey(event) || KeyHelper.isSpace(event)) {
+                    console.log('Key board pressed');
+                    this.getHTMLElement().dispatchEvent(
+                        new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
+                    );
+                    this.toggle();
+                }
+            });
+
+            this.onMouseUp(event => {
+                console.log('mouse up');
+                this.getHTMLElement().dispatchEvent(
+                    new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
+                );
                 this.toggle();
-            }
-        });
-
-        this.onClicked(() => {
-            this.getHTMLElement().dispatchEvent(
-                new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
-            );
-            this.toggle();
-        });
+            });
+        }
     }
 
     private toggle() {
-        // Is there a way we force this on build time? constructor?
+        // Should move this to the parent class. Events could cause race conditions.
         (<SelectionList>this.getParentElement()).clearActive();
         this.toggleClass('active');
     }
