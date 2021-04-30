@@ -1,7 +1,7 @@
-const auditData = require("/lib/auditlog-data");
+const auditData = require('/lib/auditlog-data');
 
 exports.post = function (req) {
-    if (req.body == "") {
+    if (req.body === '') {
         return {
             status: 404,
         };
@@ -10,8 +10,8 @@ exports.post = function (req) {
     let body = JSON.parse(req.body);
     let options = body.options || {};
 
-    if (body.entryId) {
-        let entry = auditData.getEntry(body.entryId);
+    if (body.id) {
+        let entry = auditData.getEntry(body.id);
 
         return jsonResponse(entry);
     } else if (body.selection) {

@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("licenseForm");
+    form.addEventListener("onsubmit", event => {
+        event.preventDefault();
+    })
+
     const uploadInput = document.getElementById("upload");
 
     uploadInput.addEventListener("change", () => {

@@ -5,79 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit log browser</title>
-    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/materialize.min.css|">
     <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
-    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.min.css|" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script data-th-src="|${assetsUrl}/js/main.js|"></script>
-    <script data-th-src="|${assetsUrl}/js/materialize.js|"></script>
+    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
+    <script data-th-src="|${assetsUrl}/admin/common/js/lib.js|"></script>
     <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
     <script data-th-inline="javascript">
         var CONFIG = {
             auditServiceUrl: /*[[${serviceUrl}]]*/,
-            allUsers: JSON.parse(/*[[${allUsers}]]*/),
-            allTypes: JSON.parse(/*[[${allTypes}]]*/),
+            allUsers: /*[[${allUsers}]]*/,
+            allTypes: /*[[${allTypes}]]*/,
+            projects: /*[[${projects}]]*/,
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
+            appIconUrl: /*[[|${assetsUrl}/application.svg|]]*/,
             icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
+            licensedTo: /*[[${licenseText}]]*/,
         };
     </script>
+    <!--/* Needs to be after config init since the script uses it */-->
+    <script data-th-src="|${assetsUrl}/js/main.js|"></script>
 </head>
 
 <body>
-    <main id="audit-log">
-        <div class="appbar">
-            <div class="home-button system-info-button">
-                <img class="app-icon audit-icon" data-th-src="|${assetsUrl}/application.svg|" />
-                <span class="app-name">Audit log browser</span>
-            </div>
-            <div class="topbar-license">
-                <span id="licenseText" data-th-text="${licenseText}"></span>
-            </div>
-        </div>
-        <div id="top-toolbar" class="toolbar row">
-            <div class="input-field">
-                <input id="select-from" class="datepicker" type="text"
-                    autocomplete="off" />
-                <label for="select-from">From</label>
-            </div>
-            <div class="input-field">
-                <input id="select-to" class="datepicker" type="text"
-                    autocomplete="off" />
-                <label for="select-to">To</label>
-            </div>
-            <div class="input-field">
-                <input id="select-user" class="autocomplete" type="text" />
-                <label>User</label>
-            </div>
-            <div class="input-field">
-                <select id="select-type" class="type">
-                    <option value="">Any</option>
-                </select>
-                <label id="select-type-label" for="select-type">Type</label>
-            </div>
-            <div class="input-field">
-                <input id="search-text" class="" type="text" autocomplete="off" />
-                <label for="search-text">Text</label>
-            </div>
-            <div class="icon-wrapper" id="search-button">
-                <div class="material-icons large">search</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <section id="select-section" class="col s5">
-                <div class="total tree-grid-toolbar toolbar"></div>
-                <ol class="select-list">
-                </ol>
-            </section>
-            <section id="preview" class="col s7">
-                <div class="show-wrapper">
-                    <span class="placeholder">Free space, select something on the left.</span>
-                </div>
-            </section>
-        </div>
-    </main>
 </body>
 
 </html>

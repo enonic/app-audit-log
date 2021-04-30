@@ -1,0 +1,16 @@
+@import "shared";
+
+@mixin input-glow($color) {
+    &:hover {
+      &:not([disabled]) {
+        border: 1px solid $color;
+      }
+      &[disabled] {
+        border: 1px solid greyscale($color);
+      }
+    }
+    &:focus {
+      box-shadow: 0 0 5px $color;
+      border: 1px solid $color;
+    }
+  }

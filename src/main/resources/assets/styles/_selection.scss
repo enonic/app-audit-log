@@ -1,0 +1,50 @@
+.selection {
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr;
+    outline: none;
+    padding: 0.5rem;
+    text-align: left;
+
+    .info {
+        display: inline-block;
+        padding: 0 2.5px;
+    }
+
+    img {
+        display: inline-block;
+        padding: 0;
+        width: 40px;
+    }
+
+    time {
+        display: inline-block;
+        color: #777;
+        font-size: 12px;
+    }
+
+    &:hover {
+        background-color: var(--light-gray);
+    }
+
+    &:focus,
+    &.active {
+        background-color: var(--mat-blue);
+        * {
+            color: white;
+        }
+    }
+
+    &.tombstone {
+        * *:after {
+            content: "";
+            background-color: var(--gray);
+            border-radius: 5px;
+            display: block;
+            height: 1rem;
+            width: 50%;
+        }
+    }
+}

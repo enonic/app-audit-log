@@ -2,14 +2,16 @@ const thymeleaf = require("/lib/thymeleaf");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
 const adminLib = require("/lib/xp/admin");
+const project = require("/lib/xp/project");
 const licenseManager = require("/lib/license-manager");
 
 const view = resolve("audit-log.html");
 const licenseView = resolve("license.html");
 
 exports.get = function () {
-    const types = JSON.stringify(auditData.getAllTypes());
-    const users = JSON.stringify(auditData.getAllUsers());
+    const types = auditData.getAllTypes();
+    const users = auditData.getAllUsers();
+    const projects = getAllProjects();
     const licenseValid = licenseManager.isCurrentLicenseValid();
 
     const serviceUrl = portal.serviceUrl({
@@ -32,6 +34,7 @@ exports.get = function () {
         licenseUrl,
         allUsers: users,
         allTypes: types,
+        projects,
         launcherPath: adminLib.getLauncherPath(),
         launcherUrl: adminLib.getLauncherUrl(),
         licenseText: licenseManager.getIssuedTo(),
@@ -47,3 +50,20 @@ exports.get = function () {
         };
     }
 };
+
+function getAllProjects() {
+    return project.list().map(function(element) {
+        return { 
+            id: element.id,
+            name: element.displayName,
+        }
+    }).sort(function (a, b) {
+        if (a.name.toUpperCase() > b.name.toUpperCase()) {
+            return 1;
+        }
+        else if (a.name.toUpperCase() < b.name.toUpperCase()) {
+            return -1;
+        }
+        return 0;
+    });
+}
