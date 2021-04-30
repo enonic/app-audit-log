@@ -305,8 +305,8 @@ export class EditToolbar extends Toolbar {
             // Option interface is missing methods? and the optionBuilder?
             dropdown.addOption(
                 Option.create()
-                    .setValue(value)
-                    .setDisplayValue(value)
+                    .setValue(value.key)
+                    .setDisplayValue(value.name)
                     .build()
             );
         });

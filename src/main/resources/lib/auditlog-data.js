@@ -22,6 +22,8 @@ function getEntry(id) {
         id: id,
     });
 
+    entry.user = getDisplayName(entry.user);
+
     return entry;
 
     /* if (entry.data.result.pendingContents) {
@@ -54,9 +56,21 @@ function getAllUsers() {
     });
 
     let data = [];
-    result.hits.forEach(function (user) {
-        data.push(user.key);
-    });
+    result.hits
+        .sort(function (a, b) {
+            if (a.key > b.key) {
+                return 1;
+            } else if (a.key < b.key) {
+                return -1;
+            }
+            return 0;
+        })
+        .forEach(function (user) {
+            data.push({
+                key: user.key,
+                name: getDisplayName(user.key)
+            });
+        });
 
     return data;
 }
@@ -74,7 +88,7 @@ function getSelection(options) {
     let selections = [];
     result.hits.forEach(function (el) {
         let log = auditlog.get({ id: el.id });
-        log.user = formatUser(log.user);
+        log.user = getDisplayName(log.user);
         selections.push(log);
     });
 
@@ -159,7 +173,7 @@ function doQuery(queryLine, settings, aggregations) {
     queryParam.aggregations = aggregations ? aggregations : undefined;
 
     let repoConnection = node.connect({
-        repoId: 'system.auditlog', // Please never connect to a system repo manuallya. Ever.
+        repoId: 'system.auditlog', // Please never connect to a system repo manually. Ever.
         branch: 'master',
     });
 
@@ -237,17 +251,18 @@ function displayData(id) {
 }
 
 /** Single field methods */
-function getUsername(key) {
-    let profile = auth.getPrincipal(key);
-
-    return profile.displayName;
+function getDisplayName(name) {
+    if (name.startsWith('user:system')) {
+        const part = name.split(':');
+        return `${part[1]}\\${part[2]}`;
+    }
+    return name;
 }
 
-function formatUser(userKey) {
+/* function formatUser(userKey) {
     return userKey.replace('user:system:', '');
-}
+} */
 
-/*  */
 function getAuditType(type) {
     switch (type) {
         case 'system.content.update':

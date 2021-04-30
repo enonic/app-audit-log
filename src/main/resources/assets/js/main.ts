@@ -1,22 +1,19 @@
 import { Application } from 'lib-admin-ui/app/Application';
 import { AppPanel } from 'lib-admin-ui/app/AppPanel';
 import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
-import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder, SplitPanelUnit } from 'lib-admin-ui/ui/panel/SplitPanel';
-import { Panel } from 'lib-admin-ui/ui/panel/Panel';
 import { DeckPanel } from 'lib-admin-ui/ui/panel/DeckPanel';
 import { Body } from 'lib-admin-ui/dom/Body';
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Messages } from 'lib-admin-ui/util/Messages';
-import { SelectionPanel } from './SelectionPanel';
-import { PreviewPanel } from './PreviewPanel';
-import { EditToolbar } from './EditToolbar';
-import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
 import { EditPanelBuilder } from './EditPanel';
 
 
 interface GlobalConfig {
     auditServiceUrl: string;
-    allUsers: Array<string>;
+    allUsers: Array<{
+        key: string;
+        name: string;
+    }>;
     allTypes: Array<{
         key: number;
         docCount: string;
