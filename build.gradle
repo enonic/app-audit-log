@@ -7,7 +7,6 @@ plugins {
 }
 
 apply from: "$rootDir/gradle/env.gradle"
-apply from: "$rootDir/gradle/lib-admin.gradle"
 apply from: "$rootDir/gradle/node.gradle"
 
 app {
@@ -38,6 +37,7 @@ dependencies {
     include "com.enonic.xp:lib-project:${xpVersion}"
     include "com.enonic.lib:lib-thymeleaf:2.0.1"
     include 'com.enonic.lib:lib-license:3.0.0'
+    include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
     devResources "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
 }
 
@@ -76,14 +76,21 @@ task copyDevResources {
     }
 }
 
+task flush( type: org.gradle.api.tasks.Delete, dependsOn: clean ) {
+    description = 'Clean the project from built sources and dependencies'
+    delete '.xp'
+}
+
 npmInstall.dependsOn copyDevResources
 
 jar {
-    exclude '**/*.ts'
-    exclude '**/*.scss'
+    exclude 'assets/**/*.ts'
+    exclude 'assets/**/*.scss'
     if (isProd()) {
-        exclude '**/*.map'
+        exclude 'assets/**/*.map'
     }
+
+    outputs.dir "${buildDir}/resources/main"
 
     dependsOn += webpack
 }
@@ -95,7 +102,7 @@ repositories {
     xp.enonicRepo('dev')
 }
 
-if ( hasEnvironment() && isLibAdminUiIncluded())
+if ( hasEnvironment() && isLibAdminUiIncluded() )
 {
     addBuildDependency()
 }
