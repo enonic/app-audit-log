@@ -20,6 +20,14 @@ app {
     devSourcePaths += file("$rootDir/../lib-admin-ui/src/main/resources")
 }
 
+configurations {
+    devResources {
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, 'dev-resources'))
+        }
+    }
+}
+
 dependencies {
     include "com.enonic.xp:lib-portal:${xpVersion}"
     include "com.enonic.xp:lib-auditlog:${xpVersion}"
@@ -28,16 +36,14 @@ dependencies {
     include "com.enonic.xp:lib-admin:${xpVersion}"
     include "com.enonic.xp:lib-io:${xpVersion}"
     include "com.enonic.xp:lib-project:${xpVersion}"
-
-    include "com.enonic.lib:lib-thymeleaf:2.0.0"
-    include "com.enonic.lib:lib-admin-ui:3.2.0"
-
+    include "com.enonic.lib:lib-thymeleaf:2.0.1"
     include 'com.enonic.lib:lib-license:3.0.0'
+    devResources "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
 }
 
 node {
-    version = "14.14.0"
     download = true
+    version = '15.8.0'
 }
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
@@ -47,7 +53,7 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
     outputs.upToDateWhen { false }
 }
 
-task webpack( type: NpmTask, dependsOn: [npmInstall, lint] ) {
+task webpack( type: NpmTask, dependsOn: [lint] ) {
     doLast {
         println "Build mode: " + nodeEnvironment()
     }
@@ -60,51 +66,48 @@ task webpack( type: NpmTask, dependsOn: [npmInstall, lint] ) {
     outputs.dir "${buildDir}/resources/main"
 }
 
-processResources.dependsOn += unpackDevResources
-npmInstall.mustRunAfter unpackDevResources
-
-jar {
-    outputs.dir "${buildDir}/resources/main"
-
-    dependsOn += webpack
-}
-
-sourceSets {
-    main {
-        resources {
-            exclude '**/*.ts'
-            exclude '**/*.scss'
-            if (isProd()) {
-                exclude '**/*.map'
-            }
+task copyDevResources {
+    doLast {
+        copy {
+            from configurations.devResources.files.collect { zipTree( it ) }
+            include 'dev/**'
+            into '.xp'
         }
     }
 }
 
+npmInstall.dependsOn copyDevResources
+
+jar {
+    exclude '**/*.ts'
+    exclude '**/*.scss'
+    if (isProd()) {
+        exclude '**/*.map'
+    }
+
+    dependsOn += webpack
+}
+
+
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
     xp.enonicRepo('dev')
 }
 
-if ( hasEnvironment() )
+if ( hasEnvironment() && isLibAdminUiIncluded())
 {
     addBuildDependency()
 }
 
 def addBuildDependency() {
-    def unpackDevResources = tasks.findByPath( ':unpackDevResources' )
-    def webpackTask = tasks.findByPath( ':webpack' )
+    def libAdminBuildTask = gradle.includedBuild('lib-admin-ui').task(':build')
+    copyDevResources.dependsOn += libAdminBuildTask
+    build.dependsOn += libAdminBuildTask
+    clean.dependsOn += gradle.includedBuild('lib-admin-ui').task(':clean')
+    flush.dependsOn += gradle.includedBuild('lib-admin-ui').task(':flush')
+}
 
-    if ( webpackTask != null ) {
-        webpackTask.dependsOn += unpackDevResources
-    }
-
-    if ( isLibAdminUiIncluded() )
-    {
-        unpackDevResources.dependsOn += libAdminBuildTask
-        build.dependsOn += libAdminBuildTask
-        clean.dependsOn += libAdminCleanTask
-        flush.dependsOn += libAdminFlushTask
-    }
+def isLibAdminUiIncluded() {
+    return new File( '../lib-admin-ui' ).exists()
 }

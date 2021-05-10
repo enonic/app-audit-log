@@ -36,7 +36,7 @@ declare global {
 // const body = Body.get();
 class AuditLogView {
     private app: Application;
-    private appPanel: AppPanel<any>;
+    private appPanel: AppPanel;
 
     constructor() {
         this.app = this.createApplication();
