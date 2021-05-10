@@ -53,7 +53,7 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
     outputs.upToDateWhen { false }
 }
 
-task webpack( type: NpmTask, dependsOn: [lint] ) {
+task webpack( type: NpmTask, dependsOn: [npmInstall, lint] ) {
     doLast {
         println "Build mode: " + nodeEnvironment()
     }
