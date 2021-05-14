@@ -113,7 +113,7 @@ function doQuery(queryLine, settings, aggregations) {
     let query = queryLine || '';
     let options = settings ? settings : {};
 
-    const dateFormat = /[0-9]{4}-[0-9]{2}-[0-9]{2}/g;
+    const dateFormat = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
 
     if (options.from) {
         let from;
@@ -176,6 +176,7 @@ function doQuery(queryLine, settings, aggregations) {
         repoId: 'system.auditlog', // Please never connect to a system repo manually. Ever.
         branch: 'master',
     });
+
 
     let result = repoConnection.query(queryParam);
 

@@ -17,7 +17,6 @@ exports.post = function (req) {
     } else if (body.selection) {
         let selection = auditData.getSelection(options);
 
-        // The aggregation structure is located in getSelectionGroups auditlog-data
         return jsonResponse(selection);
     }
 

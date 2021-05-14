@@ -125,7 +125,11 @@ export class PreviewPanel extends Panel {
                 } else if (typeof value === 'object') {
                     this.addToDataGroup(value, dataGroup);
                 } else {
-                    dataGroup.addDataList(`${key}`, `${value}`);
+                    if (RegExp(/^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(\.\d+)*Z/g).test(value)) {
+                        dataGroup.addDataList(`${key}`, `${formatDate(new Date(value))}`);
+                    } else {
+                        dataGroup.addDataList(`${key}`, `${value}`);
+                    }
                 }
             }
         }

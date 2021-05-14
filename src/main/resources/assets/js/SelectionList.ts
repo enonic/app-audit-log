@@ -60,7 +60,6 @@ export class SelectionList extends DivEl {
             options,
         };
 
-
         return await fetch(CONFIG.auditServiceUrl, {
             method: 'POST',
             headers: new Headers({ 'content-type': 'application/json' }),
@@ -111,6 +110,7 @@ export class SelectionList extends DivEl {
             count: amount,
             ...options,
         };
+        this.elementsStart += amount;
         if (this.total === 0 || this.elementsCount <= this.total) {
             return await this.fetchSelectionData(function (data: SelectionListData) {
                 context.createSelectionList(data);
