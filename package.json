@@ -28,7 +28,7 @@
         "circular-dependency-plugin": "^5.2.2",
         "css-loader": "^5.2.6",
         "eslint": "^7.27.0",
-        "eslint-plugin-import": "^2.23.0",
+        "eslint-plugin-import": "^2.23.4",
         "eslint-plugin-jsdoc": "^34.2.2",
         "highlight.js": "^10.7.2",
         "mini-css-extract-plugin": "^1.6.0",
