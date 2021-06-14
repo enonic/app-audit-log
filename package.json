@@ -27,7 +27,7 @@
         "@typescript-eslint/parser": "^4.26.1",
         "circular-dependency-plugin": "^5.2.2",
         "css-loader": "^5.2.4",
-        "eslint": "^7.26.0",
+        "eslint": "^7.28.0",
         "eslint-plugin-import": "^2.23.0",
         "eslint-plugin-jsdoc": "^35.2.0",
         "highlight.js": "^11.0.1",
