@@ -30,7 +30,7 @@
         "eslint": "^7.32.0",
         "eslint-plugin-import": "^2.25.4",
         "eslint-plugin-jsdoc": "^37.6.1",
-        "highlight.js": "^11.3.1",
+        "highlight.js": "^11.4.0",
         "mini-css-extract-plugin": "^2.4.6",
         "postcss-loader": "^6.2.1",
         "sass": "^1.47.0",
