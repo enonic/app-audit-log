@@ -1,6 +1,6 @@
 const auth = require('/lib/xp/auth');
 const auditlog = require('/lib/xp/auditlog');
-const moment = require('/assets/lib/moment.min.js');
+const moment = require('/lib/moment');
 //const content = require("/lib/xp/content");
 const node = require('/lib/xp/node');
 

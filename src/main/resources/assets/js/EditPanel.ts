@@ -1,6 +1,7 @@
 import { Element } from 'lib-admin-ui/dom/Element';
 import { Panel } from 'lib-admin-ui/ui/panel/Panel';
-import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder, SplitPanelUnit } from 'lib-admin-ui/ui/panel/SplitPanel';
+import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder } from 'lib-admin-ui/ui/panel/SplitPanel';
+import { SplitPanelSize } from 'lib-admin-ui/ui/panel/SplitPanelSize';
 import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
 import { EditToolbar } from './EditToolbar';
 import { PreviewPanel } from './PreviewPanel';
@@ -22,9 +23,9 @@ export class EditPanelBuilder {
             .setAlignment(SplitPanelAlignment.VERTICAL)
             .setAlignmentTreshold(700)
             .setSecondPanelShouldSlideRight(true)
-            .setSecondPanelMinSize(30, SplitPanelUnit.PERCENT)
-            .setFirstPanelMinSize(30, SplitPanelUnit.PERCENT)
-            .setFirstPanelSize(38, SplitPanelUnit.PERCENT)
+            .setSecondPanelMinSize(SplitPanelSize.Percents(30))
+            .setFirstPanelMinSize(SplitPanelSize.Percents(30))
+            .setFirstPanelSize(SplitPanelSize.Percents(30))
             .build();
 
         // Force mobil to re-render
