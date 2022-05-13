@@ -2,7 +2,6 @@ import { DivEl } from 'lib-admin-ui/dom/DivEl';
 import { LabelEl } from 'lib-admin-ui/dom/LabelEl';
 import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
-import { SelectionPanel } from './SelectionPanel';
 import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
 import { Option } from 'lib-admin-ui/ui/selector/Option';
 import { Element } from 'lib-admin-ui/dom/Element';
@@ -12,6 +11,8 @@ import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
 import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
 import { ModalDialog } from 'lib-admin-ui/ui/dialog/ModalDialog';
 import { FilterActionButton } from './FilterActionButton';
+import { DropdownTreeGrid } from 'lib-admin-ui/ui/selector/DropdownTreeGrid';
+import { DropdownGridConfig } from 'lib-admin-ui/ui/selector/DropdownGrid';
 
 export class EditToolbar extends Toolbar {
 
@@ -23,9 +24,9 @@ export class EditToolbar extends Toolbar {
     filters: {
         from: DatePickerClear;
         to: DatePickerClear;
-        project: Dropdown<string>;
-        user: Dropdown<string>;
-        type: Dropdown<string>;
+        project: Dropdown<String>;
+        user: Dropdown<String>;
+        type: DropdownTreeGrid<String>;
         fulltext: FormInputEl;
     };
 
@@ -123,7 +124,38 @@ export class EditToolbar extends Toolbar {
             }
         }
         const user = this.createDropdown('user', 'User', this.setUserOptions);
-        const type = this.createDropdown('type', 'Type', this.setTypeOptions);
+        // const type = this.createDropdown('type', 'Type', this.setTypeOptions);
+        const a: DropdownGridConfig<string> = {
+            width: 200,
+            filter:  (item: Option<String>) => true,
+            optionDataHelper: {
+                hasChildren: () => {
+                    return false;
+                },
+                getDataId: (data) => {
+                    return data;
+                },
+                isSelectable: () => true,
+                isExpandable: () => false,
+                isDescendingPath: (childOption, parentOption) => {
+                    return;
+                },
+            },
+        };
+        const typeDropdown = new DropdownTreeGrid<String>(a);
+        const options = CONFIG.allTypes.map((typeData) => {
+            const option = Option.create<string>();
+            option.setValue(typeData.key.toString());
+            return option.build();
+        });
+        typeDropdown.setOptions(options);
+        // const groupTypes = new DataView<String>();
+        // CONFIG.allTypes.forEach((value) => {
+        //     groupTypes.setItems([
+        //         value.key.toString(),
+        //     ]);
+        // });
+        // const type = new Grid(groupTypes);
 
         const searchInput = new FormInputEl('input', 'xp-admin-common-text-input form-input');
         searchInput.setId('free-text');
@@ -157,7 +189,7 @@ export class EditToolbar extends Toolbar {
             from: fromDatePicker,
             project,
             user,
-            type,
+            type: typeDropdown,
             fulltext: searchInput,
         };
 
@@ -166,7 +198,7 @@ export class EditToolbar extends Toolbar {
             this.labelAndWrapElement(toDatePicker, 'To'),
             this.labelAndWrapElement(project, 'Project'),
             this.labelAndWrapElement(user, 'User'),
-            this.labelAndWrapElement(type, 'Type'),
+            this.labelAndWrapElement(typeDropdown.getGrid(), 'Type'),
             this.labelAndWrapElement(searchInput, 'Free text'),
         );
 

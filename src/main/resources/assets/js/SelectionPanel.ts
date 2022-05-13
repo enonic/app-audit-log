@@ -143,7 +143,7 @@ export class SelectionPanel extends Panel {
         const to = optTool.filters.to.getTextInput().getValue();
         const project = optTool.filters.project.getValue();
         const user = optTool.filters.user.getValue();
-        const type = optTool.filters.type.getValue();
+        const type = optTool.filters.type.getOptions()[0].getValue();
         const fullText = optTool.filters.fulltext.getValue();
 
         const options: FetchOptions = {};
