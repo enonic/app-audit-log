@@ -42,10 +42,12 @@ class AuditLogView {
         this.app = this.createApplication();
         this.createAppPanels(this.app);
 
+        /* eslint-disable */
         Messages.setMessages({
             'action.ok': 'ok',
             'dialog.notification.title': 'Filters',
         });
+        /* eslint-enable */
     }
 
     createApplication(): Application {

@@ -1,52 +1,72 @@
+import { DivEl } from 'lib-admin-ui/dom/DivEl';
+import { Element } from 'lib-admin-ui/dom/Element';
 import { Button } from 'lib-admin-ui/ui/button/Button';
-import { DatePicker, DatePickerBuilder, DatePickerShownEvent } from 'lib-admin-ui/ui/time/DatePicker';
-import { DatePickerPopupBuilder } from 'lib-admin-ui/ui/time/DatePickerPopup';
+import { DatePicker, DatePickerBuilder } from 'lib-admin-ui/ui/time/DatePicker';
+import { DateTimePickerPopup, DateTimePickerPopupBuilder } from 'lib-admin-ui/ui/time/DateTimePickerPopup';
 
 export class DatePickerClear extends DatePicker {
-    private popupClearButton: Button;
-
     constructor(id?: string) {
         super(new DatePickerBuilder());
         if (id) {
             this.getEl().setId(id);
         }
-
-        this.popupClearButton = new Button('Clear');
-        this.popupClearButton.addClass('clear-button');
     }
 
     /**
      * Shamlessly overriding a parent with the same function (ish)
      */
-    protected initPopup() {
-        this.popup = new DatePickerPopupBuilder().setDate(this.selectedDate).build();
+    protected createPopup(): DateTimePickerPopup {
+        const popupBuilder: DateTimePickerPopupBuilder = new DateTimePickerPopupBuilder()
+            .setDate(this.selectedDateTime)
+            .setManageDate(this.builder.manageDate)
+            .setManageTime(this.builder.manageTime);
 
-        this.popup.onShown(() => {
-            new DatePickerShownEvent(this).fire();
+
+        if (this.builder.timezone) {
+            popupBuilder.setTimezone(this.builder.timezone);
+        }
+
+        if (this.builder.useLocalTimezoneIfNotPresent) {
+            popupBuilder.setUseLocalTimezoneIfNotPresent(true);
+        }
+
+        if (this.builder.defaultValue) {
+            popupBuilder.setDefaultValue(this.builder.defaultValue);
+        }
+
+        const clearButton = new Button('Clear');
+        clearButton.addClass('clear-button');
+
+        clearButton.onClicked(() => {
+            this.onClear();
         });
 
-        this.popup.appendChild(this.popupClearButton);
+        return new DatePickerClearPopup(popupBuilder, clearButton);
     }
 
-    // Hides the popup (hidePopup would overrides subclass method)
     public popupHide() {
         this.hidePopup();
     }
 
-    protected showPopup() {
-        super.showPopup();
-        if (this.popup.hasChild(this.popupOkButton)) {
-            this.popup.removeChild(this.popupOkButton);
-        }
-    }
-
-    /* public resetInput() {
-        this.getTextInput().reset();
-    } */
-
-    public getPopupClearButton() {
-        return this.popupClearButton;
+    public onClear() {
+        throw ('Should be overriden');
     }
 }
 
+class DatePickerClearPopup extends DateTimePickerPopup {
+    private clearButton: Button;
 
+    constructor(builder: DateTimePickerPopupBuilder, clearButton: Button) {
+        super(builder);
+        this.clearButton = clearButton;
+    }
+
+    protected getChildElements(): Element[] {
+        const popUpElements: Element[] = super.getChildElements();
+
+        const wrapper = new DivEl('picker-buttons');
+        wrapper.appendChild(this.clearButton);
+        popUpElements.push(wrapper);
+        return popUpElements;
+    }
+}
