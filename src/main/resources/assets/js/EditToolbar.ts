@@ -47,7 +47,7 @@ export class EditToolbar extends Toolbar {
         if (loadParams.from) {
             if (loadParams.from !== 'empty') {
                 inDate = dateFromFormatDate(loadParams.from);
-                fromDatePicker.setSelectedDate(inDate);
+                fromDatePicker.setDateTime(inDate);
                 this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
             }
         } else if (loadParams.from === undefined &&
@@ -56,11 +56,11 @@ export class EditToolbar extends Toolbar {
             loadParams.type === undefined &&
             loadParams.q === undefined) {
             addUrlParam('from', formatDate(inDate, true));
-            fromDatePicker.setSelectedDate(inDate);
+            fromDatePicker.setDateTime(inDate);
             this.filterModalButton.addInfo('from', formatDate(inDate, true), false);
         }
 
-        fromDatePicker.getPopupClearButton().onClicked(() => {
+        fromDatePicker.onClear = () => {
             fromDatePicker.resetBase();
             fromDatePicker.getTextInput().reset();
             addUrlParam('from', 'empty');
@@ -68,18 +68,14 @@ export class EditToolbar extends Toolbar {
             this.optionsChanged();
             fromDatePicker.popupHide();
             this.filterModalButton.removeInfo('from');
-        });
+        };
 
         fromDatePicker.onSelectedDateTimeChanged(event => {
             const date = formatDate(event.getDate(), true);
             if (date != null) {
                 addUrlParam('from', date);
                 this.filterModalButton.addInfo('from', date);
-                // why is this needed?
-                fromDatePicker.resetBase();
-                fromDatePicker.setSelectedDate(event.getDate());
             } else {
-                fromDatePicker.resetBase();
                 addUrlParam('from', 'empty');
                 this.filterModalButton.removeInfo('from');
             }
@@ -90,12 +86,11 @@ export class EditToolbar extends Toolbar {
         const toDatePicker = new DatePickerClear('select-to');
         if (loadParams.to) {
             const toDate = dateFromFormatDate(loadParams.to);
-            toDatePicker.resetBase();
-            toDatePicker.setSelectedDate(toDate);
+            toDatePicker.setDateTime(toDate);
             this.filterModalButton.addInfo('to', formatDate(toDate, true), false);
         }
 
-        toDatePicker.getPopupClearButton().onClicked(() => {
+        toDatePicker.onClear = () => {
             toDatePicker.resetBase();
             toDatePicker.getTextInput().reset();
             removeUrlParam('to');
@@ -103,18 +98,14 @@ export class EditToolbar extends Toolbar {
 
             toDatePicker.popupHide();
             this.filterModalButton.removeInfo('to');
-        });
+        };
 
         toDatePicker.onSelectedDateTimeChanged(event => {
             const date = formatDate(event.getDate(), true);
             if (date != null) {
                 addUrlParam('to', date);
                 this.filterModalButton.addInfo('to', date);
-                // why is this needed?
-                toDatePicker.resetBase();
-                toDatePicker.setSelectedDate(event.getDate());
             } else {
-                toDatePicker.resetBase();
                 removeUrlParam('to');
                 this.filterModalButton.removeInfo('to');
             }

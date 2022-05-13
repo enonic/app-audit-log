@@ -48,7 +48,7 @@
 
         &:nth-of-type(2),
         &:nth-of-type(3) {
-            flex-basis: 120px;
+            flex-basis: 150px;
             flex-grow: 0;
         }
 
@@ -95,7 +95,7 @@
     }
 }
 
-.date-picker .xp-admin-common-wrapper .date-picker-dialog {
+.date-time-picker .xp-admin-common-wrapper .date-time-dialog {
     min-width: 220px;
 
     .clear-button {

@@ -140,7 +140,7 @@ export class PreviewPanel extends Panel {
             {
                 method: 'POST',
                 // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: new Headers({ 'content-type': 'application/json' }),
+                headers: new Headers({ 'Content-Type': 'application/json' }),
                 body: JSON.stringify({
                     id: key,
                 }),
