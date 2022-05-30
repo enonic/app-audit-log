@@ -139,6 +139,7 @@ export class PreviewPanel extends Panel {
         return fetch(CONFIG.auditServiceUrl,
             {
                 method: 'POST',
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: new Headers({ 'content-type': 'application/json' }),
                 body: JSON.stringify({
                     id: key,

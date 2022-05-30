@@ -62,6 +62,7 @@ export class SelectionList extends DivEl {
 
         return await fetch(CONFIG.auditServiceUrl, {
             method: 'POST',
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             headers: new Headers({ 'content-type': 'application/json' }),
             body: JSON.stringify(data),
         })
