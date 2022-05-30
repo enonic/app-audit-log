@@ -43,7 +43,9 @@ class AuditLogView {
         this.createAppPanels(this.app);
 
         Messages.setMessages({
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'action.ok': 'ok',
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'dialog.notification.title': 'Filters',
         });
     }
