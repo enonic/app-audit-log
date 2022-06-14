@@ -1,16 +1,16 @@
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { LabelEl } from 'lib-admin-ui/dom/LabelEl';
-import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { LabelEl } from '@enonic/lib-admin-ui/dom/LabelEl';
+import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
 import { SelectionPanel } from './SelectionPanel';
 import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
-import { Option } from 'lib-admin-ui/ui/selector/Option';
-import { Element } from 'lib-admin-ui/dom/Element';
+import { Option } from '@enonic/lib-admin-ui/ui/selector/Option';
+import { Element } from '@enonic/lib-admin-ui/dom/Element';
 import { dateFromFormatDate, formatDate } from './util';
-import { Dropdown } from 'lib-admin-ui/ui/selector/dropdown/Dropdown';
-import { FormInputEl } from 'lib-admin-ui/dom/FormInputEl';
-import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
-import { ModalDialog } from 'lib-admin-ui/ui/dialog/ModalDialog';
+import { Dropdown } from '@enonic/lib-admin-ui/ui/selector/dropdown/Dropdown';
+import { FormInputEl } from '@enonic/lib-admin-ui/dom/FormInputEl';
+import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
+import { ModalDialog } from '@enonic/lib-admin-ui/ui/dialog/ModalDialog';
 import { FilterActionButton } from './FilterActionButton';
 
 export class EditToolbar extends Toolbar {
@@ -66,7 +66,7 @@ export class EditToolbar extends Toolbar {
             addUrlParam('from', 'empty');
 
             this.optionsChanged();
-            fromDatePicker.popupHide();
+            fromDatePicker.hidePopup();
             this.filterModalButton.removeInfo('from');
         };
 
@@ -79,7 +79,7 @@ export class EditToolbar extends Toolbar {
                 addUrlParam('from', 'empty');
                 this.filterModalButton.removeInfo('from');
             }
-            fromDatePicker.popupHide();
+            fromDatePicker.hidePopup();
             this.optionsChanged();
         });
 
@@ -96,7 +96,7 @@ export class EditToolbar extends Toolbar {
             removeUrlParam('to');
             this.optionsChanged();
 
-            toDatePicker.popupHide();
+            toDatePicker.hidePopup();
             this.filterModalButton.removeInfo('to');
         };
 
@@ -109,7 +109,7 @@ export class EditToolbar extends Toolbar {
                 removeUrlParam('to');
                 this.filterModalButton.removeInfo('to');
             }
-            toDatePicker.popupHide();
+            toDatePicker.hidePopup();
             this.optionsChanged();
         });
 

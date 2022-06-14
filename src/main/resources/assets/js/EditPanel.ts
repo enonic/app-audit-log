@@ -1,8 +1,8 @@
-import { Element } from 'lib-admin-ui/dom/Element';
-import { Panel } from 'lib-admin-ui/ui/panel/Panel';
-import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder } from 'lib-admin-ui/ui/panel/SplitPanel';
-import { SplitPanelSize } from 'lib-admin-ui/ui/panel/SplitPanelSize';
-import { ResponsiveManager } from 'lib-admin-ui/ui/responsive/ResponsiveManager';
+import { Element } from '@enonic/lib-admin-ui/dom/Element';
+import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
+import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder } from '@enonic/lib-admin-ui/ui/panel/SplitPanel';
+import { SplitPanelSize } from '@enonic/lib-admin-ui/ui/panel/SplitPanelSize';
+import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
 import { EditToolbar } from './EditToolbar';
 import { PreviewPanel } from './PreviewPanel';
 import { SelectionPanel } from './SelectionPanel';

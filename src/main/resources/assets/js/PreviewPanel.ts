@@ -1,15 +1,15 @@
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { ImgEl } from 'lib-admin-ui/dom/ImgEl';
-import { H1El } from 'lib-admin-ui/dom/H1El';
-import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { ImgEl } from '@enonic/lib-admin-ui/dom/ImgEl';
+import { H1El } from '@enonic/lib-admin-ui/dom/H1El';
+import { Element, NewElementBuilder } from '@enonic/lib-admin-ui/dom/Element';
 import { formatDate } from './util';
-import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
-import { Exception } from 'lib-admin-ui/Exception';
-import { Panel } from 'lib-admin-ui/ui/panel/Panel';
-import { ImageLoader } from 'lib-admin-ui/util/loader/ImageLoader';
-import { ItemDataGroup } from 'lib-admin-ui/app/view/ItemDataGroup';
-import { Action } from 'lib-admin-ui/ui/Action';
-import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
+import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
+import { Exception } from '@enonic/lib-admin-ui/Exception';
+import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
+import { ImageLoader } from '@enonic/lib-admin-ui/util/loader/ImageLoader';
+import { ItemDataGroup } from '@enonic/lib-admin-ui/app/view/ItemDataGroup';
+import { Action } from '@enonic/lib-admin-ui/ui/Action';
+import { ActionButton } from '@enonic/lib-admin-ui/ui/button/ActionButton';
 
 
 export interface AuditlogData {

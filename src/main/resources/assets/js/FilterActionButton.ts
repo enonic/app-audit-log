@@ -1,7 +1,7 @@
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
-import { Action } from 'lib-admin-ui/ui/Action';
-import { ActionButton } from 'lib-admin-ui/ui/button/ActionButton';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
+import { Action } from '@enonic/lib-admin-ui/ui/Action';
+import { ActionButton } from '@enonic/lib-admin-ui/ui/button/ActionButton';
 
 export class FilterActionButton extends ActionButton {
     private info: Map<string, string>;

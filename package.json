@@ -15,10 +15,10 @@
     "dependencies": {
         "jquery": "^3.6.0",
         "jquery-ui": "^1.13.1",
-        "lib-admin-ui": "file:./.xp/dev/lib-admin-ui",
         "q": "^1.5.1"
     },
     "devDependencies": {
+        "@enonic/lib-admin-ui": "./.xp/dev/lib-admin-ui",
         "@types/jquery": "^3.5.14",
         "@types/jqueryui": "^1.12.16",
         "@types/q": "^1.5.5",

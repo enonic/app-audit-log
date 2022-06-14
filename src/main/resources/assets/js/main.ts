@@ -1,10 +1,10 @@
-import { Application } from 'lib-admin-ui/app/Application';
-import { AppPanel } from 'lib-admin-ui/app/AppPanel';
-import { AppBar } from 'lib-admin-ui/app/bar/AppBar';
-import { DeckPanel } from 'lib-admin-ui/ui/panel/DeckPanel';
-import { Body } from 'lib-admin-ui/dom/Body';
-import { Element } from 'lib-admin-ui/dom/Element';
-import { Messages } from 'lib-admin-ui/util/Messages';
+import { Application } from '@enonic/lib-admin-ui/app/Application';
+import { AppPanel } from '@enonic/lib-admin-ui/app/AppPanel';
+import { AppBar } from '@enonic/lib-admin-ui/app/bar/AppBar';
+import { DeckPanel } from '@enonic/lib-admin-ui/ui/panel/DeckPanel';
+import { Body } from '@enonic/lib-admin-ui/dom/Body';
+import { Element } from '@enonic/lib-admin-ui/dom/Element';
+import { Messages } from '@enonic/lib-admin-ui/util/Messages';
 import { EditPanelBuilder } from './EditPanel';
 
 
