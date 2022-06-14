@@ -1,6 +1,6 @@
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { Exception } from 'lib-admin-ui/Exception';
-import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { Exception } from '@enonic/lib-admin-ui/Exception';
+import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { AuditlogNode, SelectionEl } from './SelectionEl';
 // import { SelectionPanel } from './SelectionPanel';
 

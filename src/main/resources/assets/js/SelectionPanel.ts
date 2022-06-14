@@ -1,11 +1,11 @@
-import { Panel } from 'lib-admin-ui/ui/panel/Panel';
-import { Mask } from 'lib-admin-ui/ui/mask/Mask';
+import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
+import { Mask } from '@enonic/lib-admin-ui/ui/mask/Mask';
 import { SelectionList, FetchOptions } from './SelectionList';
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { Toolbar } from 'lib-admin-ui/ui/toolbar/Toolbar';
-import { Element } from 'lib-admin-ui/dom/Element';
-import { Body } from 'lib-admin-ui/dom/Body';
-import { SpanEl } from 'lib-admin-ui/dom/SpanEl';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import { Element } from '@enonic/lib-admin-ui/dom/Element';
+import { Body } from '@enonic/lib-admin-ui/dom/Body';
+import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
 import { EditToolbar } from './EditToolbar';
 
 export class SelectionPanel extends Panel {

@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import { DivEl } from 'lib-admin-ui/dom/DivEl';
-import { Element, NewElementBuilder } from 'lib-admin-ui/dom/Element';
-import { H6El } from 'lib-admin-ui/dom/H6El';
-import { ImgEl } from 'lib-admin-ui/dom/ImgEl';
-import { KeyHelper } from 'lib-admin-ui/ui/KeyHelper';
+import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
+import { Element, NewElementBuilder } from '@enonic/lib-admin-ui/dom/Element';
+import { H6El } from '@enonic/lib-admin-ui/dom/H6El';
+import { ImgEl } from '@enonic/lib-admin-ui/dom/ImgEl';
+import { KeyHelper } from '@enonic/lib-admin-ui/ui/KeyHelper';
 import { SelectionList } from './SelectionList';
 import { formatDate } from './util';
 
