@@ -32,7 +32,7 @@
         "eslint-plugin-jsdoc": "^39.3.3",
         "highlight.js": "^11.6.0",
         "mini-css-extract-plugin": "^2.6.1",
-        "postcss-loader": "^7.0.0",
+        "postcss-loader": "^7.0.1",
         "sass": "^1.53.0",
         "sass-loader": "^13.0.2",
         "terser-webpack-plugin": "^5.3.3",
