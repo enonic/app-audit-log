@@ -2,7 +2,6 @@ import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
 import { LabelEl } from '@enonic/lib-admin-ui/dom/LabelEl';
 import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
-import { SelectionPanel } from './SelectionPanel';
 import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
 import { Option } from '@enonic/lib-admin-ui/ui/selector/Option';
 import { Element } from '@enonic/lib-admin-ui/dom/Element';
@@ -12,8 +11,12 @@ import { FormInputEl } from '@enonic/lib-admin-ui/dom/FormInputEl';
 import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
 import { ModalDialog } from '@enonic/lib-admin-ui/ui/dialog/ModalDialog';
 import { FilterActionButton } from './FilterActionButton';
+import { DefaultOptionDisplayValueViewer } from '@enonic/lib-admin-ui/ui/selector/DefaultOptionDisplayValueViewer';
 
 export class EditToolbar extends Toolbar {
+
+    static emptyOptionValue: string = 'empty';
+    static emptyOptionText: string = '<Clear selection>';
 
     responsiveRender: Boolean = false;
     filterEls: Element[] = [];
@@ -218,11 +221,17 @@ export class EditToolbar extends Toolbar {
         }
     }
 
-    createDropdown(name: string, placeholder: string, setOptions: CallableFunction): Dropdown<string> {
-        const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), { inputPlaceholderText: placeholder });
+    createDropdown(name: string, placeholder: string, setOptions: (dropdown: Dropdown<string>) => void): Dropdown<string> {
+        const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), {
+            inputPlaceholderText: placeholder,
+            rowHeight: 30,
+            optionDisplayValueViewer: new AuditLogFilterOptionViewer(),
+        });
         dropdown.setId(`select-${name}`);
         dropdown.onOptionSelected(event => {
-            const value = event.getOption().getValue();
+            const option = event.getOption();
+            const displayName: string = option.getDisplayValue();
+            const value: string = option.getValue();
             if (value === 'empty') {
                 dropdown.reset();
                 if (name === 'project') {
@@ -231,8 +240,10 @@ export class EditToolbar extends Toolbar {
                     removeUrlParam(name);
                 }
                 this.filterModalButton.removeInfo(name);
-
             } else {
+                if (name === 'type' && displayName !== value) {
+                    this.updateSelectedOption(dropdown, value);
+                }
                 addUrlParam(name, event.getOption().getValue());
                 this.filterModalButton.addInfo(name, value);
             }
@@ -241,10 +252,14 @@ export class EditToolbar extends Toolbar {
 
         const loadParam = getUrlParams()[name];
 
-        setOptions(dropdown);
+        setOptions.bind(this)(dropdown);
 
         if (loadParam !== 'empty' && loadParam !== undefined) {
             dropdown.setValue(loadParam, true);
+            if (name === 'type') {
+                this.updateSelectedOption(dropdown, loadParam);
+            }
+
             this.filterModalButton.addInfo(name, loadParam, false);
         }
 
@@ -267,59 +282,57 @@ export class EditToolbar extends Toolbar {
         return wrapper;
     }
 
-    setTypeOptions(dropdown: Dropdown<any>): void {
-        dropdown.addOption(
-            Option.create()
-                .setValue('empty')
-                .setDisplayValue('<Clear selection>')
-                .build()
-        );
+    setTypeOptions(dropdown: Dropdown<string>): void {
+        this.addClearValueOption(dropdown);
+
+        let lastActionGroup: string = '';
         CONFIG.allTypes.forEach((value) => {
-            // Option interface is missing methods? and the optionBuilder?
-            dropdown.addOption(
-                Option.create()
-                    .setValue(value.key.toString())
-                    .setDisplayValue(value.key.toString())
-                    .build()
-            );
+            const actionType: string = value.key.toString();
+            const splitActionType: string[] = actionType.split('.');
+            const thisActionGroup: string = splitActionType.length > 2 ? `${splitActionType[0]}.${splitActionType[1]}` : '';
+            if (thisActionGroup !== lastActionGroup) {
+                this.addDropdownOption(dropdown, thisActionGroup, thisActionGroup, false);
+                lastActionGroup = thisActionGroup;
+            }
+            this.addDropdownOption(dropdown, actionType, actionType.replace(thisActionGroup, ''));
         });
     }
 
-    setUserOptions(dropdown: Dropdown<any>): void {
-        dropdown.addOption(
-            Option.create()
-                .setValue('empty')
-                .setDisplayValue('<Clear selection>')
-                .build()
-        );
+    setUserOptions(dropdown: Dropdown<string>): void {
+        this.addClearValueOption(dropdown);
         CONFIG.allUsers.forEach((value) => {
-            // Option interface is missing methods? and the optionBuilder?
-            dropdown.addOption(
-                Option.create()
-                    .setValue(value.key)
-                    .setDisplayValue(value.name)
-                    .build()
-            );
+            this.addDropdownOption(dropdown, value.key, value.name);
         });
     }
 
-    setProjectOptions(dropdown: Dropdown<any>): void {
-        dropdown.addOption(
-            Option.create()
-                .setValue('empty')
-                .setDisplayValue('<Clear selection>')
-                .build()
-        );
+    setProjectOptions(dropdown: Dropdown<string>): void {
+        this.addClearValueOption(dropdown);
 
         CONFIG.projects.forEach((project) => {
-            dropdown.addOption(
-                Option.create()
-                    .setValue(project.id)
-                    .setDisplayValue(project.name)
-                    .build()
-            );
+            this.addDropdownOption(dropdown, project.id, project.name);
         });
+    }
 
+    private createOption(value: string, displayValue?: string, selectable: boolean = true): Option<string> {
+        return Option.create()
+            .setSelectable(selectable)
+            .setValue(value)
+            .setDisplayValue(displayValue || value)
+            .build() as Option<string>;
+    }
+
+    private updateSelectedOption(dropdown: Dropdown<string>, displayValue: string): void {
+        const displayOption: Option<string> = this.createOption(displayValue);
+        dropdown.getSelectedOptionView().setOption(displayOption);
+    }
+
+    private addDropdownOption(dropdown: Dropdown<string>, value: string, displayValue?: string, selectable: boolean = true): void {
+        // Option interface is missing methods? and the optionBuilder?
+        dropdown.addOption(this.createOption(value, displayValue, selectable));
+    }
+
+    private addClearValueOption(dropdown: Dropdown<string>): void {
+        this.addDropdownOption(dropdown, EditToolbar.emptyOptionValue, EditToolbar.emptyOptionText);
     }
 }
 
@@ -327,5 +340,15 @@ class FilterDiag extends ModalDialog {
     constructor() {
         super();
         this.addCancelButtonToBottom('Apply');
+    }
+}
+
+class AuditLogFilterOptionViewer
+    extends DefaultOptionDisplayValueViewer {
+
+    setObject(text: string) {
+        this.toggleClass('empty-option', text === EditToolbar.emptyOptionText);
+
+        return super.setObject(text);
     }
 }

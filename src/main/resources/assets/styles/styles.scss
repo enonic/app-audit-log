@@ -75,6 +75,22 @@
         width: 100%;
     }
 
+    #select-type {
+        .dropdown-grid .viewer {
+            padding-left: 20px;
+
+            &.empty-option,
+            &.non-selectable {
+                padding-left: 0;
+            }
+
+            &.non-selectable {
+                pointer-events: none;
+                font-weight: bold;
+            }
+        }
+    }
+
     .filter-button {
         flex-grow: 1;
         display: flex;
