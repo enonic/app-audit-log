@@ -6,7 +6,7 @@ It represents the closest reasonable ESLint configuration to this
 project's original TSLint configuration.
 
 We recommend eventually switching this configuration to extend from
-the recommended rulesets in typescript-eslint. 
+the recommended rulesets in typescript-eslint.
 https://github.com/typescript-eslint/tslint-to-eslint-config/blob/master/docs/FAQs.md
 
 Happy linting! 💖
@@ -89,7 +89,7 @@ module.exports = {
             "1tbs"
         ],
         "comma-dangle": [
-            "error", 
+            "error",
             "always-multiline",
         ],
         "curly": "error",
@@ -117,7 +117,6 @@ module.exports = {
         "import/order": "off",
         "jsdoc/check-alignment": "error",
         "jsdoc/check-indentation": "error",
-        "jsdoc/newline-after-description": "error",
         "linebreak-style": "off",
         "max-len": [
             "error",
