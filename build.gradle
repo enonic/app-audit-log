@@ -42,7 +42,7 @@ dependencies {
 
 node {
     download = true
-    version = '16.16.0'
+    version = '20.9.0'
 }
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {

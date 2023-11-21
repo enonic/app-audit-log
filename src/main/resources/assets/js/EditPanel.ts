@@ -23,9 +23,9 @@ export class EditPanelBuilder {
             .setAlignment(SplitPanelAlignment.VERTICAL)
             .setAlignmentTreshold(700)
             .setSecondPanelShouldSlideRight(true)
-            .setSecondPanelMinSize(SplitPanelSize.Percents(30))
-            .setFirstPanelMinSize(SplitPanelSize.Percents(30))
-            .setFirstPanelSize(SplitPanelSize.Percents(30))
+            .setSecondPanelMinSize(SplitPanelSize.PERCENTS(30))
+            .setFirstPanelMinSize(SplitPanelSize.PERCENTS(30))
+            .setFirstPanelSize(SplitPanelSize.PERCENTS(30))
             .build();
 
         // Force mobil to re-render
