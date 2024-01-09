@@ -34,7 +34,7 @@ dependencies {
     include "com.enonic.xp:lib-admin:${xpVersion}"
     include "com.enonic.xp:lib-io:${xpVersion}"
     include "com.enonic.xp:lib-project:${xpVersion}"
-    include "com.enonic.lib:lib-thymeleaf:2.0.1"
+    include "com.enonic.lib:lib-thymeleaf:2.1.0"
     include 'com.enonic.lib:lib-license:3.1.0'
     include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
     devResources "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
