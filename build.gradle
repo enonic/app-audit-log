@@ -1,22 +1,12 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id "com.enonic.xp.app" version "3.6.2"
+    id "com.enonic.xp.app"
     id "com.github.node-gradle.node" version "7.1.0"
 }
 
 apply from: "$rootDir/gradle/env.gradle"
 apply from: "$rootDir/gradle/node.gradle"
-
-app {
-    name = "${appName}"
-    displayName = "${appDisplayName}"
-    vendorName = "${vendorName}"
-    vendorUrl = "${vendorUrl}"
-    systemVersion = "${xpVersion}"
-
-    devSourcePaths += file("$rootDir/../lib-admin-ui/src/main/resources")
-}
 
 configurations {
     devResources {
@@ -27,17 +17,17 @@ configurations {
 }
 
 dependencies {
-    include "com.enonic.xp:lib-portal:${xpVersion}"
-    include "com.enonic.xp:lib-auditlog:${xpVersion}"
-    include "com.enonic.xp:lib-node:${xpVersion}"
-    include "com.enonic.xp:lib-auth:${xpVersion}"
-    include "com.enonic.xp:lib-admin:${xpVersion}"
-    include "com.enonic.xp:lib-io:${xpVersion}"
-    include "com.enonic.xp:lib-project:${xpVersion}"
-    include "com.enonic.lib:lib-thymeleaf:2.1.1"
-    include 'com.enonic.lib:lib-license:3.1.0'
-    include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
-    devResources "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
+    include xplibs.portal
+    include xplibs.auditlog
+    include xplibs.node
+    include xplibs.auth
+    include xplibs.admin
+    include xplibs.io
+    include xplibs.project
+    include libs.lib.thymeleaf
+    include libs.lib.license
+    include libs.lib.admin.ui
+    devResources libs.lib.admin.ui
 }
 
 node {
