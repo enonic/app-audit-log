@@ -1,0 +1,5 @@
+kind: "Application"
+title: "Audit log browser"
+description: "Browser system audit log"
+vendorName: "enonic"
+vendorUrl: "https://enonic.com"

@@ -1,0 +1,9 @@
+[versions]
+lib-thymeleaf = "3.0.0-SNAPSHOT"
+lib-license = "3.1.0"
+lib-admin-ui = "4.8.1"
+
+[libraries]
+lib-thymeleaf = { module = "com.enonic.lib:lib-thymeleaf", version.ref = "lib-thymeleaf" }
+lib-license = { module = "com.enonic.lib:lib-license", version.ref = "lib-license" }
+lib-admin-ui = { module = "com.enonic.lib:lib-admin-ui", version.ref = "lib-admin-ui" }
