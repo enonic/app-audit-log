@@ -4,3 +4,5 @@ description: "Browse system audit log"
 allow:
   - "role:com.enonic.app.audit.log.admin"
   - "role:system.admin"
+apis:
+  - "asset"
