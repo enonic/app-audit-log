@@ -27,6 +27,7 @@ dependencies {
     include libs.lib.thymeleaf
     include libs.lib.license
     include libs.lib.admin.ui
+    include libs.lib.asset
     devResources libs.lib.admin.ui
 }
 

@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit log browser</title>
-    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/admin/common/styles/lib.css|">
-    <link rel="stylesheet" type="text/css" data-th-href="|${assetsUrl}/styles/styles.css|" />
-    <script data-th-src="|${assetsUrl}/admin/common/js/lib.js|"></script>
+    <link rel="stylesheet" type="text/css" data-th-href="${adminCommonCssUrl}">
+    <link rel="stylesheet" type="text/css" data-th-href="${stylesUrl}" />
+    <script data-th-src="${adminCommonJsUrl}"></script>
     <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
     <script data-th-inline="javascript">
         var CONFIG = {
@@ -17,13 +17,13 @@
             projects: /*[[${projects}]]*/,
             launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
             services: {}, // Workaround for i18nUrl BUG
-            appIconUrl: /*[[|${assetsUrl}/application.svg|]]*/,
-            icon: /*[[|${assetsUrl}/icons/entry.svg|]]*/,
+            appIconUrl: /*[[${appIconUrl}]]*/,
+            icon: /*[[${iconUrl}]]*/,
             licensedTo: /*[[${licenseText}]]*/,
         };
     </script>
     <!--/* Needs to be after config init since the script uses it */-->
-    <script data-th-src="|${assetsUrl}/js/main.js|"></script>
+    <script data-th-src="${mainJsUrl}"></script>
 </head>
 
 <body>

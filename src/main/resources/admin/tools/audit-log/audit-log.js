@@ -1,6 +1,7 @@
 const thymeleaf = require("/lib/thymeleaf");
 const auditData = require("/lib/auditlog-data");
 const portal = require("/lib/xp/portal");
+const assetLib = require("/lib/enonic/asset");
 const adminLib = require("/lib/xp/admin");
 const project = require("/lib/xp/project");
 const licenseManager = require("/lib/license-manager");
@@ -24,12 +25,14 @@ exports.get = function () {
         type: "absolute",
     })
 
-    const assetsUrl = portal.assetUrl({
-        path: "",
-    });
-
     const model = {
-        assetsUrl,
+        adminCommonCssUrl: assetLib.assetUrl({ path: "admin/common/styles/lib.css" }),
+        adminCommonJsUrl: assetLib.assetUrl({ path: "admin/common/js/lib.js" }),
+        stylesUrl: assetLib.assetUrl({ path: "styles/styles.css" }),
+        mainJsUrl: assetLib.assetUrl({ path: "js/main.js" }),
+        licenseJsUrl: assetLib.assetUrl({ path: "js/license.js" }),
+        appIconUrl: assetLib.assetUrl({ path: "application.svg" }),
+        iconUrl: assetLib.assetUrl({ path: "icons/entry.svg" }),
         serviceUrl,
         licenseUrl,
         allUsers: users,
