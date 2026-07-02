@@ -2,7 +2,7 @@
 lib-thymeleaf = "3.0.0"
 lib-license = "4.0.0"
 lib-admin-ui = "4.8.1"
-lib-asset = "2.0.0"
+lib-asset = "2.0.1"
 
 [libraries]
 lib-thymeleaf = { module = "com.enonic.lib:lib-thymeleaf", version.ref = "lib-thymeleaf" }
