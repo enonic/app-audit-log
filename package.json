@@ -1,48 +1,48 @@
 {
-    "name": "audit_log",
-    "version": "1.2.0",
-    "scripts": {
-        "build": "webpack --color",
-        "lint": "eslint -c .eslintrc.js --ext .ts ./src",
-        "fix": "eslint -c .eslintrc.js --ext .ts ./src --fix"
-    },
-    "targets": {
-        "xp": {
-            "outputFormat": "global",
-            "sourceMap": false
-        }
-    },
-    "dependencies": {
-        "jquery": "^3.7.1",
-        "jquery-ui": "^1.13.2",
-        "q": "^1.5.1"
-    },
-    "devDependencies": {
-        "@enonic/lib-admin-ui": "./.xp/dev/lib-admin-ui",
-        "@types/jquery": "^3.5.24",
-        "@types/jqueryui": "^1.12.19",
-        "@types/q": "^1.5.7",
-        "@typescript-eslint/eslint-plugin": "^6.11.0",
-        "@typescript-eslint/eslint-plugin-tslint": "^6.12.0",
-        "@typescript-eslint/parser": "^6.11.0",
-        "circular-dependency-plugin": "^5.2.2",
-        "css-loader": "^6.8.1",
-        "eslint": "^8.52.0",
-        "eslint-plugin-import": "^2.29.0",
-        "eslint-plugin-jsdoc": "^46.9.0",
-        "highlight.js": "^11.9.0",
-        "mini-css-extract-plugin": "^2.7.6",
-        "postcss-loader": "^7.3.3",
-        "sass": "^1.69.5",
-        "sass-loader": "^13.3.2",
-        "terser-webpack-plugin": "^5.3.6",
-        "ts-loader": "^9.5.0",
-        "typescript": "^5.2.2",
-        "webpack": "^5.89.0",
-        "webpack-cli": "^5.1.4"
-    },
-    "engines": {
-        "node": ">= 16.16.0",
-        "npm": ">= 8.11.0"
+  "name": "audit_log",
+  "version": "2.0.0",
+  "scripts": {
+    "build": "webpack --color",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
+    "fix": "eslint -c .eslintrc.js --ext .ts ./src --fix"
+  },
+  "targets": {
+    "xp": {
+      "outputFormat": "global",
+      "sourceMap": false
     }
+  },
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "jquery-ui": "^1.13.2",
+    "q": "^1.5.1"
+  },
+  "devDependencies": {
+    "@enonic/lib-admin-ui": "./.xp/dev/lib-admin-ui",
+    "@types/jquery": "^3.5.24",
+    "@types/jqueryui": "^1.12.19",
+    "@types/q": "^1.5.7",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^6.12.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "circular-dependency-plugin": "^5.2.2",
+    "css-loader": "^6.8.1",
+    "eslint": "^8.52.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsdoc": "^46.9.0",
+    "highlight.js": "^11.9.0",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss-loader": "^7.3.3",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.2",
+    "terser-webpack-plugin": "^5.3.6",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "engines": {
+    "node": ">= 24.20.0",
+    "npm": ">= 11.19.0"
+  }
 }

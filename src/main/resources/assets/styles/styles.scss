@@ -13,13 +13,27 @@
     }
 }
 
+.appbar {
+    height: 60px;
+
+    .home-button {
+        .app-icon {
+            height: 60px;
+        }
+
+        .app-name {
+            line-height: 60px;
+        }
+    }
+}
+
 /* lib-admin-ui addition? */
 .appbar .topbar-license {
     height: 100%;
     margin-right: 50px;
     color: white;
     font-size: 15px;
-    line-height: 44px;
+    line-height: 60px;
 }
 
 .toolbar.tools {
@@ -46,8 +60,8 @@
         min-width: 75px;
         margin: 2px 1%;
 
-        &:nth-of-type(2),
-        &:nth-of-type(3) {
+        &:nth-of-type(1),
+        &:nth-of-type(2) {
             flex-basis: 150px;
             flex-grow: 0;
         }
@@ -76,16 +90,15 @@
     }
 
     #select-type {
-        .dropdown-grid .viewer {
+        .filterable-listbox .viewer {
             padding-left: 20px;
 
             &.empty-option,
             &.non-selectable {
-                padding-left: 0;
+                padding-left: 10px;
             }
 
             &.non-selectable {
-                pointer-events: none;
                 font-weight: bold;
             }
         }
@@ -108,6 +121,18 @@
                 text-transform: uppercase;
             }
         }
+    }
+}
+
+.audit-log-dropdown .selectable-listbox .item-view-wrapper {
+    height: 30px;
+
+    .item-view {
+        margin: auto 0;
+    }
+
+    &:has(.non-selectable) {
+        pointer-events: none;
     }
 }
 

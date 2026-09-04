@@ -22,8 +22,6 @@ interface GlobalConfig {
         id: string;
         name: string;
     }>;
-    launcherUrl: string;
-    services: object;
     appIconUrl: string;
     icon: string;
     licenseText: string;

@@ -2,7 +2,7 @@ import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
 import { Mask } from '@enonic/lib-admin-ui/ui/mask/Mask';
 import { SelectionList, FetchOptions } from './SelectionList';
 import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { Element } from '@enonic/lib-admin-ui/dom/Element';
 import { Body } from '@enonic/lib-admin-ui/dom/Body';
 import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
@@ -13,7 +13,7 @@ export class SelectionPanel extends Panel {
     private mask: Mask;
     private selectionList: SelectionList;
     private optionsToolbar: EditToolbar;
-    private toolbar: Toolbar;
+    private toolbar: Toolbar<ToolbarConfig>;
     private loading: boolean = false;
 
     constructor(className?: string) {
@@ -36,7 +36,7 @@ export class SelectionPanel extends Panel {
         splash.appendChild(spinner);
         this.mask.appendChild(splash);
 
-        this.toolbar = new Toolbar('select-toolbar');
+        this.toolbar = new Toolbar({ className: 'select-toolbar' });
 
         let listPanel = this.createListPanel();
         this.appendChildren(

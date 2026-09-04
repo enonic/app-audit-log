@@ -8,15 +8,13 @@
     <link rel="stylesheet" type="text/css" data-th-href="${adminCommonCssUrl}">
     <link rel="stylesheet" type="text/css" data-th-href="${stylesUrl}" />
     <script data-th-src="${adminCommonJsUrl}"></script>
-    <script defer data-th-src="${launcherPath}" type="text/javascript"></script>
+    <script type="module" data-th-src="${menuLoaderUrl}"></script>
     <script data-th-inline="javascript">
         var CONFIG = {
             auditServiceUrl: /*[[${serviceUrl}]]*/,
             allUsers: /*[[${allUsers}]]*/,
             allTypes: /*[[${allTypes}]]*/,
             projects: /*[[${projects}]]*/,
-            launcherUrl: /*[[${launcherUrl}]]*/, // Required for lanucher
-            services: {}, // Workaround for i18nUrl BUG
             appIconUrl: /*[[${appIconUrl}]]*/,
             icon: /*[[${iconUrl}]]*/,
             licensedTo: /*[[${licenseText}]]*/,

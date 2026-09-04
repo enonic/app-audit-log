@@ -38,8 +38,13 @@ exports.get = function () {
         allUsers: users,
         allTypes: types,
         projects,
-        launcherPath: adminLib.getLauncherPath(),
-        launcherUrl: adminLib.getLauncherUrl(),
+        menuLoaderUrl: adminLib.extensionUrl({
+            application: "com.enonic.xp.app.main",
+            extension: "menu-loader",
+            params: {
+                theme: "dark",
+            },
+        }),
         licenseText: licenseManager.getIssuedTo(),
     };
 

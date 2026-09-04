@@ -1,19 +1,19 @@
 import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
 import { LabelEl } from '@enonic/lib-admin-ui/dom/LabelEl';
-import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { DatePickerClear } from './DatePickerClear';
 import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
 import { Option } from '@enonic/lib-admin-ui/ui/selector/Option';
 import { Element } from '@enonic/lib-admin-ui/dom/Element';
 import { dateFromFormatDate, formatDate } from './util';
-import { Dropdown } from '@enonic/lib-admin-ui/ui/selector/dropdown/Dropdown';
+import { Dropdown } from './Dropdown';
 import { FormInputEl } from '@enonic/lib-admin-ui/dom/FormInputEl';
 import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
 import { ModalDialog } from '@enonic/lib-admin-ui/ui/dialog/ModalDialog';
 import { FilterActionButton } from './FilterActionButton';
 import { DefaultOptionDisplayValueViewer } from '@enonic/lib-admin-ui/ui/selector/DefaultOptionDisplayValueViewer';
 
-export class EditToolbar extends Toolbar {
+export class EditToolbar extends Toolbar<ToolbarConfig> {
 
     static emptyOptionValue: string = 'empty';
     static emptyOptionText: string = '<Clear selection>';
@@ -26,16 +26,16 @@ export class EditToolbar extends Toolbar {
     filters: {
         from: DatePickerClear;
         to: DatePickerClear;
-        project: Dropdown<string>;
-        user: Dropdown<string>;
-        type: Dropdown<string>;
+        project: Dropdown;
+        user: Dropdown;
+        type: Dropdown;
         fulltext: FormInputEl;
     };
 
     // Possible to refacor each event into a setable state.
     // So the selectionpanel could just set the different events.
     constructor() {
-        super('tools');
+        super({ className: 'tools' });
         this.filterModalButton = new FilterActionButton();
         this.filterModal = new FilterDiag();
         this.filterModal.onHidden(() => {
@@ -221,17 +221,15 @@ export class EditToolbar extends Toolbar {
         }
     }
 
-    createDropdown(name: string, placeholder: string, setOptions: (dropdown: Dropdown<string>) => void): Dropdown<string> {
-        const dropdown: Dropdown<string> = new Dropdown(name.toLowerCase(), {
+    createDropdown(name: string, placeholder: string, setOptions: (dropdown: Dropdown) => void): Dropdown {
+        const dropdown: Dropdown = new Dropdown(name.toLowerCase(), {
             inputPlaceholderText: placeholder,
-            rowHeight: 30,
-            optionDisplayValueViewer: new AuditLogFilterOptionViewer(),
+            createOptionViewer: () => new AuditLogFilterOptionViewer(),
+            selectedOptionDisplayValue: name === 'type' ? option => option.getValue() : undefined,
         });
         dropdown.setId(`select-${name}`);
-        dropdown.onOptionSelected(event => {
-            const option = event.getOption();
-            const displayName: string = option.getDisplayValue();
-            const value: string = option.getValue();
+        dropdown.onOptionSelected(option => {
+            const value: string = option ? option.getValue() : 'empty';
             if (value === 'empty') {
                 dropdown.reset();
                 if (name === 'project') {
@@ -241,10 +239,7 @@ export class EditToolbar extends Toolbar {
                 }
                 this.filterModalButton.removeInfo(name);
             } else {
-                if (name === 'type' && displayName !== value) {
-                    this.updateSelectedOption(dropdown, value);
-                }
-                addUrlParam(name, event.getOption().getValue());
+                addUrlParam(name, value);
                 this.filterModalButton.addInfo(name, value);
             }
             this.optionsChanged();
@@ -256,9 +251,6 @@ export class EditToolbar extends Toolbar {
 
         if (loadParam !== 'empty' && loadParam !== undefined) {
             dropdown.setValue(loadParam, true);
-            if (name === 'type') {
-                this.updateSelectedOption(dropdown, loadParam);
-            }
 
             this.filterModalButton.addInfo(name, loadParam, false);
         }
@@ -282,7 +274,7 @@ export class EditToolbar extends Toolbar {
         return wrapper;
     }
 
-    setTypeOptions(dropdown: Dropdown<string>): void {
+    setTypeOptions(dropdown: Dropdown): void {
         this.addClearValueOption(dropdown);
 
         let lastActionGroup: string = '';
@@ -298,14 +290,14 @@ export class EditToolbar extends Toolbar {
         });
     }
 
-    setUserOptions(dropdown: Dropdown<string>): void {
+    setUserOptions(dropdown: Dropdown): void {
         this.addClearValueOption(dropdown);
         CONFIG.allUsers.forEach((value) => {
             this.addDropdownOption(dropdown, value.key, value.name);
         });
     }
 
-    setProjectOptions(dropdown: Dropdown<string>): void {
+    setProjectOptions(dropdown: Dropdown): void {
         this.addClearValueOption(dropdown);
 
         CONFIG.projects.forEach((project) => {
@@ -321,17 +313,12 @@ export class EditToolbar extends Toolbar {
             .build() as Option<string>;
     }
 
-    private updateSelectedOption(dropdown: Dropdown<string>, displayValue: string): void {
-        const displayOption: Option<string> = this.createOption(displayValue);
-        dropdown.getSelectedOptionView().setOption(displayOption);
-    }
-
-    private addDropdownOption(dropdown: Dropdown<string>, value: string, displayValue?: string, selectable: boolean = true): void {
+    private addDropdownOption(dropdown: Dropdown, value: string, displayValue?: string, selectable: boolean = true): void {
         // Option interface is missing methods? and the optionBuilder?
         dropdown.addOption(this.createOption(value, displayValue, selectable));
     }
 
-    private addClearValueOption(dropdown: Dropdown<string>): void {
+    private addClearValueOption(dropdown: Dropdown): void {
         this.addDropdownOption(dropdown, EditToolbar.emptyOptionValue, EditToolbar.emptyOptionText);
     }
 }

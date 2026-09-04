@@ -1,6 +1,6 @@
 import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
 import { Exception } from '@enonic/lib-admin-ui/Exception';
-import { Toolbar } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
 import { AuditlogNode, SelectionEl } from './SelectionEl';
 // import { SelectionPanel } from './SelectionPanel';
 
@@ -22,14 +22,14 @@ export interface FetchOptions {
 }
 
 export class SelectionList extends DivEl {
-    private toolbar: Toolbar;
+    private toolbar: Toolbar<ToolbarConfig>;
     private elementsCount: number = 0;
     private elementsStart: number = 0;
     private total: number = 0;
 
     public scrollIntoView: Boolean = false;
 
-    constructor(toolbar: Toolbar, classes?: string, prefix?: string) {
+    constructor(toolbar: Toolbar<ToolbarConfig>, classes?: string, prefix?: string) {
         super(classes, prefix);
         this.toolbar = toolbar;
 
