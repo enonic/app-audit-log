@@ -53,6 +53,7 @@ task webpack( type: NpmTask, dependsOn: [npmInstall, lint] ) {
     inputs.dir '.xp/dev'
     inputs.dir 'src/main'
     inputs.file 'webpack.config.js'
+    inputs.file 'tsconfig.json'
     outputs.dir "${buildDir}/resources/main"
 }
 

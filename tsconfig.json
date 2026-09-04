@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es5",
+    "target": "ES2022",
+    "useDefineForClassFields": false,
     "sourceMap": true,
     "types": [
       "jquery",
@@ -9,7 +10,7 @@
       "q"
     ],
     "lib": [
-      "es2017",
+      "ES2022",
       "dom"
     ]
   },
