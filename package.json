@@ -13,14 +13,20 @@
     }
   },
   "dependencies": {
+    "dayjs": "^1.11.19",
+    "dompurify": "~3.3.1",
+    "fine-uploader": "^5.16.2",
     "jquery": "^3.7.1",
-    "jquery-ui": "^1.13.2",
+    "jquery-simulate": "^1.0.2",
+    "jquery-ui": "^1.14.2",
+    "mousetrap": "^1.6.5",
     "q": "^1.5.1"
   },
   "devDependencies": {
-    "@enonic/lib-admin-ui": "./.xp/dev/lib-admin-ui",
+    "@enonic/lib-admin-ui": "link:.xp/dev/lib-admin-ui",
     "@types/jquery": "^3.5.24",
     "@types/jqueryui": "^1.12.19",
+    "@types/mousetrap": "^1.6.15",
     "@types/q": "^1.5.7",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/eslint-plugin-tslint": "^6.12.0",
@@ -41,8 +47,9 @@
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
+  "packageManager": "pnpm@10.33.4",
   "engines": {
     "node": ">= 24.20.0",
-    "npm": ">= 11.19.0"
+    "pnpm": ">= 10.33.4"
   }
 }
