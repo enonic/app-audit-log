@@ -1,4 +1,4 @@
-task npmInstallForce( type: NpmTask ) {
+task pnpmInstallForce( type: PnpmTask ) {
     description = 'Update all project node dependencies'
     args = ['install', '--force']
 }
