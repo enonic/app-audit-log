@@ -22,7 +22,7 @@ export function formatDate(date: Date, excludeHour: boolean = false): string {
 export function dateFromFormatDate(formatedDate: string) {
     const parts = formatedDate.split('-');
     const year = parseInt(parts[0], 10);
-    //JS month 😃
+    // JS month 😃
     const month = parseInt(parts[1], 10) - 1;
     const day = parseInt(parts[2], 10);
 

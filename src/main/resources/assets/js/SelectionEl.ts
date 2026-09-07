@@ -1,11 +1,11 @@
-/* eslint-disable no-underscore-dangle */
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { Element, NewElementBuilder } from '@enonic/lib-admin-ui/dom/Element';
-import { H6El } from '@enonic/lib-admin-ui/dom/H6El';
-import { ImgEl } from '@enonic/lib-admin-ui/dom/ImgEl';
-import { KeyHelper } from '@enonic/lib-admin-ui/ui/KeyHelper';
-import { SelectionList } from './SelectionList';
-import { formatDate } from './util';
+ 
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {Element, NewElementBuilder} from '@enonic/lib-admin-ui/dom/Element';
+import {H6El} from '@enonic/lib-admin-ui/dom/H6El';
+import {ImgEl} from '@enonic/lib-admin-ui/dom/ImgEl';
+import {KeyHelper} from '@enonic/lib-admin-ui/ui/KeyHelper';
+import {SelectionList} from './SelectionList';
+import {formatDate} from './util';
 
 // Might need to move this to a datafile if more data structures are created.
 // Full audit-log data node
@@ -55,7 +55,7 @@ export class SelectionEl extends DivEl {
             this.onKeyPressed(event => {
                 if (KeyHelper.isEnterKey(event) || KeyHelper.isSpace(event)) {
                     this.getHTMLElement().dispatchEvent(
-                        new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
+                        new CustomEvent('SelectionClick', {detail: {id: this.id}, bubbles: true, cancelable: true}),
                     );
                     this.toggle();
                 }
@@ -63,7 +63,7 @@ export class SelectionEl extends DivEl {
 
             this.onMouseUp(event => {
                 this.getHTMLElement().dispatchEvent(
-                    new CustomEvent('SelectionClick', { detail: { id: this.id }, bubbles: true, cancelable: true })
+                    new CustomEvent('SelectionClick', {detail: {id: this.id}, bubbles: true, cancelable: true}),
                 );
                 this.toggle();
             });
@@ -72,7 +72,7 @@ export class SelectionEl extends DivEl {
 
     private toggle() {
         // Should move this to the parent class. Events could cause race conditions.
-        (<SelectionList>this.getParentElement()).clearActive();
+        (this.getParentElement() as SelectionList).clearActive();
         this.toggleClass('active');
     }
 }

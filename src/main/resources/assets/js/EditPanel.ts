@@ -1,11 +1,11 @@
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
-import { SplitPanel, SplitPanelAlignment, SplitPanelBuilder } from '@enonic/lib-admin-ui/ui/panel/SplitPanel';
-import { SplitPanelSize } from '@enonic/lib-admin-ui/ui/panel/SplitPanelSize';
-import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
-import { EditToolbar } from './EditToolbar';
-import { PreviewPanel } from './PreviewPanel';
-import { SelectionPanel } from './SelectionPanel';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {Panel} from '@enonic/lib-admin-ui/ui/panel/Panel';
+import {SplitPanel, SplitPanelAlignment, SplitPanelBuilder} from '@enonic/lib-admin-ui/ui/panel/SplitPanel';
+import {SplitPanelSize} from '@enonic/lib-admin-ui/ui/panel/SplitPanelSize';
+import {ResponsiveManager} from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
+import {EditToolbar} from './EditToolbar';
+import {PreviewPanel} from './PreviewPanel';
+import {SelectionPanel} from './SelectionPanel';
 
 export class EditPanelBuilder {
     toolbar: EditToolbar;
@@ -66,8 +66,8 @@ class EditPanel extends Panel {
         });
 
         this.appendChildren(
-            <Element>builder.toolbar,
-            <Element>this.splitPanel,
+            (builder.toolbar as Element),
+            this.splitPanel,
         );
     }
 

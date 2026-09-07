@@ -1,12 +1,11 @@
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { Exception } from '@enonic/lib-admin-ui/Exception';
-import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
-import { AuditlogNode, SelectionEl } from './SelectionEl';
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {Toolbar, ToolbarConfig} from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import {AuditlogNode, SelectionEl} from './SelectionEl';
 // import { SelectionPanel } from './SelectionPanel';
 
 interface SelectionListData {
     total: number;
-    selections: Array<AuditlogNode>;
+    selections: AuditlogNode[];
 }
 
 export interface FetchOptions {
@@ -27,7 +26,7 @@ export class SelectionList extends DivEl {
     private elementsStart: number = 0;
     private total: number = 0;
 
-    public scrollIntoView: Boolean = false;
+    public scrollIntoView: boolean = false;
 
     constructor(toolbar: Toolbar<ToolbarConfig>, classes?: string, prefix?: string) {
         super(classes, prefix);
@@ -62,8 +61,8 @@ export class SelectionList extends DivEl {
 
         return await fetch(CONFIG.auditServiceUrl, {
             method: 'POST',
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            headers: new Headers({ 'Content-Type': 'application/json' }),
+             
+            headers: new Headers({'Content-Type': 'application/json'}),
             body: JSON.stringify(data),
         })
             .then((res: Response) => res.json())
@@ -71,7 +70,7 @@ export class SelectionList extends DivEl {
                 success(jsonData);
             })
             .catch(error => {
-                throw new Exception(`SelectionList fetch error:\n ${error}`);
+                throw new Error(`SelectionList fetch error:\n ${error}`);
             });
     }
 
@@ -87,7 +86,7 @@ export class SelectionList extends DivEl {
     private onSelectionClick() {
         this.getHTMLElement().addEventListener('SelectionClick', event => {
             if (this.scrollIntoView) {
-                (<HTMLElement>event.target).scrollIntoView(true);
+                (event.target as HTMLElement).scrollIntoView(true);
             }
         });
     }
@@ -104,7 +103,6 @@ export class SelectionList extends DivEl {
         if (clear) {
             this.clearAll();
         }
-        const context = this;
         this.elementsCount += amount;
         const passDown: FetchOptions = {
             start: this.elementsStart,
@@ -113,8 +111,8 @@ export class SelectionList extends DivEl {
         };
         this.elementsStart += amount;
         if (this.total === 0 || this.elementsCount <= this.total) {
-            return await this.fetchSelectionData(function (data: SelectionListData) {
-                context.createSelectionList(data);
+            return await this.fetchSelectionData((data: SelectionListData) => {
+                this.createSelectionList(data);
             }, passDown);
         }
         return null;

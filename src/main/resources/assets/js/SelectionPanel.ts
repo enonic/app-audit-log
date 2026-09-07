@@ -1,12 +1,12 @@
-import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
-import { Mask } from '@enonic/lib-admin-ui/ui/mask/Mask';
-import { SelectionList, FetchOptions } from './SelectionList';
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { Body } from '@enonic/lib-admin-ui/dom/Body';
-import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
-import { EditToolbar } from './EditToolbar';
+import {Panel} from '@enonic/lib-admin-ui/ui/panel/Panel';
+import {Mask} from '@enonic/lib-admin-ui/ui/mask/Mask';
+import {SelectionList, FetchOptions} from './SelectionList';
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {Toolbar, ToolbarConfig} from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {Body} from '@enonic/lib-admin-ui/dom/Body';
+import {SpanEl} from '@enonic/lib-admin-ui/dom/SpanEl';
+import {EditToolbar} from './EditToolbar';
 
 export class SelectionPanel extends Panel {
 
@@ -36,11 +36,11 @@ export class SelectionPanel extends Panel {
         splash.appendChild(spinner);
         this.mask.appendChild(splash);
 
-        this.toolbar = new Toolbar({ className: 'select-toolbar' });
+        this.toolbar = new Toolbar({className: 'select-toolbar'});
 
         let listPanel = this.createListPanel();
         this.appendChildren(
-            <Element>this.toolbar,
+            (this.toolbar as Element),
             listPanel,
         );
 
