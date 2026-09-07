@@ -36,7 +36,7 @@
     "highlight.js": "^11.9.0",
     "jiti": "^2.7.0",
     "mini-css-extract-plugin": "^2.7.6",
-    "postcss-loader": "^7.3.3",
+    "postcss-loader": "^8.2.1",
     "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
     "terser-webpack-plugin": "^5.3.6",
