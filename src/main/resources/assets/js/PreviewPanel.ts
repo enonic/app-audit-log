@@ -1,15 +1,14 @@
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { ImgEl } from '@enonic/lib-admin-ui/dom/ImgEl';
-import { H1El } from '@enonic/lib-admin-ui/dom/H1El';
-import { Element, NewElementBuilder } from '@enonic/lib-admin-ui/dom/Element';
-import { formatDate } from './util';
-import { SpanEl } from '@enonic/lib-admin-ui/dom/SpanEl';
-import { Exception } from '@enonic/lib-admin-ui/Exception';
-import { Panel } from '@enonic/lib-admin-ui/ui/panel/Panel';
-import { ImageLoader } from '@enonic/lib-admin-ui/util/loader/ImageLoader';
-import { ItemDataGroup } from '@enonic/lib-admin-ui/app/view/ItemDataGroup';
-import { Action } from '@enonic/lib-admin-ui/ui/Action';
-import { ActionButton } from '@enonic/lib-admin-ui/ui/button/ActionButton';
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {ImgEl} from '@enonic/lib-admin-ui/dom/ImgEl';
+import {H1El} from '@enonic/lib-admin-ui/dom/H1El';
+import {Element, NewElementBuilder} from '@enonic/lib-admin-ui/dom/Element';
+import {formatDate} from './util';
+import {SpanEl} from '@enonic/lib-admin-ui/dom/SpanEl';
+import {Panel} from '@enonic/lib-admin-ui/ui/panel/Panel';
+import {ImageLoader} from '@enonic/lib-admin-ui/util/loader/ImageLoader';
+import {ItemDataGroup} from '@enonic/lib-admin-ui/app/view/ItemDataGroup';
+import {Action} from '@enonic/lib-admin-ui/ui/Action';
+import {ActionButton} from '@enonic/lib-admin-ui/ui/button/ActionButton';
 
 
 export interface AuditlogData {
@@ -67,7 +66,7 @@ export class PreviewPanel extends Panel {
     public setPreviewHeader(data: AuditlogData) {
         this.header = new DivEl('preview-header');
 
-        //Future img update
+        // Future img update
         // let icon = ImageLoader.get(data.iconUrl);
         let icon = ImageLoader.get(CONFIG.icon, 64, 64);
         const iconEl = ImgEl.fromHtmlElement(icon);
@@ -78,10 +77,10 @@ export class PreviewPanel extends Panel {
         const titleEl: Element = new H1El('title');
         titleEl.getEl().setText(`${data.type}`);
 
-        const time = formatDate(new Date(`${data.time}`));
+        const time = formatDate(new Date(data.time));
         const timeEl = new Element(new NewElementBuilder()
             .setTagName('Time')
-            .setClassName('timestamp')
+            .setClassName('timestamp'),
         );
 
         timeEl.getEl().setText(time);
@@ -117,7 +116,7 @@ export class PreviewPanel extends Panel {
         this.appendChild(this.logDataContainer);
     }
 
-    private addToDataGroup(data: Object, dataGroup: ItemDataGroup, ignore?: string) {
+    private addToDataGroup(data: object, dataGroup: ItemDataGroup, ignore?: string) {
         for (const [key, value] of Object.entries(data)) {
             if (key !== ignore) {
                 if (Array.isArray(value)) {
@@ -139,8 +138,8 @@ export class PreviewPanel extends Panel {
         return fetch(CONFIG.auditServiceUrl,
             {
                 method: 'POST',
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: new Headers({ 'Content-Type': 'application/json' }),
+                 
+                headers: new Headers({'Content-Type': 'application/json'}),
                 body: JSON.stringify({
                     id: key,
                 }),
@@ -148,7 +147,7 @@ export class PreviewPanel extends Panel {
         )
             .then((res) => res.json())
             .catch(error => {
-                throw new Exception(`Preview fetch error:\n ${error}`);
+                throw new Error(`Preview fetch error:\n ${error}`);
             });
     }
 }

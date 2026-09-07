@@ -1,24 +1,24 @@
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { LabelEl } from '@enonic/lib-admin-ui/dom/LabelEl';
-import { Toolbar, ToolbarConfig } from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
-import { DatePickerClear } from './DatePickerClear';
-import { addUrlParam, getUrlParams, removeUrlParam } from './Urlparam';
-import { Option } from '@enonic/lib-admin-ui/ui/selector/Option';
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { dateFromFormatDate, formatDate } from './util';
-import { Dropdown } from './Dropdown';
-import { FormInputEl } from '@enonic/lib-admin-ui/dom/FormInputEl';
-import { ResponsiveManager } from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
-import { ModalDialog } from '@enonic/lib-admin-ui/ui/dialog/ModalDialog';
-import { FilterActionButton } from './FilterActionButton';
-import { DefaultOptionDisplayValueViewer } from '@enonic/lib-admin-ui/ui/selector/DefaultOptionDisplayValueViewer';
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {LabelEl} from '@enonic/lib-admin-ui/dom/LabelEl';
+import {Toolbar, ToolbarConfig} from '@enonic/lib-admin-ui/ui/toolbar/Toolbar';
+import {DatePickerClear} from './DatePickerClear';
+import {addUrlParam, getUrlParams, removeUrlParam} from './Urlparam';
+import {Option} from '@enonic/lib-admin-ui/ui/selector/Option';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {dateFromFormatDate, formatDate} from './util';
+import {Dropdown} from './Dropdown';
+import {FormInputEl} from '@enonic/lib-admin-ui/dom/FormInputEl';
+import {ResponsiveManager} from '@enonic/lib-admin-ui/ui/responsive/ResponsiveManager';
+import {ModalDialog} from '@enonic/lib-admin-ui/ui/dialog/ModalDialog';
+import {FilterActionButton} from './FilterActionButton';
+import {DefaultOptionDisplayValueViewer} from '@enonic/lib-admin-ui/ui/selector/DefaultOptionDisplayValueViewer';
 
 export class EditToolbar extends Toolbar<ToolbarConfig> {
 
     static emptyOptionValue: string = 'empty';
     static emptyOptionText: string = '<Clear selection>';
 
-    responsiveRender: Boolean = false;
+    responsiveRender: boolean = false;
     filterEls: Element[] = [];
     filterModalButton: FilterActionButton;
     filterModal: FilterDiag;
@@ -35,7 +35,7 @@ export class EditToolbar extends Toolbar<ToolbarConfig> {
     // Possible to refacor each event into a setable state.
     // So the selectionpanel could just set the different events.
     constructor() {
-        super({ className: 'tools' });
+        super({className: 'tools'});
         this.filterModalButton = new FilterActionButton();
         this.filterModal = new FilterDiag();
         this.filterModal.onHidden(() => {
@@ -137,7 +137,7 @@ export class EditToolbar extends Toolbar<ToolbarConfig> {
                 clearTimeout(searchTimeout);
             }
             searchTimeout = setTimeout(() => {
-                const query = (<HTMLInputElement>event.target).value;
+                const query = (event.target as HTMLInputElement).value;
                 if (query !== '') {
                     addUrlParam('q', query);
                     this.filterModalButton.addInfo('free-text', query);
@@ -191,7 +191,7 @@ export class EditToolbar extends Toolbar<ToolbarConfig> {
         }
     }
 
-    showModalFilters(largeRender: Boolean) {
+    showModalFilters(largeRender: boolean) {
         if (largeRender === false) {
             if (this.responsiveRender === false) {
                 const button = this.filterModalButton;
@@ -259,7 +259,7 @@ export class EditToolbar extends Toolbar<ToolbarConfig> {
     }
 
     optionsChanged() {
-        this.getHTMLElement().dispatchEvent(new CustomEvent('optionsChanged', { bubbles: true }));
+        this.getHTMLElement().dispatchEvent(new CustomEvent('optionsChanged', {bubbles: true}));
     }
 
     labelAndWrapElement(element: Element, labelText: string) {
@@ -268,7 +268,7 @@ export class EditToolbar extends Toolbar<ToolbarConfig> {
 
         wrapper.appendChildren(
             labelEl,
-            element
+            element,
         );
 
         return wrapper;

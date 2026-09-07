@@ -1,27 +1,27 @@
-import { Application } from '@enonic/lib-admin-ui/app/Application';
-import { AppPanel } from '@enonic/lib-admin-ui/app/AppPanel';
-import { AppBar } from '@enonic/lib-admin-ui/app/bar/AppBar';
-import { DeckPanel } from '@enonic/lib-admin-ui/ui/panel/DeckPanel';
-import { Body } from '@enonic/lib-admin-ui/dom/Body';
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { Messages } from '@enonic/lib-admin-ui/util/Messages';
-import { EditPanelBuilder } from './EditPanel';
+import {Application} from '@enonic/lib-admin-ui/app/Application';
+import {AppPanel} from '@enonic/lib-admin-ui/app/AppPanel';
+import {AppBar} from '@enonic/lib-admin-ui/app/bar/AppBar';
+import {DeckPanel} from '@enonic/lib-admin-ui/ui/panel/DeckPanel';
+import {Body} from '@enonic/lib-admin-ui/dom/Body';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {Messages} from '@enonic/lib-admin-ui/util/Messages';
+import {EditPanelBuilder} from './EditPanel';
 
 
 interface GlobalConfig {
     auditServiceUrl: string;
-    allUsers: Array<{
+    allUsers: {
         key: string;
         name: string;
-    }>;
-    allTypes: Array<{
+    }[];
+    allTypes: {
         key: number;
         docCount: string;
-    }>;
-    projects: Array<{
+    }[];
+    projects: {
         id: string;
         name: string;
-    }>;
+    }[];
     appIconUrl: string;
     icon: string;
     licenseText: string;
@@ -40,14 +40,14 @@ class AuditLogView {
         this.app = this.createApplication();
         this.createAppPanels(this.app);
 
-        /* eslint-disable */
+         
         Messages.setMessages({
-            // eslint-disable-next-line @typescript-eslint/naming-convention
+             
             'action.ok': 'ok',
-            // eslint-disable-next-line @typescript-eslint/naming-convention
+             
             'dialog.notification.title': 'Filters',
         });
-        /* eslint-enable */
+         
     }
 
     createApplication(): Application {
@@ -67,7 +67,7 @@ class AuditLogView {
         const mainPanel = new DeckPanel('main-panel');
 
 
-        mainPanel.appendChildren(appBar, <Element>editPanel);
+        mainPanel.appendChildren<Element>(appBar, editPanel);
         this.appPanel.appendChild(mainPanel);
 
         Body.get().appendChild(this.appPanel);

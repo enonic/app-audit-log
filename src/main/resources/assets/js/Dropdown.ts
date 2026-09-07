@@ -1,10 +1,10 @@
 import * as Q from 'q';
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { Viewer } from '@enonic/lib-admin-ui/ui/Viewer';
-import { Option } from '@enonic/lib-admin-ui/ui/selector/Option';
-import { ListBox } from '@enonic/lib-admin-ui/ui/selector/list/ListBox';
-import { FilterableListBoxWrapper } from '@enonic/lib-admin-ui/ui/selector/list/FilterableListBoxWrapper';
-import { SelectionChange } from '@enonic/lib-admin-ui/util/SelectionChange';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {Viewer} from '@enonic/lib-admin-ui/ui/Viewer';
+import {Option} from '@enonic/lib-admin-ui/ui/selector/Option';
+import {ListBox} from '@enonic/lib-admin-ui/ui/selector/list/ListBox';
+import {FilterableListBoxWrapper} from '@enonic/lib-admin-ui/ui/selector/list/FilterableListBoxWrapper';
+import {SelectionChange} from '@enonic/lib-admin-ui/util/SelectionChange';
 
 export interface DropdownConfig {
     inputPlaceholderText: string;
@@ -14,7 +14,7 @@ export interface DropdownConfig {
 
 class OptionListBox extends ListBox<string> {
 
-    private optionsByValue: Map<string, Option<string>> = new Map();
+    private optionsByValue = new Map<string, Option<string>>();
 
     constructor(private createViewer: () => Viewer<string>) {
         super('dropdown-list');

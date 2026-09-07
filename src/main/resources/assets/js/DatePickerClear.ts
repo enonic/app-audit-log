@@ -1,8 +1,8 @@
-import { DivEl } from '@enonic/lib-admin-ui/dom/DivEl';
-import { Element } from '@enonic/lib-admin-ui/dom/Element';
-import { Button } from '@enonic/lib-admin-ui/ui/button/Button';
-import { DatePicker, DatePickerBuilder } from '@enonic/lib-admin-ui/ui/time/DatePicker';
-import { DateTimePickerPopup, DateTimePickerPopupBuilder } from '@enonic/lib-admin-ui/ui/time/DateTimePickerPopup';
+import {DivEl} from '@enonic/lib-admin-ui/dom/DivEl';
+import {Element} from '@enonic/lib-admin-ui/dom/Element';
+import {Button} from '@enonic/lib-admin-ui/ui/button/Button';
+import {DatePicker, DatePickerBuilder} from '@enonic/lib-admin-ui/ui/time/DatePicker';
+import {DateTimePickerPopup, DateTimePickerPopupBuilder} from '@enonic/lib-admin-ui/ui/time/DateTimePickerPopup';
 
 export class DatePickerClear extends DatePicker {
     constructor(id?: string) {
@@ -24,7 +24,7 @@ export class DatePickerClear extends DatePicker {
 
 
     public onClear() {
-        throw ('Should be overriden');
+        throw new Error('Should be overriden');
     }
 }
 
