@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.19",
-    "dompurify": "~3.4.13",
+    "dompurify": "~3.4.15",
     "fine-uploader": "^5.16.2",
     "jquery": "^4.0.0",
     "jquery-simulate": "^1.0.2",
