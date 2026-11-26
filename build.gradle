@@ -34,7 +34,7 @@ dependencies {
 node {
     download = true
     version = '24.22.3'
-    pnpmVersion = '11.26.0'
+    pnpmVersion = '11.29.0'
 }
 
 task lint( type: PnpmTask, dependsOn: pnpmInstall ) {
